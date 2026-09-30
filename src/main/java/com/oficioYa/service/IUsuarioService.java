@@ -1,9 +1,8 @@
 package com.oficioya.service;
 
-import com.oficioya.model.dto.request.UsuarioRegistroRequestDTO;
-import com.oficioya.model.dto.response.UsuarioResponseDTO;
+import com.oficioya.model.domain.Usuario;
 
 public interface IUsuarioService {
-    UsuarioResponseDTO registrarUsuario(UsuarioRegistroRequestDTO request);
+    Usuario registrarUsuario(Usuario usuario);
 }
 
