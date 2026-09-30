@@ -30,9 +30,8 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
     public List<PerfilTrabajador> buscarTrabajadores(String zona, Long oficioId, Double calificacionMinima, String orden) {
         log.info("Iniciando busqueda de trabajadores. Zona: {}, Oficio: {}", zona, oficioId);
         
-        List<PerfilTrabajador> candidatos = repository.findAll().stream()
+        List<PerfilTrabajador> candidatos = repository.findByZonaCoberturaContaining(zona).stream()
                 .map(mapper::toDomain)
-                .filter(p -> p.getZonaCobertura() != null && p.getZonaCobertura().contains(zona))
                 .collect(Collectors.toList());
 
         if (calificacionMinima != null) {

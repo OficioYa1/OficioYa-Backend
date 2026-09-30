@@ -18,6 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class BusquedaTrabajadorServiceImplTest {
@@ -50,12 +51,18 @@ class BusquedaTrabajadorServiceImplTest {
     }
 
     private void mockRepositoryAndMapper() {
-        when(repository.findAll()).thenReturn(Arrays.asList(e1, e2, e3, e4, e5));
-        when(mapper.toDomain(e1)).thenReturn(p1);
-        when(mapper.toDomain(e2)).thenReturn(p2);
-        when(mapper.toDomain(e3)).thenReturn(p3);
-        when(mapper.toDomain(e4)).thenReturn(p4);
-        when(mapper.toDomain(e5)).thenReturn(p5);
+        lenient().when(repository.findByZonaCoberturaContaining(any())).thenAnswer(i -> {
+            String z = i.getArgument(0);
+            if ("Sur".equals(z)) return java.util.Collections.singletonList(e4);
+            if ("Oeste".equals(z)) return java.util.Collections.emptyList();
+            if ("Norte".equals(z)) return java.util.Arrays.asList(e1, e2, e3, e5);
+            return java.util.Arrays.asList(e1, e2, e3, e4, e5); // Por defecto retorna todo (null, "", "A", etc)
+        });
+        lenient().when(mapper.toDomain(e1)).thenReturn(p1);
+        lenient().when(mapper.toDomain(e2)).thenReturn(p2);
+        lenient().when(mapper.toDomain(e3)).thenReturn(p3);
+        lenient().when(mapper.toDomain(e4)).thenReturn(p4);
+        lenient().when(mapper.toDomain(e5)).thenReturn(p5);
     }
 
     // --- RF-16: Filtrar calificacion ---

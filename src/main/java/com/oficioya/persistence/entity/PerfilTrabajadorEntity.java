@@ -22,7 +22,10 @@ import java.util.List;
  */
 @Entity
 @Table(name = "perfiles_trabajador")
-@Data
+@lombok.Getter
+@lombok.Setter
+@lombok.ToString(exclude = {"usuario", "oficios"})
+@lombok.EqualsAndHashCode(exclude = {"usuario", "oficios"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,7 +36,7 @@ public class PerfilTrabajadorEntity {
     private Long id;
 
     /** Relación 1:1 con UsuarioEntity */
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false, unique = true)
     private UsuarioEntity usuario;
 
@@ -71,9 +74,6 @@ public class PerfilTrabajadorEntity {
     @Column(name = "calificacion_promedio")
     private Double calificacionPromedio = 0.0;
 
-    /** RF-07 / RF-65: Fotos del portafolio (URLs separadas por coma) */
-    @Column(name = "fotos_portafolio", columnDefinition = "TEXT")
-    private String fotosPortafolio;
 
     /** Número total de trabajos completados */
     @Builder.Default

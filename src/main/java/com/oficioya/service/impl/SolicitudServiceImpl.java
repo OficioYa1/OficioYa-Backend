@@ -36,7 +36,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public Solicitud crearSolicitud(Solicitud solicitud, Long contratanteId) {
         log.info("Creando nueva solicitud para el contratante ID: {}", contratanteId);
         solicitud.setEstadoEnum(com.oficioya.persistence.entity.EstadoSolicitud.CREADA);
@@ -47,7 +47,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void enviarSolicitud(Long solicitudId, Long trabajadorId) {
         log.info("Enviando solicitud {} al trabajador {}", solicitudId, trabajadorId);
         Solicitud solicitud = recuperarDominio(solicitudId);
@@ -57,7 +57,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void aceptarSolicitud(Long solicitudId) {
         log.info("Aceptando solicitud {}", solicitudId);
         Solicitud solicitud = recuperarDominio(solicitudId);
@@ -66,7 +66,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void rechazarSolicitud(Long solicitudId) {
         Solicitud solicitud = recuperarDominio(solicitudId);
         solicitud.rechazar();
@@ -74,7 +74,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void iniciarSolicitud(Long solicitudId) {
         Solicitud solicitud = recuperarDominio(solicitudId);
         solicitud.iniciar();
@@ -82,7 +82,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void completarSolicitud(Long solicitudId) {
         Solicitud solicitud = recuperarDominio(solicitudId);
         solicitud.completar();
@@ -90,7 +90,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void cancelarSolicitud(Long solicitudId, String motivo) {
         log.warn("Cancelando solicitud {} por motivo: {}", solicitudId, motivo);
         Solicitud solicitud = recuperarDominio(solicitudId);

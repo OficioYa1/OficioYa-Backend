@@ -11,7 +11,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "solicitudes")
-@Data
+@lombok.Getter
+@lombok.Setter
+@lombok.ToString(exclude = {"contratante", "trabajador"})
+@lombok.EqualsAndHashCode(exclude = {"contratante", "trabajador"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,12 +25,12 @@ public class SolicitudEntity {
     private Long id;
 
     /** RF-19: Contratante que crea la solicitud */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contratante_id", nullable = false)
     private UsuarioEntity contratante;
 
     /** RF-23 / RF-26: Trabajador al que se le envió/aceptó */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trabajador_id")
     private UsuarioEntity trabajador;
 
