@@ -1,11 +1,8 @@
 package com.oficioya.service;
 
 import com.oficioya.exception.CorreoYaRegistradoException;
-import com.oficioya.mapper.UsuarioDTOMapper;
 import com.oficioya.mapper.UsuarioEntityMapper;
 import com.oficioya.model.domain.Usuario;
-import com.oficioya.model.dto.request.UsuarioRegistroRequestDTO;
-import com.oficioya.model.dto.response.UsuarioResponseDTO;
 import com.oficioya.persistence.entity.RolUsuario;
 import com.oficioya.persistence.entity.UsuarioEntity;
 import com.oficioya.repository.UsuarioRepository;
@@ -17,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,77 +31,111 @@ class UsuarioServiceImplTest {
     private IUsuarioValidator usuarioValidator;
 
     @Mock
-    private UsuarioDTOMapper dtoMapper;
-
-    @Mock
     private UsuarioEntityMapper entityMapper;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
 
-    private UsuarioRegistroRequestDTO requestDTO;
     private Usuario domainUsuario;
     private UsuarioEntity usuarioEntity;
-    private UsuarioResponseDTO responseDTO;
 
     @BeforeEach
     void setUp() {
-        // Preparamos datos dummy para cada prueba
-        requestDTO = new UsuarioRegistroRequestDTO(
-                "test@test.com", "1234567890", "password123", "Juan", "Perez", RolUsuario.CONTRATANTE
-        );
-
         domainUsuario = Usuario.builder()
-                .correo("test@test.com")
+                .correo("juan@test.com")
+                .telefono("3001234567")
+                .contrasena("password123")
                 .nombre("Juan")
                 .apellido("Perez")
                 .rol(RolUsuario.CONTRATANTE)
                 .build();
 
-        usuarioEntity = new UsuarioEntity();
-        usuarioEntity.setId(1L);
-        usuarioEntity.setCorreo("test@test.com");
-
-        responseDTO = new UsuarioResponseDTO(
-                1L, "test@test.com", "1234567890", "Juan", "Perez", RolUsuario.CONTRATANTE,
-                false, false, null, true
-        );
+        usuarioEntity = UsuarioEntity.builder()
+                .id(1L)
+                .correo("juan@test.com")
+                .telefono("3001234567")
+                .contrasena("password123")
+                .nombre("Juan")
+                .apellido("Perez")
+                .rol(RolUsuario.CONTRATANTE)
+                .correoVerificado(false)
+                .telefonoVerificado(false)
+                .fechaRegistro(LocalDateTime.now())
+                .activo(true)
+                .build();
     }
 
     @Test
-    void registrarUsuario_Exito() {
-        doNothing().when(usuarioValidator).validarCorreoUnico(requestDTO.correo());
-        when(dtoMapper.toDomain(requestDTO)).thenReturn(domainUsuario);
-        when(entityMapper.toEntity(domainUsuario)).thenReturn(usuarioEntity);
+    void registrarUsuario_success_returnsRegisteredUser() {
+        doNothing().when(usuarioValidator).validarCorreoUnico(domainUsuario.getCorreo());
+        when(entityMapper.toEntity(any(Usuario.class))).thenReturn(usuarioEntity);
         when(usuarioRepository.save(any(UsuarioEntity.class))).thenReturn(usuarioEntity);
         when(entityMapper.toDomain(usuarioEntity)).thenReturn(domainUsuario);
-        when(dtoMapper.toResponseDTO(domainUsuario)).thenReturn(responseDTO);
 
-        UsuarioResponseDTO result = usuarioService.registrarUsuario(requestDTO);
+        Usuario result = usuarioService.registrarUsuario(domainUsuario);
 
         assertNotNull(result);
-        assertEquals("test@test.com", result.correo());
-        assertEquals(RolUsuario.CONTRATANTE, result.rol());
-
-        verify(usuarioValidator, times(1)).validarCorreoUnico(requestDTO.correo());
+        assertEquals("juan@test.com", result.getCorreo());
+        assertEquals(RolUsuario.CONTRATANTE, result.getRol());
+        verify(usuarioValidator, times(1)).validarCorreoUnico(domainUsuario.getCorreo());
         verify(usuarioRepository, times(1)).save(any(UsuarioEntity.class));
     }
 
     @Test
-    void registrarUsuario_Falla_CorreoYaRegistrado() {
-        doThrow(new com.oficioya.exception.CorreoYaRegistradoException("El correo ya se encuentra registrado."))
-                .when(usuarioValidator).validarCorreoUnico(requestDTO.correo());
+    void registrarUsuario_whenDuplicateEmail_throwsCorreoYaRegistradoException() {
+        doThrow(new CorreoYaRegistradoException("El correo juan@test.com ya se encuentra registrado."))
+                .when(usuarioValidator).validarCorreoUnico(domainUsuario.getCorreo());
 
-        CorreoYaRegistradoException exception = assertThrows(
-                com.oficioya.exception.CorreoYaRegistradoException.class,
-                () -> usuarioService.registrarUsuario(requestDTO)
+        CorreoYaRegistradoException ex = assertThrows(
+                CorreoYaRegistradoException.class,
+                () -> usuarioService.registrarUsuario(domainUsuario)
         );
 
-        assertEquals("El correo ya se encuentra registrado.", exception.getMessage());
-
-        // Esta línea es clave para JaCoCo y SonarLint: asegura que si falla la validación, el flujo se corta
+        assertEquals("El correo juan@test.com ya se encuentra registrado.", ex.getMessage());
         verify(usuarioRepository, never()).save(any(UsuarioEntity.class));
-        verify(dtoMapper, never()).toDomain(any());
+        verify(entityMapper, never()).toEntity(any(Usuario.class));
     }
 
+    @Test
+    void registrarUsuario_success_setsDefaultValues() {
+        doNothing().when(usuarioValidator).validarCorreoUnico(any());
+        when(entityMapper.toEntity(any(Usuario.class))).thenReturn(usuarioEntity);
+        when(usuarioRepository.save(any(UsuarioEntity.class))).thenReturn(usuarioEntity);
+        when(entityMapper.toDomain(any(UsuarioEntity.class))).thenReturn(domainUsuario);
+
+        usuarioService.registrarUsuario(domainUsuario);
+
+        assertFalse(domainUsuario.isCorreoVerificado(), "El correo NO debe estar verificado al registrarse");
+        assertFalse(domainUsuario.isTelefonoVerificado(), "El teléfono NO debe estar verificado al registrarse");
+        assertTrue(domainUsuario.isActivo(), "El usuario debe estar activo al registrarse");
+        assertNotNull(domainUsuario.getFechaRegistro(), "La fecha de registro debe establecerse");
+    }
+
+    @Test
+    void registrarUsuario_whenRepositoryFails_propagatesException() {
+        doNothing().when(usuarioValidator).validarCorreoUnico(any());
+        when(entityMapper.toEntity(any(Usuario.class))).thenReturn(usuarioEntity);
+        when(usuarioRepository.save(any(UsuarioEntity.class)))
+                .thenThrow(new RuntimeException("Error de conexión con la base de datos"));
+
+        RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> usuarioService.registrarUsuario(domainUsuario)
+        );
+
+        assertTrue(ex.getMessage().contains("Error de conexión"));
+    }
+
+    @Test
+    void registrarUsuario_success_invokesEntityMapperCorrectly() {
+        doNothing().when(usuarioValidator).validarCorreoUnico(any());
+        when(entityMapper.toEntity(any(Usuario.class))).thenReturn(usuarioEntity);
+        when(usuarioRepository.save(any(UsuarioEntity.class))).thenReturn(usuarioEntity);
+        when(entityMapper.toDomain(usuarioEntity)).thenReturn(domainUsuario);
+
+        usuarioService.registrarUsuario(domainUsuario);
+
+        verify(entityMapper, times(1)).toEntity(any(Usuario.class));
+        verify(entityMapper, times(1)).toDomain(usuarioEntity);
+    }
 }
