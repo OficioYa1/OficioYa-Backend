@@ -42,8 +42,11 @@ class BusquedaTrabajadorServiceImplTest {
         p3 = new PerfilTrabajador(); p3.setZonaCobertura("Norte"); p3.setCalificacionPromedio(4.0); p3.setTrabajosCompletados(20);
         p4 = new PerfilTrabajador(); p4.setZonaCobertura("Sur"); p4.setCalificacionPromedio(4.8); p4.setTrabajosCompletados(5);
         p5 = new PerfilTrabajador(); p5.setZonaCobertura("Norte"); p5.setCalificacionPromedio(null); p5.setTrabajosCompletados(0);
-        
-        e1 = new PerfilTrabajadorEntity(); e2 = new PerfilTrabajadorEntity(); e3 = new PerfilTrabajadorEntity(); e4 = new PerfilTrabajadorEntity(); e5 = new PerfilTrabajadorEntity();
+        e1 = new PerfilTrabajadorEntity(); e1.setId(1L);
+        e2 = new PerfilTrabajadorEntity(); e2.setId(2L);
+        e3 = new PerfilTrabajadorEntity(); e3.setId(3L);
+        e4 = new PerfilTrabajadorEntity(); e4.setId(4L);
+        e5 = new PerfilTrabajadorEntity(); e5.setId(5L);
     }
 
     private void mockRepositoryAndMapper() {

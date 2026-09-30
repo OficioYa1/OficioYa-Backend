@@ -121,10 +121,9 @@ class SolicitudServiceImplTest {
     }
 
     // --- RF-76: Cancelar ---
-    @Test @DisplayName("RF-76 T1: Cancela desde CREADA")
+    @Test @DisplayName("RF-76 T1: Falla si intenta cancelar desde CREADA (regla de negocio)")
     void rf76_t1() {
-        solicitud.cancelar();
-        assertEquals(EstadoSolicitud.CANCELADA, solicitud.getEstadoEnum());
+        assertThrows(EstadoInvalidoException.class, () -> solicitud.cancelar());
     }
     @Test @DisplayName("RF-76 T2: Cancela desde ENVIADA")
     void rf76_t2() {
