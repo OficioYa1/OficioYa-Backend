@@ -28,21 +28,15 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Transactional
     public UsuarioResponseDTO registrarUsuario(UsuarioRegistroRequestDTO request) {
 
-        // 1. Validaciones de Negocio Estrictas
         usuarioValidator.validarCorreoUnico(request.correo());
 
-        // 2. Transformación: Request DTO -> Dominio Puro
         Usuario usuario = dtoMapper.toDomain(request);
 
-        // 3. Lógica de Negocio y reglas por defecto
         usuario.setFechaRegistro(LocalDateTime.now());
-        // TODO (Sprint 3): Encriptar la contraseña usando BCrypt antes de persistir
 
-        // 4. Persistencia: Dominio -> Entidad JPA -> Base de Datos
         UsuarioEntity entity = entityMapper.toEntity(usuario);
         UsuarioEntity entityGuardada = usuarioRepository.save(entity);
 
-        // 5. Retorno: Entidad JPA -> Dominio -> Response DTO
         Usuario usuarioGuardado = entityMapper.toDomain(entityGuardada);
         return dtoMapper.toResponseDTO(usuarioGuardado);
     }
