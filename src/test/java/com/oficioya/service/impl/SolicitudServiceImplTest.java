@@ -23,6 +23,7 @@ class SolicitudServiceImplTest {
     @Mock private SolicitudRepository solicitudRepository;
     @Mock private UsuarioRepository usuarioRepository;
     @Mock private ApplicationEventPublisher eventPublisher;
+    @Mock private com.oficioya.mapper.SolicitudEntityMapper mapper;
     @InjectMocks private SolicitudServiceImpl service;
 
     private Solicitud solicitud;
@@ -33,6 +34,12 @@ class SolicitudServiceImplTest {
         solicitud.setId(1L);
         // Simulando que el factory le asigna el estado correspondiente
         solicitud.setEstadoEnum(EstadoSolicitud.CREADA);
+        
+        com.oficioya.persistence.entity.SolicitudEntity entity = new com.oficioya.persistence.entity.SolicitudEntity();
+        org.mockito.Mockito.lenient().when(mapper.toEntity(org.mockito.ArgumentMatchers.any())).thenReturn(entity);
+        org.mockito.Mockito.lenient().when(solicitudRepository.save(org.mockito.ArgumentMatchers.any())).thenReturn(entity);
+        org.mockito.Mockito.lenient().when(mapper.toDomain(org.mockito.ArgumentMatchers.any())).thenReturn(solicitud);
+        org.mockito.Mockito.lenient().when(solicitudRepository.findById(org.mockito.ArgumentMatchers.any())).thenReturn(java.util.Optional.of(entity));
     }
 
     // --- RF-19: Crear solicitud ---

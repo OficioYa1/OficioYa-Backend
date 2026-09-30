@@ -20,6 +20,12 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
     private final PerfilTrabajadorRepository repository;
     private final PerfilTrabajadorEntityMapper mapper;
 
+    private static final java.util.Map<String, Comparator<PerfilTrabajador>> SORTER_STRATEGIES = java.util.Map.of(
+            "REPUTACION", Comparator.comparing(PerfilTrabajador::getCalificacionPromedio, Comparator.nullsLast(Comparator.reverseOrder()))
+                    .thenComparing(PerfilTrabajador::getTrabajosCompletados, Comparator.nullsLast(Comparator.reverseOrder())),
+            "DISTANCIA", Comparator.comparing(PerfilTrabajador::getZonaCobertura, Comparator.nullsLast(Comparator.naturalOrder()))
+    );
+
     @Override
     public List<PerfilTrabajador> buscarTrabajadores(String zona, Long oficioId, Double calificacionMinima, String orden) {
         log.info("Iniciando busqueda de trabajadores. Zona: {}, Oficio: {}", zona, oficioId);
@@ -35,13 +41,8 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
                     .collect(Collectors.toList());
         }
 
-        Comparator<PerfilTrabajador> comparator;
-        if ("REPUTACION".equalsIgnoreCase(orden)) {
-            comparator = Comparator.comparing(PerfilTrabajador::getCalificacionPromedio, Comparator.nullsLast(Comparator.reverseOrder()))
-                    .thenComparing(PerfilTrabajador::getTrabajosCompletados, Comparator.nullsLast(Comparator.reverseOrder()));
-        } else {
-            comparator = Comparator.comparing(PerfilTrabajador::getZonaCobertura, Comparator.nullsLast(Comparator.naturalOrder()));
-        }
+        String safeOrden = (orden != null) ? orden.toUpperCase() : "DISTANCIA";
+        Comparator<PerfilTrabajador> comparator = SORTER_STRATEGIES.getOrDefault(safeOrden, SORTER_STRATEGIES.get("DISTANCIA"));
 
         return candidatos.stream()
                 .sorted(comparator)
