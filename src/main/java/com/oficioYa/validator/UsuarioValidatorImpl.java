@@ -1,9 +1,9 @@
 package com.oficioYa.validator;
 
-import com.oficioya.exception.ConflictoException;
-import com.oficioya.exception.RecursoNoEncontradoException;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.validation.IUsuarioValidator;
+import com.oficioYa.exception.CorreoYaRegistradoException;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.validator.impl.IUsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,14 +16,14 @@ public class UsuarioValidatorImpl implements IUsuarioValidator {
     @Override
     public void validarExistencia(Long usuarioId) {
         if (!usuarioRepository.existsById(usuarioId)) {
-            throw new RecursoNoEncontradoException("No se encontró ningún usuario con el ID: " + usuarioId);
+            throw new UsuarioNoEncontradoException("No se encontró ningún usuario con el ID: " + usuarioId);
         }
     }
 
     @Override
     public void validarCorreoUnico(String correo) {
         if (usuarioRepository.existsByCorreo(correo)) {
-            throw new ConflictoException("El correo " + correo + " ya se encuentra registrado.");
+            throw new CorreoYaRegistradoException("El correo " + correo + " ya se encuentra registrado.");
         }
     }
 }
