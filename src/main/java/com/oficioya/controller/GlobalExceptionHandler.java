@@ -57,7 +57,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleGenerico(
             Exception ex, HttpServletRequest request) {
 
+        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponseDTO(500, "Error interno", "Ocurrió un error inesperado. Intente de nuevo.", request.getRequestURI()));
+                .body(new ErrorResponseDTO(500, "Error interno", ex.getMessage() + " " + ex.toString(), request.getRequestURI()));
     }
 }
