@@ -1,5 +1,6 @@
 package com.oficioya.model.domain;
 
+import com.oficioya.model.domain.state.*;
 import com.oficioya.persistence.entity.EstadoSolicitud;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
 
 @Data
 @Builder
@@ -21,8 +21,26 @@ public class Solicitud {
     private String descripcion;
     private String zonaServicio;
     private String fotoAdjuntaUrl;
-    private EstadoSolicitud estado;
+    private EstadoSolicitud estadoEnum;
+    private SolicitudState estadoActual;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
     
+    // Configura el estado basado en el enum
+    public void setEstadoEnum(EstadoSolicitud estado) {
+        this.estadoEnum = estado;
+        this.estadoActual = SolicitudStateFactory.getState(estado);
+    }
+    
+    public void cambiarEstado(EstadoSolicitud nuevoEstado) {
+        setEstadoEnum(nuevoEstado);
+        this.fechaActualizacion = LocalDateTime.now();
+    }
+    
+    public void enviar() { this.estadoActual.enviar(this); }
+    public void aceptar() { this.estadoActual.aceptar(this); }
+    public void rechazar() { this.estadoActual.rechazar(this); }
+    public void iniciar() { this.estadoActual.iniciar(this); }
+    public void completar() { this.estadoActual.completar(this); }
+    public void cancelar() { this.estadoActual.cancelar(this); }
 }
