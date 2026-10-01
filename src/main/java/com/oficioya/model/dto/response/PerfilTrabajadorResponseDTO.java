@@ -12,6 +12,7 @@ public class PerfilTrabajadorResponseDTO {
     private Long id;
     private Long usuarioId;
     private String descripcion;
+    private List<OficioResumenResponseDTO> oficios;
     private String zonaCobertura;
     private BigDecimal tarifaPorHora;
     private List<FranjaDisponibilidadResponseDTO> disponibilidadSemanal;
