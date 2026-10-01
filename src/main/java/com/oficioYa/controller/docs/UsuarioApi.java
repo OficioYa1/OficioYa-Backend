@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -33,6 +34,6 @@ public interface UsuarioApi {
             @ApiResponse(responseCode = "404", description = "No existe usuario con ese correo", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
             @ApiResponse(responseCode = "422", description = "Estado inválido: el correo ya estaba verificado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
     })
-    ResponseEntity<java.util.Map<String, String>> verificarCorreo(@PathVariable String correo);
+    ResponseEntity<MensajeResponseDTO> verificarCorreo(@PathVariable String correo);
 
 }
