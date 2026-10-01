@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -138,4 +139,53 @@ class UsuarioServiceImplTest {
         verify(entityMapper, times(1)).toEntity(any(Usuario.class));
         verify(entityMapper, times(1)).toDomain(usuarioEntity);
     }
+
+    @Test
+    void verificarCorreo_UsuarioExisteYNoEstaVerificado_VerificaYGuarda() {
+        // Arrange
+        String correo = "test@test.com";
+        UsuarioEntity entity = new UsuarioEntity();
+        entity.setCorreo(correo);
+        entity.setCorreoVerificado(false);
+
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.of(entity));
+
+        // Act
+        usuarioService.verificarCorreo(correo);
+
+        // Assert
+        assertTrue(entity.isCorreoVerificado());
+        verify(usuarioRepository, times(1)).save(entity);
+    }
+
+    @Test
+    void verificarCorreo_UsuarioNoExiste_LanzaUsuarioNoEncontradoException() {
+        // Arrange
+        String correo = "test@test.com";
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(com.oficioya.exception.UsuarioNoEncontradoException.class, () -> {
+            usuarioService.verificarCorreo(correo);
+        });
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    void verificarCorreo_UsuarioYaEstaVerificado_LanzaEstadoInvalidoException() {
+        // Arrange
+        String correo = "test@test.com";
+        UsuarioEntity entity = new UsuarioEntity();
+        entity.setCorreo(correo);
+        entity.setCorreoVerificado(true);
+
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.of(entity));
+
+        // Act & Assert
+        assertThrows(com.oficioya.exception.EstadoInvalidoException.class, () -> {
+            usuarioService.verificarCorreo(correo);
+        });
+        verify(usuarioRepository, never()).save(any());
+    }
+
 }
