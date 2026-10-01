@@ -4,9 +4,12 @@ import com.oficioya.exception.ConflictoException;
 import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioya.model.domain.FranjaDisponibilidad;
+import com.oficioya.model.domain.MetodoPago;
 import com.oficioya.model.domain.PerfilTrabajador;
 import com.oficioya.model.domain.Usuario;
 import com.oficioya.model.exception.ReglaDeNegocioException;
+import com.oficioya.persistence.entity.FranjaDisponibilidadEmbeddable;
 import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
 import com.oficioya.persistence.entity.UsuarioEntity;
 import com.oficioya.repository.PerfilTrabajadorRepository;
@@ -22,7 +25,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -123,13 +130,17 @@ class PerfilTrabajadorServiceImplTest {
         verify(perfilRepository, never()).save(any());
     }
 
-    // ---------------- RF-04: zona de cobertura ----------------
+    // ───────────────────────── RF-04 / 05 / 06 / 60 ─────────────────────────
+
+    private PerfilTrabajadorEntity entidadExistente() {
+        return PerfilTrabajadorEntity.builder().id(1L).build();
+    }
 
     @Test
     @DisplayName("actualizarZonaCobertura - perfil existente guarda la zona sin espacios sobrantes")
     void actualizarZonaCobertura_perfilExistente_guardaZona() {
         // Arrange
-        PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(1L).build();
+        PerfilTrabajadorEntity entidad = entidadExistente();
         PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).zonaCobertura("Chapinero").build();
         when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
         when(perfilRepository.save(entidad)).thenReturn(entidad);
@@ -140,7 +151,7 @@ class PerfilTrabajadorServiceImplTest {
 
         // Assert
         assertEquals("Chapinero", entidad.getZonaCobertura());
-        assertEquals("Chapinero", resultado.getZonaCobertura());
+        assertSame(esperado, resultado);
         verify(perfilRepository, times(1)).save(entidad);
     }
 
@@ -151,17 +162,15 @@ class PerfilTrabajadorServiceImplTest {
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarZonaCobertura(99L, "Usaquén"));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarZonaCobertura(99L, "Norte"));
         verify(perfilRepository, never()).save(any());
     }
-
-    // ---------------- RF-05: tarifa ----------------
 
     @Test
     @DisplayName("actualizarTarifa - perfil existente guarda la tarifa")
     void actualizarTarifa_perfilExistente_guardaTarifa() {
         // Arrange
-        PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(1L).build();
+        PerfilTrabajadorEntity entidad = entidadExistente();
         PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).tarifaPorHora(new BigDecimal("35000")).build();
         when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
         when(perfilRepository.save(entidad)).thenReturn(entidad);
@@ -172,8 +181,7 @@ class PerfilTrabajadorServiceImplTest {
 
         // Assert
         assertEquals(new BigDecimal("35000"), entidad.getTarifaPorHora());
-        assertEquals(new BigDecimal("35000"), resultado.getTarifaPorHora());
-        verify(perfilRepository, times(1)).save(entidad);
+        assertSame(esperado, resultado);
     }
 
     @Test
@@ -183,7 +191,87 @@ class PerfilTrabajadorServiceImplTest {
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarTarifa(99L, new BigDecimal("1000")));
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarTarifa(99L, BigDecimal.TEN));
+        verify(perfilRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("actualizarDisponibilidadSemanal - reemplaza las franjas anteriores por las nuevas")
+    void actualizarDisponibilidadSemanal_franjasValidas_reemplazaFranjas() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = entidadExistente();
+        entidad.getDisponibilidadSemanal().add(FranjaDisponibilidadEmbeddable.builder()
+                .dia(DayOfWeek.FRIDAY).horaInicio(LocalTime.of(6, 0)).horaFin(LocalTime.of(7, 0)).build());
+        List<FranjaDisponibilidad> franjas = List.of(FranjaDisponibilidad.builder()
+                .dia(DayOfWeek.MONDAY).horaInicio(LocalTime.of(8, 0)).horaFin(LocalTime.of(17, 0)).build());
+        FranjaDisponibilidadEmbeddable nueva = FranjaDisponibilidadEmbeddable.builder()
+                .dia(DayOfWeek.MONDAY).horaInicio(LocalTime.of(8, 0)).horaFin(LocalTime.of(17, 0)).build();
+        PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(entityMapper.toFranjasEntity(franjas)).thenReturn(List.of(nueva));
+        when(perfilRepository.save(entidad)).thenReturn(entidad);
+        when(entityMapper.toDomain(entidad)).thenReturn(esperado);
+
+        // Act
+        PerfilTrabajador resultado = service.actualizarDisponibilidadSemanal(1L, franjas);
+
+        // Assert
+        assertSame(esperado, resultado);
+        assertEquals(List.of(nueva), entidad.getDisponibilidadSemanal());
+        verify(validator, times(1)).validarFranjasDisponibilidad(franjas);
+    }
+
+    @Test
+    @DisplayName("actualizarDisponibilidadSemanal - franjas inválidas propagan ReglaDeNegocioException y no guardan")
+    void actualizarDisponibilidadSemanal_franjasInvalidas_propagaReglaDeNegocio() {
+        // Arrange
+        List<FranjaDisponibilidad> franjas = List.of();
+        doThrow(new ReglaDeNegocioException("Solapadas")).when(validator).validarFranjasDisponibilidad(franjas);
+
+        // Act & Assert
+        assertThrows(ReglaDeNegocioException.class, () -> service.actualizarDisponibilidadSemanal(1L, franjas));
+        verify(perfilRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("actualizarDisponibilidadSemanal - perfil inexistente lanza RecursoNoEncontradoException")
+    void actualizarDisponibilidadSemanal_perfilInexistente_lanzaNotFound() {
+        // Arrange
+        List<FranjaDisponibilidad> franjas = List.of();
+        when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarDisponibilidadSemanal(99L, franjas));
+        verify(perfilRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("actualizarMetodosPago - reemplaza los métodos de pago anteriores")
+    void actualizarMetodosPago_perfilExistente_reemplazaMetodos() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = entidadExistente();
+        entidad.getMetodosPago().add(MetodoPago.EFECTIVO);
+        PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(perfilRepository.save(entidad)).thenReturn(entidad);
+        when(entityMapper.toDomain(entidad)).thenReturn(esperado);
+
+        // Act
+        PerfilTrabajador resultado = service.actualizarMetodosPago(1L, Set.of(MetodoPago.NEQUI, MetodoPago.DAVIPLATA));
+
+        // Assert
+        assertSame(esperado, resultado);
+        assertEquals(Set.of(MetodoPago.NEQUI, MetodoPago.DAVIPLATA), entidad.getMetodosPago());
+    }
+
+    @Test
+    @DisplayName("actualizarMetodosPago - perfil inexistente lanza RecursoNoEncontradoException")
+    void actualizarMetodosPago_perfilInexistente_lanzaNotFound() {
+        // Arrange
+        when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarMetodosPago(99L, Set.of(MetodoPago.NEQUI)));
         verify(perfilRepository, never()).save(any());
     }
 }

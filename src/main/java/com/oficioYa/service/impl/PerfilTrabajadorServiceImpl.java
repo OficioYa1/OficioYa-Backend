@@ -3,6 +3,8 @@ package com.oficioya.service.impl;
 import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioya.model.domain.FranjaDisponibilidad;
+import com.oficioya.model.domain.MetodoPago;
 import com.oficioya.model.domain.PerfilTrabajador;
 import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
 import com.oficioya.persistence.entity.UsuarioEntity;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -66,6 +70,27 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         log.info("Actualizando tarifa: perfilId={}, tarifa={}", perfilId, tarifaPorHora);
         PerfilTrabajadorEntity entity = obtenerEntity(perfilId);
         entity.setTarifaPorHora(tarifaPorHora);
+        return guardar(entity);
+    }
+
+    @Override
+    @Transactional
+    public PerfilTrabajador actualizarDisponibilidadSemanal(Long perfilId, List<FranjaDisponibilidad> franjas) {
+        log.info("Actualizando disponibilidad semanal: perfilId={}, franjas={}", perfilId, franjas.size());
+        validator.validarFranjasDisponibilidad(franjas);
+        PerfilTrabajadorEntity entity = obtenerEntity(perfilId);
+        entity.getDisponibilidadSemanal().clear();
+        entity.getDisponibilidadSemanal().addAll(entityMapper.toFranjasEntity(franjas));
+        return guardar(entity);
+    }
+
+    @Override
+    @Transactional
+    public PerfilTrabajador actualizarMetodosPago(Long perfilId, Set<MetodoPago> metodosPago) {
+        log.info("Actualizando métodos de pago: perfilId={}, metodos={}", perfilId, metodosPago);
+        PerfilTrabajadorEntity entity = obtenerEntity(perfilId);
+        entity.getMetodosPago().clear();
+        entity.getMetodosPago().addAll(metodosPago);
         return guardar(entity);
     }
 

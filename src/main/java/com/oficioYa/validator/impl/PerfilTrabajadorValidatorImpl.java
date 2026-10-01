@@ -1,8 +1,8 @@
 package com.oficioya.validator.impl;
 
 import com.oficioya.exception.ConflictoException;
-import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.model.domain.FranjaDisponibilidad;
 import com.oficioya.model.exception.ReglaDeNegocioException;
 import com.oficioya.persistence.entity.RolUsuario;
 import com.oficioya.persistence.entity.UsuarioEntity;
@@ -12,6 +12,12 @@ import com.oficioya.validator.IPerfilTrabajadorValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+
+import java.time.DayOfWeek;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -52,10 +58,27 @@ public class PerfilTrabajadorValidatorImpl implements IPerfilTrabajadorValidator
     }
 
     @Override
-    public void validarPerfilExiste(Long perfilId) {
-        if (!perfilRepository.existsById(perfilId)) {
-            log.warn("Perfil de trabajador inexistente id={}", perfilId);
-            throw new RecursoNoEncontradoException("No se encontró el perfil de trabajador con ID: " + perfilId);
+    public void validarFranjasDisponibilidad(List<FranjaDisponibilidad> franjas) {
+        for (FranjaDisponibilidad franja : franjas) {
+            if (!franja.getHoraInicio().isBefore(franja.getHoraFin())) {
+                log.warn("Franja inválida: dia={}, inicio={}, fin={}", franja.getDia(), franja.getHoraInicio(), franja.getHoraFin());
+                throw new ReglaDeNegocioException("La hora de inicio debe ser anterior a la hora de fin (" + franja.getDia() + ")");
+            }
+        }
+
+        Map<DayOfWeek, List<FranjaDisponibilidad>> porDia = franjas.stream()
+                .collect(Collectors.groupingBy(FranjaDisponibilidad::getDia));
+
+        for (Map.Entry<DayOfWeek, List<FranjaDisponibilidad>> entrada : porDia.entrySet()) {
+            List<FranjaDisponibilidad> ordenadas = entrada.getValue().stream()
+                    .sorted(Comparator.comparing(FranjaDisponibilidad::getHoraInicio))
+                    .toList();
+            for (int i = 1; i < ordenadas.size(); i++) {
+                if (ordenadas.get(i).getHoraInicio().isBefore(ordenadas.get(i - 1).getHoraFin())) {
+                    log.warn("Franjas solapadas el día {}", entrada.getKey());
+                    throw new ReglaDeNegocioException("Hay franjas de disponibilidad solapadas el día " + entrada.getKey());
+                }
+            }
         }
     }
 }

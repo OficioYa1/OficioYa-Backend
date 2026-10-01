@@ -3,6 +3,8 @@ package com.oficioya.controller;
 import com.oficioya.controller.docs.PerfilTrabajadorApi;
 import com.oficioya.mapper.PerfilTrabajadorMapper;
 import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.dto.request.DisponibilidadSemanalRequestDTO;
+import com.oficioya.model.dto.request.MetodosPagoRequestDTO;
 import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
 import com.oficioya.model.dto.request.TarifaRequestDTO;
 import com.oficioya.model.dto.request.ZonaCoberturaRequestDTO;
@@ -49,6 +51,23 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarTarifa(
             @PathVariable Long id, @Valid @RequestBody TarifaRequestDTO request) {
         PerfilTrabajador actualizado = perfilService.actualizarTarifa(id, request.getTarifaPorHora());
+        return ResponseEntity.ok(mapper.toResponse(actualizado));
+    }
+
+    @Override
+    @PutMapping("/{id}/disponibilidad-semanal")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarDisponibilidadSemanal(
+            @PathVariable Long id, @Valid @RequestBody DisponibilidadSemanalRequestDTO request) {
+        PerfilTrabajador actualizado = perfilService.actualizarDisponibilidadSemanal(
+                id, mapper.toFranjasDomain(request.getFranjas()));
+        return ResponseEntity.ok(mapper.toResponse(actualizado));
+    }
+
+    @Override
+    @PutMapping("/{id}/metodos-pago")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarMetodosPago(
+            @PathVariable Long id, @Valid @RequestBody MetodosPagoRequestDTO request) {
+        PerfilTrabajador actualizado = perfilService.actualizarMetodosPago(id, request.getMetodosPago());
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 }

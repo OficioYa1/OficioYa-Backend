@@ -1,8 +1,8 @@
 package com.oficioya.validator;
 
 import com.oficioya.exception.ConflictoException;
-import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.model.domain.FranjaDisponibilidad;
 import com.oficioya.model.exception.ReglaDeNegocioException;
 import com.oficioya.persistence.entity.RolUsuario;
 import com.oficioya.persistence.entity.UsuarioEntity;
@@ -16,6 +16,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -114,23 +117,62 @@ class PerfilTrabajadorValidatorImplTest {
         assertThrows(ConflictoException.class, () -> validator.validarPerfilNoExiste(1L));
     }
 
-    @Test
-    @DisplayName("validarPerfilExiste - perfil inexistente lanza RecursoNoEncontradoException")
-    void validarPerfilExiste_inexistente_lanzaNotFound() {
-        // Arrange
-        when(perfilRepository.existsById(5L)).thenReturn(false);
-
-        // Act & Assert
-        assertThrows(RecursoNoEncontradoException.class, () -> validator.validarPerfilExiste(5L));
+    private FranjaDisponibilidad franja(DayOfWeek dia, String inicio, String fin) {
+        return FranjaDisponibilidad.builder().dia(dia)
+                .horaInicio(LocalTime.parse(inicio)).horaFin(LocalTime.parse(fin)).build();
     }
 
     @Test
-    @DisplayName("validarPerfilExiste - perfil existente no lanza excepción")
-    void validarPerfilExiste_existente_noLanza() {
+    @DisplayName("validarFranjasDisponibilidad - franjas válidas y consecutivas no lanzan excepción")
+    void validarFranjas_validasYConsecutivas_noLanza() {
         // Arrange
-        when(perfilRepository.existsById(5L)).thenReturn(true);
+        List<FranjaDisponibilidad> franjas = List.of(
+                franja(DayOfWeek.MONDAY, "08:00", "12:00"),
+                franja(DayOfWeek.MONDAY, "12:00", "17:00"),
+                franja(DayOfWeek.TUESDAY, "08:00", "12:00"));
 
         // Act & Assert
-        assertDoesNotThrow(() -> validator.validarPerfilExiste(5L));
+        assertDoesNotThrow(() -> validator.validarFranjasDisponibilidad(franjas));
+    }
+
+    @Test
+    @DisplayName("validarFranjasDisponibilidad - lista vacía es válida")
+    void validarFranjas_listaVacia_noLanza() {
+        // Act & Assert
+        assertDoesNotThrow(() -> validator.validarFranjasDisponibilidad(List.of()));
+    }
+
+    @Test
+    @DisplayName("validarFranjasDisponibilidad - inicio igual o posterior al fin lanza ReglaDeNegocioException")
+    void validarFranjas_inicioPosteriorAlFin_lanzaReglaDeNegocio() {
+        // Arrange
+        List<FranjaDisponibilidad> franjas = List.of(franja(DayOfWeek.MONDAY, "17:00", "08:00"));
+
+        // Act & Assert
+        assertThrows(ReglaDeNegocioException.class, () -> validator.validarFranjasDisponibilidad(franjas));
+    }
+
+    @Test
+    @DisplayName("validarFranjasDisponibilidad - franjas solapadas el mismo día lanzan ReglaDeNegocioException")
+    void validarFranjas_solapadasMismoDia_lanzaReglaDeNegocio() {
+        // Arrange
+        List<FranjaDisponibilidad> franjas = List.of(
+                franja(DayOfWeek.MONDAY, "08:00", "12:00"),
+                franja(DayOfWeek.MONDAY, "11:00", "15:00"));
+
+        // Act & Assert
+        assertThrows(ReglaDeNegocioException.class, () -> validator.validarFranjasDisponibilidad(franjas));
+    }
+
+    @Test
+    @DisplayName("validarFranjasDisponibilidad - mismas horas en días distintos no se consideran solape")
+    void validarFranjas_mismasHorasDiasDistintos_noLanza() {
+        // Arrange
+        List<FranjaDisponibilidad> franjas = List.of(
+                franja(DayOfWeek.MONDAY, "08:00", "12:00"),
+                franja(DayOfWeek.TUESDAY, "08:00", "12:00"));
+
+        // Act & Assert
+        assertDoesNotThrow(() -> validator.validarFranjasDisponibilidad(franjas));
     }
 }
