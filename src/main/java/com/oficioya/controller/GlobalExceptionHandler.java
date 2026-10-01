@@ -3,6 +3,7 @@ package com.oficioya.controller;
 import com.oficioya.exception.CorreoYaRegistradoException;
 import com.oficioya.exception.EstadoInvalidoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.model.dto.response.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,14 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(404, "Recurso no encontrado", ex.getMessage(), request.getRequestURI()));
     }
 
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<ErrorResponseDTO> handleRecursoNoEncontrado(
+            RecursoNoEncontradoException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponseDTO(404, "Recurso no encontrado", ex.getMessage(), request.getRequestURI()));
+    }
+
     @ExceptionHandler(CorreoYaRegistradoException.class)
     public ResponseEntity<ErrorResponseDTO> handleCorreoYaRegistrado(
             CorreoYaRegistradoException ex, HttpServletRequest request) {
@@ -59,6 +68,6 @@ public class GlobalExceptionHandler {
 
         ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponseDTO(500, "Error interno", ex.getMessage() + " " + ex.toString(), request.getRequestURI()));
+                .body(new ErrorResponseDTO(500, "Error interno del servidor", "Ocurrió un error inesperado en el sistema.", request.getRequestURI()));
     }
 }
