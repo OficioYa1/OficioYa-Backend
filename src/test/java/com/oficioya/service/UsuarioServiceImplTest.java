@@ -34,6 +34,16 @@ class UsuarioServiceImplTest {
     @Mock
     private UsuarioEntityMapper entityMapper;
 
+    @Mock
+    private com.oficioya.repository.PerfilTrabajadorRepository perfilRepository;
+
+    @Mock
+    private com.oficioya.mapper.PerfilTrabajadorEntityMapper perfilEntityMapper;
+
+    @Mock
+    private com.oficioya.mapper.PerfilTrabajadorMapper perfilMapper;
+
+
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
 

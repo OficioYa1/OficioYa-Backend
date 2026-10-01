@@ -13,14 +13,27 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+import com.oficioya.repository.PerfilTrabajadorRepository;
+import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioya.mapper.PerfilTrabajadorMapper;
+import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.exception.RecursoNoEncontradoException;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.persistence.entity.RolUsuario;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UsuarioServiceImpl implements IUsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PerfilTrabajadorRepository perfilRepository;
     private final IUsuarioValidator usuarioValidator;
     private final UsuarioEntityMapper entityMapper;
+    private final PerfilTrabajadorEntityMapper perfilEntityMapper;
+    private final PerfilTrabajadorMapper perfilMapper;
 
     @Override
     @Transactional
@@ -47,13 +60,37 @@ public class UsuarioServiceImpl implements IUsuarioService {
     public void verificarCorreo(String correo) {
         log.info("Iniciando proceso de verificación de correo para: {}", correo);
         UsuarioEntity entity = usuarioRepository.findByCorreo(correo)
-                .orElseThrow(() -> new com.oficioya.exception.UsuarioNoEncontradoException("No existe un usuario con el correo: " + correo));
+                .orElseThrow(() -> new UsuarioNoEncontradoException("No existe un usuario con el correo: " + correo));
         if (entity.isCorreoVerificado()) {
             log.warn("El correo {} ya había sido verificado anteriormente.", correo);
-            throw new com.oficioya.exception.EstadoInvalidoException("El correo ya se encuentra verificado en el sistema.");
+            throw new EstadoInvalidoException("El correo ya se encuentra verificado en el sistema.");
         }
         entity.setCorreoVerificado(true);
         usuarioRepository.save(entity);
         log.info("Correo {} verificado exitosamente.", correo);
+    }
+
+    @Override
+    public PerfilTrabajadorResponseDTO obtenerPerfilTrabajador(Long usuarioId) {
+        log.info("Consultando perfil de trabajador para el usuario ID: {}", usuarioId);
+
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> {
+                    log.error("Usuario con ID {} no encontrado", usuarioId);
+                    return new UsuarioNoEncontradoException("Usuario no encontrado");
+                });
+
+        if (usuario.getRol() != RolUsuario.TRABAJADOR) {
+            log.error("El usuario con ID {} no tiene rol de trabajador", usuarioId);
+            throw new EstadoInvalidoException("El usuario consultado no es un trabajador");
+        }
+
+        PerfilTrabajadorEntity perfilEntity = perfilRepository.findByUsuarioId(usuarioId)
+                .orElseThrow(() -> {
+                    log.error("Perfil no encontrado para el trabajador con ID {}", usuarioId);
+                    return new RecursoNoEncontradoException("Perfil de trabajador no encontrado");
+                });
+
+        return perfilMapper.toResponse(perfilEntityMapper.toDomain(perfilEntity));
     }
 }
