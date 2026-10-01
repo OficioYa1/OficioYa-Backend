@@ -10,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,4 +32,12 @@ public class UsuarioController implements UsuarioApi {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @Override
+    @PatchMapping("/{correo}/verificar")
+    public ResponseEntity<MensajeResponseDTO> verificarCorreo(@PathVariable String correo) {
+        usuarioService.verificarCorreo(correo);
+        return ResponseEntity.ok(new MensajeResponseDTO("Correo verificado exitosamente"));
+    }
+
 }

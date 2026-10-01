@@ -33,7 +33,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuario.setCorreoVerificado(false);
         usuario.setTelefonoVerificado(false);
         usuario.setActivo(true);
-        // TODO Sprint 3: encriptar usuario.getContrasena() con BCrypt
 
         UsuarioEntity entity = entityMapper.toEntity(usuario);
         UsuarioEntity guardada = usuarioRepository.save(entity);
@@ -41,5 +40,20 @@ public class UsuarioServiceImpl implements IUsuarioService {
         log.info("Usuario registrado exitosamente: id={}, correo={}", guardada.getId(), guardada.getCorreo());
 
         return entityMapper.toDomain(guardada);
+    }
+
+    @Override
+    @Transactional
+    public void verificarCorreo(String correo) {
+        log.info("Iniciando proceso de verificación de correo para: {}", correo);
+        UsuarioEntity entity = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new com.oficioya.exception.UsuarioNoEncontradoException("No existe un usuario con el correo: " + correo));
+        if (entity.isCorreoVerificado()) {
+            log.warn("El correo {} ya había sido verificado anteriormente.", correo);
+            throw new com.oficioya.exception.EstadoInvalidoException("El correo ya se encuentra verificado en el sistema.");
+        }
+        entity.setCorreoVerificado(true);
+        usuarioRepository.save(entity);
+        log.info("Correo {} verificado exitosamente.", correo);
     }
 }
