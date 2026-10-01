@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -69,5 +70,17 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
             @PathVariable Long id, @Valid @RequestBody MetodosPagoRequestDTO request) {
         PerfilTrabajador actualizado = perfilService.actualizarMetodosPago(id, request.getMetodosPago());
         return ResponseEntity.ok(mapper.toResponse(actualizado));
+    }
+
+    @Override
+    @PatchMapping("/{id}/disponible-ahora/activar")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> activarDisponibleAhora(@PathVariable Long id) {
+        return ResponseEntity.ok(mapper.toResponse(perfilService.activarDisponibleAhora(id)));
+    }
+
+    @Override
+    @PatchMapping("/{id}/disponible-ahora/desactivar")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> desactivarDisponibleAhora(@PathVariable Long id) {
+        return ResponseEntity.ok(mapper.toResponse(perfilService.desactivarDisponibleAhora(id)));
     }
 }

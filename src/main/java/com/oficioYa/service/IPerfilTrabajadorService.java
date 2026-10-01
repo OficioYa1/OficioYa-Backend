@@ -25,4 +25,10 @@ public interface IPerfilTrabajadorService {
 
     /** RF-60: reemplaza los métodos de pago aceptados. */
     PerfilTrabajador actualizarMetodosPago(Long perfilId, Set<MetodoPago> metodosPago);
+
+    /** RF-30: activa "Disponible ahora" para recibir solicitudes inmediatas. */
+    PerfilTrabajador activarDisponibleAhora(Long perfilId);
+
+    /** RF-31: desactiva "Disponible ahora" y retira al trabajador de la búsqueda inmediata. */
+    PerfilTrabajador desactivarDisponibleAhora(Long perfilId);
 }
