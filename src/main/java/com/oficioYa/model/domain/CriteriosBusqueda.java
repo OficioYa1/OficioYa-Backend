@@ -15,6 +15,8 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CriteriosBusqueda {
+    /** RF-11: necesidad descrita en lenguaje natural, ej. "alguien que arregle una gotera". */
+    private String texto;
     /** RF-12: categoría del oficio (Hogar, Educación...). */
     private String categoria;
     /** RF-12: oficio específico. */

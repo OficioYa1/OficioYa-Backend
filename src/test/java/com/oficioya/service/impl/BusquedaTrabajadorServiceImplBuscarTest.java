@@ -4,7 +4,9 @@ import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
 import com.oficioya.model.domain.CriteriosBusqueda;
 import com.oficioya.model.domain.PerfilTrabajador;
 import com.oficioya.model.exception.ReglaDeNegocioException;
+import com.oficioya.persistence.entity.OficioEntity;
 import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioya.repository.OficioRepository;
 import com.oficioya.repository.PerfilTrabajadorRepository;
 import com.oficioya.validator.IBusquedaValidator;
 import org.junit.jupiter.api.DisplayName;
@@ -23,19 +25,20 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-/** Pruebas del método buscar(CriteriosBusqueda) — RF-12 a RF-15 y RF-32 (Dev B). */
+/** Pruebas del método buscar(CriteriosBusqueda) — RF-11 a RF-15 y RF-32 (Dev B). */
 @ExtendWith(MockitoExtension.class)
 class BusquedaTrabajadorServiceImplBuscarTest {
 
     @Mock private PerfilTrabajadorRepository repository;
     @Mock private PerfilTrabajadorEntityMapper mapper;
+    @Mock private OficioRepository oficioRepository;
     @Mock private IBusquedaValidator busquedaValidator;
 
     @InjectMocks private BusquedaTrabajadorServiceImpl service;
 
     @Test
-    @DisplayName("buscar - ordena por reputación por defecto")
-    void buscar_sinOrden_ordenaPorReputacion() {
+    @DisplayName("buscar - sin texto no consulta el catálogo y ordena por reputación por defecto")
+    void buscar_sinTexto_ordenaPorReputacionSinConsultarCatalogo() {
         // Arrange
         CriteriosBusqueda criterios = CriteriosBusqueda.builder().zona("Chapinero").build();
         PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(1L).build();
@@ -51,6 +54,7 @@ class BusquedaTrabajadorServiceImplBuscarTest {
         ArgumentCaptor<Sort> sort = ArgumentCaptor.forClass(Sort.class);
         verify(repository).findAll(any(Specification.class), sort.capture());
         assertEquals(Sort.Direction.DESC, sort.getValue().getOrderFor("calificacionPromedio").getDirection());
+        verify(oficioRepository, never()).findAll();
         verify(busquedaValidator).validarRangoTarifa(criterios);
         verify(busquedaValidator).validarFranjaSolicitada(criterios);
     }
@@ -69,6 +73,27 @@ class BusquedaTrabajadorServiceImplBuscarTest {
         ArgumentCaptor<Sort> sort = ArgumentCaptor.forClass(Sort.class);
         verify(repository).findAll(any(Specification.class), sort.capture());
         assertEquals(Sort.Direction.ASC, sort.getValue().getOrderFor("zonaCobertura").getDirection());
+    }
+
+    @Test
+    @DisplayName("buscar - texto libre consulta el catálogo de oficios y devuelve los resultados mapeados")
+    void buscar_textoLibre_consultaCatalogo() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().texto("alguien que arregle una gotera").build();
+        OficioEntity plomeria = OficioEntity.builder().id(1L).nombre("Plomería").categoria("Hogar").build();
+        OficioEntity profesor = OficioEntity.builder().id(2L).nombre("Clases particulares").categoria("Educación").build();
+        PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(9L).build();
+        PerfilTrabajador dominio = PerfilTrabajador.builder().id(9L).build();
+        when(oficioRepository.findAll()).thenReturn(List.of(plomeria, profesor));
+        when(repository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of(entidad));
+        when(mapper.toDomain(entidad)).thenReturn(dominio);
+
+        // Act
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
+
+        // Assert
+        assertEquals(1, resultado.size());
+        verify(oficioRepository, times(1)).findAll();
     }
 
     @Test
