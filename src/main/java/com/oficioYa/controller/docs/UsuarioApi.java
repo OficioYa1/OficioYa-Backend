@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,9 +29,9 @@ public interface UsuarioApi {
     @Operation(summary = "RF-40 — Verificar correo de usuario",
                description = "Verifica el correo electrónico de una cuenta existente.")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Correo verificado exitosamente"),
-            @ApiResponse(responseCode = "404", description = "No existe usuario con ese correo"),
-            @ApiResponse(responseCode = "422", description = "Estado inválido: el correo ya estaba verificado")
+            @ApiResponse(responseCode = "204", description = "Correo verificado exitosamente (No requiere cuerpo JSON)"),
+            @ApiResponse(responseCode = "404", description = "No existe usuario con ese correo", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "Estado inválido: el correo ya estaba verificado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
     })
     ResponseEntity<Void> verificarCorreo(@PathVariable String correo);
 
