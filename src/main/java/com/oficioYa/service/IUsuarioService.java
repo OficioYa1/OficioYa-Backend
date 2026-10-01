@@ -4,5 +4,6 @@ import com.oficioya.model.domain.Usuario;
 
 public interface IUsuarioService {
     Usuario registrarUsuario(Usuario usuario);
+    void verificarCorreo(String correo);
 }
 
