@@ -31,4 +31,12 @@ public class UsuarioController implements UsuarioApi {
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @Override
+    @PatchMapping("/{correo}/verificar")
+    public ResponseEntity<Void> verificarCorreo(@PathVariable String correo) {
+        usuarioService.verificarCorreo(correo);
+        return ResponseEntity.noContent().build();
+    }
+
 }

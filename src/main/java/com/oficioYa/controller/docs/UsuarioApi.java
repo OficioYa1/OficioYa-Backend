@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Tag(name = "Módulo Identidad — Usuarios", description = "Gestión de cuentas de usuario: registro, perfil y ciclo de vida")
 public interface UsuarioApi {
@@ -22,5 +23,14 @@ public interface UsuarioApi {
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
     })
     ResponseEntity<UsuarioResponseDTO> registrarUsuario(@Valid @RequestBody UsuarioRegistroRequestDTO request);
-}
 
+    @Operation(summary = "RF-40 — Verificar correo de usuario",
+               description = "Verifica el correo electrónico de una cuenta existente.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Correo verificado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "No existe usuario con ese correo"),
+            @ApiResponse(responseCode = "422", description = "Estado inválido: el correo ya estaba verificado")
+    })
+    ResponseEntity<Void> verificarCorreo(@PathVariable String correo);
+
+}
