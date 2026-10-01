@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.oficioya.model.dto.response.MensajeResponseDTO;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,4 +41,10 @@ public class UsuarioController implements UsuarioApi {
         return ResponseEntity.ok(new MensajeResponseDTO("Correo verificado exitosamente"));
     }
 
+    @Override
+    @GetMapping("/{id}/perfil-trabajador")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilTrabajador(@PathVariable Long id) {
+        PerfilTrabajadorResponseDTO response = usuarioService.obtenerPerfilTrabajador(id);
+        return ResponseEntity.ok(response);
+    }
 }
