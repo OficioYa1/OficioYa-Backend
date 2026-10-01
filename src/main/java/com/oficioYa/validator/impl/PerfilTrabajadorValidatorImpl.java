@@ -1,8 +1,10 @@
 package com.oficioya.validator.impl;
 
 import com.oficioya.exception.ConflictoException;
+import com.oficioya.exception.EstadoInvalidoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.model.domain.FranjaDisponibilidad;
+import com.oficioya.model.domain.PerfilTrabajador;
 import com.oficioya.model.exception.ReglaDeNegocioException;
 import com.oficioya.persistence.entity.RolUsuario;
 import com.oficioya.persistence.entity.UsuarioEntity;
@@ -79,6 +81,26 @@ public class PerfilTrabajadorValidatorImpl implements IPerfilTrabajadorValidator
                     throw new ReglaDeNegocioException("Hay franjas de disponibilidad solapadas el día " + entrada.getKey());
                 }
             }
+        }
+    }
+
+    @Override
+    public void validarPuedeActivarDisponibleAhora(PerfilTrabajador perfil) {
+        if (perfil.isDisponibleAhora()) {
+            log.warn("Disponible ahora: el perfil id={} ya estaba activo", perfil.getId());
+            throw new EstadoInvalidoException("El perfil ya está marcado como disponible ahora");
+        }
+        if (perfil.getZonaCobertura() == null || perfil.getZonaCobertura().isBlank()) {
+            log.warn("Disponible ahora: el perfil id={} no tiene zona de cobertura", perfil.getId());
+            throw new ReglaDeNegocioException("Define tu zona de cobertura antes de activar 'Disponible ahora'");
+        }
+    }
+
+    @Override
+    public void validarPuedeDesactivarDisponibleAhora(PerfilTrabajador perfil) {
+        if (!perfil.isDisponibleAhora()) {
+            log.warn("Disponible ahora: el perfil id={} ya estaba desactivado", perfil.getId());
+            throw new EstadoInvalidoException("El perfil no está marcado como disponible ahora");
         }
     }
 }

@@ -94,6 +94,26 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         return guardar(entity);
     }
 
+    @Override
+    @Transactional
+    public PerfilTrabajador activarDisponibleAhora(Long perfilId) {
+        log.info("Activando 'Disponible ahora': perfilId={}", perfilId);
+        PerfilTrabajadorEntity entity = obtenerEntity(perfilId);
+        validator.validarPuedeActivarDisponibleAhora(entityMapper.toDomain(entity));
+        entity.setDisponibleAhora(true);
+        return guardar(entity);
+    }
+
+    @Override
+    @Transactional
+    public PerfilTrabajador desactivarDisponibleAhora(Long perfilId) {
+        log.info("Desactivando 'Disponible ahora': perfilId={}", perfilId);
+        PerfilTrabajadorEntity entity = obtenerEntity(perfilId);
+        validator.validarPuedeDesactivarDisponibleAhora(entityMapper.toDomain(entity));
+        entity.setDisponibleAhora(false);
+        return guardar(entity);
+    }
+
     private PerfilTrabajadorEntity obtenerEntity(Long perfilId) {
         return perfilRepository.findById(perfilId)
                 .orElseThrow(() -> {

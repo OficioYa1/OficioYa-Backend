@@ -80,4 +80,28 @@ public interface PerfilTrabajadorApi {
     })
     ResponseEntity<PerfilTrabajadorResponseDTO> actualizarMetodosPago(
             @Parameter(description = "ID del perfil de trabajador") Long id, MetodosPagoRequestDTO request);
+
+    @Operation(summary = "Activar 'Disponible ahora' (RF-30)",
+            description = "Muestra al trabajador como candidato para solicitudes inmediatas. Requiere zona de cobertura definida.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Disponible ahora activado"),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "Ya estaba activo o falta la zona de cobertura",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> activarDisponibleAhora(
+            @Parameter(description = "ID del perfil de trabajador") Long id);
+
+    @Operation(summary = "Desactivar 'Disponible ahora' (RF-31)",
+            description = "Retira al trabajador de la búsqueda inmediata.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Disponible ahora desactivado"),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "No estaba activo",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> desactivarDisponibleAhora(
+            @Parameter(description = "ID del perfil de trabajador") Long id);
 }

@@ -1,6 +1,7 @@
 package com.oficioya.service;
 
 import com.oficioya.exception.ConflictoException;
+import com.oficioya.exception.EstadoInvalidoException;
 import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
@@ -273,5 +274,99 @@ class PerfilTrabajadorServiceImplTest {
         // Act & Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarMetodosPago(99L, Set.of(MetodoPago.NEQUI)));
         verify(perfilRepository, never()).save(any());
+    }
+
+    // ───────────────────────── RF-30 / 31 ─────────────────────────
+
+    @Test
+    @DisplayName("activarDisponibleAhora - perfil elegible queda disponible")
+    void activarDisponibleAhora_perfilElegible_activa() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = entidadExistente();
+        PerfilTrabajador dominio = PerfilTrabajador.builder().id(1L).zonaCobertura("Norte").build();
+        PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).disponibleAhora(true).build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(entityMapper.toDomain(entidad)).thenReturn(dominio, esperado);
+        when(perfilRepository.save(entidad)).thenReturn(entidad);
+
+        // Act
+        PerfilTrabajador resultado = service.activarDisponibleAhora(1L);
+
+        // Assert
+        assertTrue(entidad.isDisponibleAhora());
+        assertSame(esperado, resultado);
+        verify(validator, times(1)).validarPuedeActivarDisponibleAhora(dominio);
+    }
+
+    @Test
+    @DisplayName("activarDisponibleAhora - regla incumplida propaga la excepción y no guarda")
+    void activarDisponibleAhora_reglaIncumplida_propagaExcepcion() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = entidadExistente();
+        PerfilTrabajador dominio = PerfilTrabajador.builder().id(1L).build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(entityMapper.toDomain(entidad)).thenReturn(dominio);
+        doThrow(new ReglaDeNegocioException("Sin zona")).when(validator).validarPuedeActivarDisponibleAhora(dominio);
+
+        // Act & Assert
+        assertThrows(ReglaDeNegocioException.class, () -> service.activarDisponibleAhora(1L));
+        assertFalse(entidad.isDisponibleAhora());
+        verify(perfilRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("activarDisponibleAhora - perfil inexistente lanza RecursoNoEncontradoException")
+    void activarDisponibleAhora_perfilInexistente_lanzaNotFound() {
+        // Arrange
+        when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, () -> service.activarDisponibleAhora(99L));
+    }
+
+    @Test
+    @DisplayName("desactivarDisponibleAhora - perfil activo queda no disponible")
+    void desactivarDisponibleAhora_perfilActivo_desactiva() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = entidadExistente();
+        entidad.setDisponibleAhora(true);
+        PerfilTrabajador dominio = PerfilTrabajador.builder().id(1L).disponibleAhora(true).build();
+        PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).disponibleAhora(false).build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(entityMapper.toDomain(entidad)).thenReturn(dominio, esperado);
+        when(perfilRepository.save(entidad)).thenReturn(entidad);
+
+        // Act
+        PerfilTrabajador resultado = service.desactivarDisponibleAhora(1L);
+
+        // Assert
+        assertFalse(entidad.isDisponibleAhora());
+        assertSame(esperado, resultado);
+        verify(validator, times(1)).validarPuedeDesactivarDisponibleAhora(dominio);
+    }
+
+    @Test
+    @DisplayName("desactivarDisponibleAhora - estado inválido propaga EstadoInvalidoException y no guarda")
+    void desactivarDisponibleAhora_estadoInvalido_propagaExcepcion() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = entidadExistente();
+        PerfilTrabajador dominio = PerfilTrabajador.builder().id(1L).build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(entityMapper.toDomain(entidad)).thenReturn(dominio);
+        doThrow(new EstadoInvalidoException("No estaba activo")).when(validator).validarPuedeDesactivarDisponibleAhora(dominio);
+
+        // Act & Assert
+        assertThrows(EstadoInvalidoException.class, () -> service.desactivarDisponibleAhora(1L));
+        verify(perfilRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("desactivarDisponibleAhora - perfil inexistente lanza RecursoNoEncontradoException")
+    void desactivarDisponibleAhora_perfilInexistente_lanzaNotFound() {
+        // Arrange
+        when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, () -> service.desactivarDisponibleAhora(99L));
     }
 }

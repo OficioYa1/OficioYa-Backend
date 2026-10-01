@@ -1,8 +1,10 @@
 package com.oficioya.validator;
 
 import com.oficioya.exception.ConflictoException;
+import com.oficioya.exception.EstadoInvalidoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.model.domain.FranjaDisponibilidad;
+import com.oficioya.model.domain.PerfilTrabajador;
 import com.oficioya.model.exception.ReglaDeNegocioException;
 import com.oficioya.persistence.entity.RolUsuario;
 import com.oficioya.persistence.entity.UsuarioEntity;
@@ -174,5 +176,55 @@ class PerfilTrabajadorValidatorImplTest {
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validarFranjasDisponibilidad(franjas));
+    }
+
+    @Test
+    @DisplayName("validarPuedeActivarDisponibleAhora - perfil inactivo con zona no lanza excepción")
+    void validarPuedeActivar_perfilInactivoConZona_noLanza() {
+        // Arrange
+        PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).zonaCobertura("Norte").disponibleAhora(false).build();
+
+        // Act & Assert
+        assertDoesNotThrow(() -> validator.validarPuedeActivarDisponibleAhora(perfil));
+    }
+
+    @Test
+    @DisplayName("validarPuedeActivarDisponibleAhora - ya activo lanza EstadoInvalidoException")
+    void validarPuedeActivar_yaActivo_lanzaEstadoInvalido() {
+        // Arrange
+        PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).zonaCobertura("Norte").disponibleAhora(true).build();
+
+        // Act & Assert
+        assertThrows(EstadoInvalidoException.class, () -> validator.validarPuedeActivarDisponibleAhora(perfil));
+    }
+
+    @Test
+    @DisplayName("validarPuedeActivarDisponibleAhora - sin zona de cobertura lanza ReglaDeNegocioException")
+    void validarPuedeActivar_sinZona_lanzaReglaDeNegocio() {
+        // Arrange
+        PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).zonaCobertura("  ").build();
+
+        // Act & Assert
+        assertThrows(ReglaDeNegocioException.class, () -> validator.validarPuedeActivarDisponibleAhora(perfil));
+    }
+
+    @Test
+    @DisplayName("validarPuedeDesactivarDisponibleAhora - perfil activo no lanza excepción")
+    void validarPuedeDesactivar_perfilActivo_noLanza() {
+        // Arrange
+        PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).disponibleAhora(true).build();
+
+        // Act & Assert
+        assertDoesNotThrow(() -> validator.validarPuedeDesactivarDisponibleAhora(perfil));
+    }
+
+    @Test
+    @DisplayName("validarPuedeDesactivarDisponibleAhora - ya inactivo lanza EstadoInvalidoException")
+    void validarPuedeDesactivar_yaInactivo_lanzaEstadoInvalido() {
+        // Arrange
+        PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).disponibleAhora(false).build();
+
+        // Act & Assert
+        assertThrows(EstadoInvalidoException.class, () -> validator.validarPuedeDesactivarDisponibleAhora(perfil));
     }
 }
