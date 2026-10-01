@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -14,6 +15,10 @@ import java.time.LocalTime;
 /** Filtros de búsqueda de trabajadores. Todos son opcionales y se combinan con AND. */
 @Data
 public class FiltroBusquedaDTO {
+
+    @Schema(description = "RF-11: necesidad en lenguaje natural", example = "alguien que arregle una gotera")
+    @Size(max = 200, message = "El texto no puede superar los 200 caracteres")
+    private String texto;
 
     @Schema(description = "RF-12: categoría del oficio", example = "Hogar")
     private String categoria;

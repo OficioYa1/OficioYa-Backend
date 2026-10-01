@@ -16,8 +16,8 @@ import java.util.List;
 @Tag(name = "Busqueda de Trabajadores", description = "Endpoints para realizar el matching y busqueda de profesionales")
 public interface BusquedaApi {
 
-    @Operation(summary = "Buscar trabajadores (RF-12 a RF-18, RF-32)",
-            description = "Todos los filtros son opcionales y se combinan: categoría u oficio, zona, "
+    @Operation(summary = "Buscar trabajadores (RF-11 a RF-18, RF-32)",
+            description = "Todos los filtros son opcionales y se combinan: descripción libre (texto), categoría u oficio, zona, "
                     + "rango de tarifa, día y franja horaria, solo disponibles ahora y calificación mínima. "
                     + "Ordena por REPUTACION (por defecto) o DISTANCIA. Sin resultados devuelve una lista vacía.")
     @ApiResponses({

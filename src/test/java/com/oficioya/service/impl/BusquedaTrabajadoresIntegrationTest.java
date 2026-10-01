@@ -159,6 +159,27 @@ class BusquedaTrabajadoresIntegrationTest {
     }
 
     @Test
+    @DisplayName("RF-11 - 'alguien que arregle una gotera' encuentra al plomero")
+    void buscar_textoLibreGotera_encuentraAlPlomero() {
+        // Act
+        List<PerfilTrabajador> resultado = service.buscar(
+                CriteriosBusqueda.builder().texto("alguien que arregle una gotera").build());
+
+        // Assert
+        assertEquals(List.of(plomero.getId()), ids(resultado));
+    }
+
+    @Test
+    @DisplayName("RF-11 - texto sin coincidencias devuelve lista vacía")
+    void buscar_textoSinCoincidencias_devuelveVacio() {
+        // Act
+        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder().texto("necesito un astronauta").build());
+
+        // Assert
+        assertTrue(resultado.isEmpty());
+    }
+
+    @Test
     @DisplayName("Combinación - categoría + calificación mínima + orden por reputación")
     void buscar_filtrosCombinados_aplicaTodosConOrdenDeReputacion() {
         // Act

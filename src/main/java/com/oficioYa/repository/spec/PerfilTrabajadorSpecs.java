@@ -5,6 +5,7 @@ import com.oficioya.persistence.entity.FranjaDisponibilidadEmbeddable;
 import com.oficioya.persistence.entity.OficioEntity;
 import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,7 +29,12 @@ public final class PerfilTrabajadorSpecs {
         // Clase utilitaria, no instanciable
     }
 
-    public static Specification<PerfilTrabajadorEntity> desdeCriterios(CriteriosBusqueda c) {
+    /**
+     * @param oficiosDelTexto IDs de oficios que coinciden con la descripción libre (RF-11)
+     * @param terminosTexto   términos de la descripción libre (RF-11)
+     */
+    public static Specification<PerfilTrabajadorEntity> desdeCriterios(
+            CriteriosBusqueda c, Collection<Long> oficiosDelTexto, List<String> terminosTexto) {
 
         Specification<PerfilTrabajadorEntity> spec = (root, query, cb) -> cb.conjunction();
 
@@ -51,6 +58,9 @@ public final class PerfilTrabajadorSpecs {
         }
         if (c.getCalificacionMinima() != null) {
             spec = spec.and(calificacionMinima(c.getCalificacionMinima()));
+        }
+        if (!terminosTexto.isEmpty()) {
+            spec = spec.and(textoLibre(oficiosDelTexto, terminosTexto));
         }
         return spec;
     }
@@ -121,6 +131,26 @@ public final class PerfilTrabajadorSpecs {
     /** RF-16: calificación promedio mayor o igual al mínimo. */
     public static Specification<PerfilTrabajadorEntity> calificacionMinima(Double minima) {
         return (root, query, cb) -> cb.greaterThanOrEqualTo(root.<Double>get("calificacionPromedio"), minima);
+    }
+
+    /**
+     * RF-11: ofrece alguno de los oficios que coinciden con el texto, o su descripción
+     * personal contiene alguno de los términos.
+     */
+    public static Specification<PerfilTrabajadorEntity> textoLibre(Collection<Long> oficioIds, List<String> terminos) {
+        return (root, query, cb) -> {
+            marcarDistinct(query);
+            List<Predicate> alternativas = new ArrayList<>();
+            if (!oficioIds.isEmpty()) {
+                Join<PerfilTrabajadorEntity, OficioEntity> oficio = root.join("oficios", JoinType.LEFT);
+                alternativas.add(oficio.get("id").in(oficioIds));
+            }
+            for (String termino : terminos) {
+                alternativas.add(cb.like(cb.lower(cb.coalesce(root.<String>get("descripcion"), "")),
+                        patronContiene(termino), ESCAPE));
+            }
+            return cb.or(alternativas.toArray(new Predicate[0]));
+        };
     }
 
     private static void marcarDistinct(jakarta.persistence.criteria.CriteriaQuery<?> query) {
