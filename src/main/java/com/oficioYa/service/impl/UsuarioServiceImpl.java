@@ -57,10 +57,20 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuario.setTelefonoVerificado(false);
         usuario.setActivo(true);
 
+
         UsuarioEntity entity = entityMapper.toEntity(usuario);
         UsuarioEntity guardada = usuarioRepository.save(entity);
 
+        // Auto-crear el perfil si es contratante
+        if (guardada.getRol() == RolUsuario.CONTRATANTE) {
+            PerfilContratanteEntity perfilContratante = new PerfilContratanteEntity();
+            perfilContratante.setUsuario(guardada);
+            perfilContratanteRepository.save(perfilContratante);
+            log.info("Perfil de contratante creado automáticamente para el usuario ID: {}", guardada.getId());
+        }
+
         log.info("Usuario registrado exitosamente: id={}, correo={}", guardada.getId(), guardada.getCorreo());
+
 
         return entityMapper.toDomain(guardada);
     }
