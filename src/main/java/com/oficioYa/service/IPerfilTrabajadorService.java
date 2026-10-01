@@ -1,8 +1,12 @@
 package com.oficioya.service;
 
+import com.oficioya.model.domain.FranjaDisponibilidad;
+import com.oficioya.model.domain.MetodoPago;
 import com.oficioya.model.domain.PerfilTrabajador;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Set;
 
 /** Casos de uso de configuración del perfil de trabajador. Trabaja solo con objetos de dominio. */
 public interface IPerfilTrabajadorService {
@@ -15,4 +19,10 @@ public interface IPerfilTrabajadorService {
 
     /** RF-05: registra la tarifa aproximada por hora. */
     PerfilTrabajador actualizarTarifa(Long perfilId, BigDecimal tarifaPorHora);
+
+    /** RF-06: reemplaza la disponibilidad semanal. */
+    PerfilTrabajador actualizarDisponibilidadSemanal(Long perfilId, List<FranjaDisponibilidad> franjas);
+
+    /** RF-60: reemplaza los métodos de pago aceptados. */
+    PerfilTrabajador actualizarMetodosPago(Long perfilId, Set<MetodoPago> metodosPago);
 }

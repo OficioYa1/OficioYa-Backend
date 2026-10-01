@@ -1,5 +1,6 @@
 package com.oficioya.persistence.entity;
 
+import com.oficioya.model.domain.MetodoPago;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Entidad de persistencia para el perfil técnico/operativo de un trabajador.
@@ -24,8 +27,8 @@ import java.util.List;
 @Table(name = "perfiles_trabajador")
 @lombok.Getter
 @lombok.Setter
-@lombok.ToString(exclude = {"usuario", "oficios"})
-@lombok.EqualsAndHashCode(exclude = {"usuario", "oficios"})
+@lombok.ToString(exclude = {"usuario", "oficios", "disponibilidadSemanal", "metodosPago"})
+@lombok.EqualsAndHashCode(exclude = {"usuario", "oficios", "disponibilidadSemanal", "metodosPago"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -48,18 +51,24 @@ public class PerfilTrabajadorEntity {
     @Column(name = "zona_cobertura")
     private String zonaCobertura;
 
-    /** RF-06: Disponibilidad semanal (ej: "Lunes a Viernes 8am-6pm") */
-    @Column(name = "disponibilidad_semanal")
-    private String disponibilidadSemanal;
+    /** RF-06: Disponibilidad semanal (día + franja horaria), tabla perfil_disponibilidad */
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "perfil_disponibilidad", joinColumns = @JoinColumn(name = "perfil_id"))
+    private List<FranjaDisponibilidadEmbeddable> disponibilidadSemanal = new ArrayList<>();
 
     /** RF-30 / RF-31: Estado de disponibilidad inmediata */
     @Builder.Default
     @Column(name = "disponible_ahora", nullable = false)
     private boolean disponibleAhora = false;
 
-    /** RF-60: Métodos de pago aceptados (ej: "Efectivo, Nequi") */
-    @Column(name = "metodos_pago")
-    private String metodosPago;
+    /** RF-60: Métodos de pago aceptados, tabla perfil_metodos_pago */
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "perfil_metodos_pago", joinColumns = @JoinColumn(name = "perfil_id"))
+    @Enumerated(EnumType.STRING)
+    @Column(name = "metodo_pago", nullable = false)
+    private Set<MetodoPago> metodosPago = new HashSet<>();
 
     /** RF-09: Detalles específicos del oficio en formato libre */
     @Column(name = "detalles_especificos", columnDefinition = "TEXT")
