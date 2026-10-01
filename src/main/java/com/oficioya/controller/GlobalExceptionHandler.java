@@ -11,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import com.oficioya.exception.ConflictoException;
+import com.oficioya.model.exception.ReglaDeNegocioException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.stream.Collectors;
 
@@ -60,6 +64,32 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ErrorResponseDTO(422, "Transición de estado inválida", ex.getMessage(), request.getRequestURI()));
+    }
+
+
+    @ExceptionHandler(ConflictoException.class)
+    public ResponseEntity<ErrorResponseDTO> handleConflicto(
+            ConflictoException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponseDTO(409, "Conflicto de negocio", ex.getMessage(), request.getRequestURI()));
+    }
+
+    @ExceptionHandler(ReglaDeNegocioException.class)
+    public ResponseEntity<ErrorResponseDTO> handleReglaDeNegocio(
+            ReglaDeNegocioException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ErrorResponseDTO(422, "Regla de negocio incumplida", ex.getMessage(), request.getRequestURI()));
+    }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class, MethodArgumentTypeMismatchException.class})
+    public ResponseEntity<ErrorResponseDTO> handleFormatoInvalido(
+            Exception ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponseDTO(400, "Formato de datos inválido",
+                        "El cuerpo o los parámetros de la petición tienen un formato o valor no válido", request.getRequestURI()));
     }
 
     @ExceptionHandler(Exception.class)
