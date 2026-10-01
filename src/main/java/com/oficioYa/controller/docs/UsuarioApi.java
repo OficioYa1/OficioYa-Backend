@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import com.oficioya.model.dto.response.MensajeResponseDTO;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -36,4 +37,11 @@ public interface UsuarioApi {
     })
     ResponseEntity<MensajeResponseDTO> verificarCorreo(@PathVariable String correo);
 
+    @Operation(summary = "RF-52 — Consultar perfil de trabajador", description = "Obtiene la información pública de un usuario con rol de trabajador.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Perfil del trabajador obtenido exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PerfilTrabajadorResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "No existe usuario o perfil con el ID especificado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "Estado inválido: el usuario consultado no tiene rol de trabajador", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilTrabajador(@PathVariable Long id);
 }

@@ -34,6 +34,16 @@ class UsuarioServiceImplTest {
     @Mock
     private UsuarioEntityMapper entityMapper;
 
+    @Mock
+    private com.oficioya.repository.PerfilTrabajadorRepository perfilRepository;
+
+    @Mock
+    private com.oficioya.mapper.PerfilTrabajadorEntityMapper perfilEntityMapper;
+
+    @Mock
+    private com.oficioya.mapper.PerfilTrabajadorMapper perfilMapper;
+
+
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
 
@@ -188,4 +198,69 @@ class UsuarioServiceImplTest {
         verify(usuarioRepository, never()).save(any());
     }
 
+    @Test
+    void obtenerPerfilTrabajador_Exitoso() {
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        usuarioEntity.setId(1L);
+        usuarioEntity.setRol(RolUsuario.TRABAJADOR);
+
+        com.oficioya.persistence.entity.PerfilTrabajadorEntity perfilEntity = new com.oficioya.persistence.entity.PerfilTrabajadorEntity();
+        perfilEntity.setId(10L);
+        perfilEntity.setUsuario(usuarioEntity);
+        perfilEntity.setZonaCobertura("Norte");
+
+        com.oficioya.model.domain.PerfilTrabajador perfilDomain = new com.oficioya.model.domain.PerfilTrabajador();
+        perfilDomain.setId(10L);
+        
+        com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO responseDTO = new com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO();
+        responseDTO.setId(10L);
+        responseDTO.setZonaCobertura("Norte");
+
+        when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuarioEntity));
+        when(perfilRepository.findByUsuarioId(1L)).thenReturn(Optional.of(perfilEntity));
+        when(perfilEntityMapper.toDomain(perfilEntity)).thenReturn(perfilDomain);
+        when(perfilMapper.toResponse(perfilDomain)).thenReturn(responseDTO);
+
+        com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO result = usuarioService.obtenerPerfilTrabajador(1L);
+
+        assertNotNull(result);
+        assertEquals(10L, result.getId());
+        assertEquals("Norte", result.getZonaCobertura());
+    }
+
+    @Test
+    void obtenerPerfilTrabajador_UsuarioNoEncontrado() {
+        when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
+
+        assertThrows(com.oficioya.exception.UsuarioNoEncontradoException.class, () -> {
+            usuarioService.obtenerPerfilTrabajador(99L);
+        });
+    }
+
+    @Test
+    void obtenerPerfilTrabajador_UsuarioNoEsTrabajador() {
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        usuarioEntity.setId(2L);
+        usuarioEntity.setRol(RolUsuario.CONTRATANTE);
+
+        when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuarioEntity));
+
+        assertThrows(com.oficioya.exception.EstadoInvalidoException.class, () -> {
+            usuarioService.obtenerPerfilTrabajador(2L);
+        });
+    }
+
+    @Test
+    void obtenerPerfilTrabajador_PerfilNoEncontrado() {
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        usuarioEntity.setId(3L);
+        usuarioEntity.setRol(RolUsuario.TRABAJADOR);
+
+        when(usuarioRepository.findById(3L)).thenReturn(Optional.of(usuarioEntity));
+        when(perfilRepository.findByUsuarioId(3L)).thenReturn(Optional.empty());
+
+        assertThrows(com.oficioya.exception.RecursoNoEncontradoException.class, () -> {
+            usuarioService.obtenerPerfilTrabajador(3L);
+        });
+    }
 }
