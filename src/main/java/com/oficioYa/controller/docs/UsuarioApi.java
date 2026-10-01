@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import com.oficioya.model.dto.response.MensajeResponseDTO;
 import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -44,4 +45,16 @@ public interface UsuarioApi {
             @ApiResponse(responseCode = "422", description = "Estado inválido: el usuario consultado no tiene rol de trabajador", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
     })
     ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilTrabajador(@PathVariable Long id);
+
+    @Operation(summary = "Obtener perfil de contratante", description = "Obtiene la información pública del perfil de un usuario con rol CONTRATANTE.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Perfil obtenido exitosamente",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PerfilContratanteResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado o perfil no creado",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "El usuario no tiene el rol de contratante",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
+    })
+    ResponseEntity<PerfilContratanteResponseDTO> obtenerPerfilContratante(
+            @PathVariable Long id);
 }

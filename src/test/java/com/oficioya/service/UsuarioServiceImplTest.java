@@ -4,6 +4,17 @@ import com.oficioya.exception.CorreoYaRegistradoException;
 import com.oficioya.mapper.UsuarioEntityMapper;
 import com.oficioya.model.domain.Usuario;
 import com.oficioya.persistence.entity.RolUsuario;
+import com.oficioya.repository.PerfilContratanteRepository;
+import com.oficioya.mapper.PerfilContratanteEntityMapper;
+import com.oficioya.mapper.PerfilContratanteMapper;
+import com.oficioya.persistence.entity.PerfilContratanteEntity;
+import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
+import com.oficioya.model.domain.PerfilContratante;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.RecursoNoEncontradoException;
+
+
 import com.oficioya.persistence.entity.UsuarioEntity;
 import com.oficioya.repository.UsuarioRepository;
 import com.oficioya.service.impl.UsuarioServiceImpl;
@@ -43,6 +54,16 @@ class UsuarioServiceImplTest {
     @Mock
     private com.oficioya.mapper.PerfilTrabajadorMapper perfilMapper;
 
+
+
+    @Mock
+    private com.oficioya.repository.PerfilContratanteRepository perfilContratanteRepository;
+
+    @Mock
+    private com.oficioya.mapper.PerfilContratanteEntityMapper perfilContratanteEntityMapper;
+
+    @Mock
+    private com.oficioya.mapper.PerfilContratanteMapper perfilContratanteMapper;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
@@ -262,5 +283,76 @@ class UsuarioServiceImplTest {
         assertThrows(com.oficioya.exception.RecursoNoEncontradoException.class, () -> {
             usuarioService.obtenerPerfilTrabajador(3L);
         });
+    }
+
+    @Test
+    void obtenerPerfilContratante_Exitoso() {
+        // Arrange
+        Long usuarioId = 1L;
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setRol(RolUsuario.CONTRATANTE);
+
+        PerfilContratanteEntity perfilEntity = new PerfilContratanteEntity();
+        perfilEntity.setId(10L);
+        perfilEntity.setCalificacionPromedio(4.5);
+
+        PerfilContratante perfilDomain = new PerfilContratante();
+        PerfilContratanteResponseDTO responseDTO = new PerfilContratanteResponseDTO();
+        responseDTO.setCalificacionPromedio(4.5);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+        when(perfilContratanteRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfilEntity));
+        when(perfilContratanteEntityMapper.toDomain(perfilEntity)).thenReturn(perfilDomain);
+        when(perfilContratanteMapper.toResponse(perfilDomain)).thenReturn(responseDTO);
+
+        // Act
+        PerfilContratanteResponseDTO result = usuarioService.obtenerPerfilContratante(usuarioId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(4.5, result.getCalificacionPromedio());
+        verify(perfilContratanteRepository).findByUsuarioId(usuarioId);
+    }
+
+    @Test
+    void obtenerPerfilContratante_UsuarioNoEncontrado() {
+        // Arrange
+        Long usuarioId = 99L;
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.obtenerPerfilContratante(usuarioId));
+        verify(perfilContratanteRepository, never()).findByUsuarioId(anyLong());
+    }
+
+    @Test
+    void obtenerPerfilContratante_UsuarioNoEsContratante() {
+        // Arrange
+        Long usuarioId = 2L;
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setRol(RolUsuario.TRABAJADOR);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+
+        // Act & Assert
+        assertThrows(EstadoInvalidoException.class, () -> usuarioService.obtenerPerfilContratante(usuarioId));
+        verify(perfilContratanteRepository, never()).findByUsuarioId(anyLong());
+    }
+
+    @Test
+    void obtenerPerfilContratante_PerfilNoEncontrado() {
+        // Arrange
+        Long usuarioId = 3L;
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setRol(RolUsuario.CONTRATANTE);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+        when(perfilContratanteRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, () -> usuarioService.obtenerPerfilContratante(usuarioId));
     }
 }
