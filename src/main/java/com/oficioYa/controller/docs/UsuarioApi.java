@@ -29,10 +29,10 @@ public interface UsuarioApi {
     @Operation(summary = "RF-40 — Verificar correo de usuario",
                description = "Verifica el correo electrónico de una cuenta existente.")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Correo verificado exitosamente (No requiere cuerpo JSON)"),
+            @ApiResponse(responseCode = "200", description = "Correo verificado exitosamente"),
             @ApiResponse(responseCode = "404", description = "No existe usuario con ese correo", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
             @ApiResponse(responseCode = "422", description = "Estado inválido: el correo ya estaba verificado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
     })
-    ResponseEntity<Void> verificarCorreo(@PathVariable String correo);
+    ResponseEntity<java.util.Map<String, String>> verificarCorreo(@PathVariable String correo);
 
 }

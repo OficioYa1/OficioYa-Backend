@@ -34,9 +34,9 @@ public class UsuarioController implements UsuarioApi {
 
     @Override
     @PatchMapping("/{correo}/verificar")
-    public ResponseEntity<Void> verificarCorreo(@PathVariable String correo) {
+    public ResponseEntity<java.util.Map<String, String>> verificarCorreo(@PathVariable String correo) {
         usuarioService.verificarCorreo(correo);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(java.util.Map.of("mensaje", "Correo verificado exitosamente"));
     }
 
 }
