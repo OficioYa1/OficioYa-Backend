@@ -1,6 +1,7 @@
 package com.oficioya.service;
 
 import com.oficioya.exception.ConflictoException;
+import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
 import com.oficioya.model.domain.PerfilTrabajador;
@@ -20,6 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -118,6 +120,70 @@ class PerfilTrabajadorServiceImplTest {
 
         // Act & Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> service.crearPerfil(entrada));
+        verify(perfilRepository, never()).save(any());
+    }
+
+    // ---------------- RF-04: zona de cobertura ----------------
+
+    @Test
+    @DisplayName("actualizarZonaCobertura - perfil existente guarda la zona sin espacios sobrantes")
+    void actualizarZonaCobertura_perfilExistente_guardaZona() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(1L).build();
+        PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).zonaCobertura("Chapinero").build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(perfilRepository.save(entidad)).thenReturn(entidad);
+        when(entityMapper.toDomain(entidad)).thenReturn(esperado);
+
+        // Act
+        PerfilTrabajador resultado = service.actualizarZonaCobertura(1L, "  Chapinero ");
+
+        // Assert
+        assertEquals("Chapinero", entidad.getZonaCobertura());
+        assertEquals("Chapinero", resultado.getZonaCobertura());
+        verify(perfilRepository, times(1)).save(entidad);
+    }
+
+    @Test
+    @DisplayName("actualizarZonaCobertura - perfil inexistente lanza RecursoNoEncontradoException")
+    void actualizarZonaCobertura_perfilInexistente_lanzaNotFound() {
+        // Arrange
+        when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarZonaCobertura(99L, "Usaquén"));
+        verify(perfilRepository, never()).save(any());
+    }
+
+    // ---------------- RF-05: tarifa ----------------
+
+    @Test
+    @DisplayName("actualizarTarifa - perfil existente guarda la tarifa")
+    void actualizarTarifa_perfilExistente_guardaTarifa() {
+        // Arrange
+        PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(1L).build();
+        PerfilTrabajador esperado = PerfilTrabajador.builder().id(1L).tarifaPorHora(new BigDecimal("35000")).build();
+        when(perfilRepository.findById(1L)).thenReturn(Optional.of(entidad));
+        when(perfilRepository.save(entidad)).thenReturn(entidad);
+        when(entityMapper.toDomain(entidad)).thenReturn(esperado);
+
+        // Act
+        PerfilTrabajador resultado = service.actualizarTarifa(1L, new BigDecimal("35000"));
+
+        // Assert
+        assertEquals(new BigDecimal("35000"), entidad.getTarifaPorHora());
+        assertEquals(new BigDecimal("35000"), resultado.getTarifaPorHora());
+        verify(perfilRepository, times(1)).save(entidad);
+    }
+
+    @Test
+    @DisplayName("actualizarTarifa - perfil inexistente lanza RecursoNoEncontradoException")
+    void actualizarTarifa_perfilInexistente_lanzaNotFound() {
+        // Arrange
+        when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarTarifa(99L, new BigDecimal("1000")));
         verify(perfilRepository, never()).save(any());
     }
 }
