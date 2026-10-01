@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.oficioya.model.dto.response.MensajeResponseDTO;
 import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -46,5 +47,12 @@ public class UsuarioController implements UsuarioApi {
     public ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilTrabajador(@PathVariable Long id) {
         PerfilTrabajadorResponseDTO response = usuarioService.obtenerPerfilTrabajador(id);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    @GetMapping("/{id}/perfil-contratante")
+    public ResponseEntity<PerfilContratanteResponseDTO> obtenerPerfilContratante(@PathVariable Long id) {
+        PerfilContratanteResponseDTO perfil = usuarioService.obtenerPerfilContratante(id);
+        return ResponseEntity.ok(perfil);
     }
 }
