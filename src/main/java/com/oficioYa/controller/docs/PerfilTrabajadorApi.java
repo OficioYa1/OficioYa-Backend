@@ -1,9 +1,12 @@
 package com.oficioya.controller.docs;
 
 import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
+import com.oficioya.model.dto.request.TarifaRequestDTO;
+import com.oficioya.model.dto.request.ZonaCoberturaRequestDTO;
 import com.oficioya.model.dto.response.ErrorResponseDTO;
 import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -28,4 +31,26 @@ public interface PerfilTrabajadorApi {
                     content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     ResponseEntity<PerfilTrabajadorResponseDTO> crearPerfil(PerfilTrabajadorCreacionRequestDTO request);
+
+    @Operation(summary = "Definir zona de cobertura (RF-04)", description = "Reemplaza la zona de cobertura del perfil.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Zona actualizada"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> actualizarZonaCobertura(
+            @Parameter(description = "ID del perfil de trabajador") Long id, ZonaCoberturaRequestDTO request);
+
+    @Operation(summary = "Registrar tarifa aproximada (RF-05)", description = "Tarifa por hora en COP. Debe ser mayor que cero.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Tarifa actualizada"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> actualizarTarifa(
+            @Parameter(description = "ID del perfil de trabajador") Long id, TarifaRequestDTO request);
 }

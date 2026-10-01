@@ -1,5 +1,6 @@
 package com.oficioya.service.impl;
 
+import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
 import com.oficioya.model.domain.PerfilTrabajador;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
 
 @Slf4j
 @Service
@@ -45,6 +48,38 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         PerfilTrabajadorEntity guardado = perfilRepository.save(entity);
 
         log.info("Perfil de trabajador creado: id={}, usuarioId={}", guardado.getId(), usuarioId);
+        return entityMapper.toDomain(guardado);
+    }
+
+    @Override
+    @Transactional
+    public PerfilTrabajador actualizarZonaCobertura(Long perfilId, String zonaCobertura) {
+        log.info("Actualizando zona de cobertura: perfilId={}, zona={}", perfilId, zonaCobertura);
+        PerfilTrabajadorEntity entity = obtenerEntity(perfilId);
+        entity.setZonaCobertura(zonaCobertura.trim());
+        return guardar(entity);
+    }
+
+    @Override
+    @Transactional
+    public PerfilTrabajador actualizarTarifa(Long perfilId, BigDecimal tarifaPorHora) {
+        log.info("Actualizando tarifa: perfilId={}, tarifa={}", perfilId, tarifaPorHora);
+        PerfilTrabajadorEntity entity = obtenerEntity(perfilId);
+        entity.setTarifaPorHora(tarifaPorHora);
+        return guardar(entity);
+    }
+
+    private PerfilTrabajadorEntity obtenerEntity(Long perfilId) {
+        return perfilRepository.findById(perfilId)
+                .orElseThrow(() -> {
+                    log.warn("Perfil de trabajador inexistente: id={}", perfilId);
+                    return new RecursoNoEncontradoException("No se encontró el perfil de trabajador con ID: " + perfilId);
+                });
+    }
+
+    private PerfilTrabajador guardar(PerfilTrabajadorEntity entity) {
+        PerfilTrabajadorEntity guardado = perfilRepository.save(entity);
+        log.info("Perfil de trabajador actualizado: id={}", guardado.getId());
         return entityMapper.toDomain(guardado);
     }
 }
