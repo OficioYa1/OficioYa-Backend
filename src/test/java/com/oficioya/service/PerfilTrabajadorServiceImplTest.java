@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Set;
 
@@ -614,6 +615,55 @@ class PerfilTrabajadorServiceImplTest {
         // Act & Assert
         assertThrows(RecursoNoEncontradoException.class, 
                 () -> service.actualizarDetallesEspecificos(perfilId, "Detalles cualquiera"));
+    }
+
+
+    // =========================================================================
+    // TESTS PARA RF-07: PORTAFOLIO DE FOTOS
+    // =========================================================================
+
+    @Test
+    @DisplayName("actualizarPortafolio - Flujo Exitoso")
+    void actualizarPortafolio_flujoExitoso() {
+        // Arrange
+        Long perfilId = 1L;
+        List<String> fotos = List.of("url1.jpg", "url2.jpg");
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        PerfilTrabajador domain = new PerfilTrabajador();
+        domain.setId(perfilId);
+        domain.setFotosPortafolio(new ArrayList<>(fotos));
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(perfilRepository.save(any(PerfilTrabajadorEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(entityMapper.toDomain(any(PerfilTrabajadorEntity.class))).thenReturn(domain);
+
+        // Act
+        PerfilTrabajador result = service.actualizarPortafolio(perfilId, fotos);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.getFotosPortafolio().size());
+        assertEquals("url1.jpg", result.getFotosPortafolio().get(0));
+        assertEquals(2, perfil.getFotosPortafolio().size()); // Verificar que muto la coleccion interna
+        
+        verify(perfilRepository).findById(perfilId);
+        verify(perfilRepository).save(perfil);
+    }
+
+    @Test
+    @DisplayName("actualizarPortafolio - Perfil no encontrado lanza excepcion")
+    void actualizarPortafolio_perfilNoEncontrado_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 99L;
+        List<String> fotos = List.of("url.jpg");
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, 
+                () -> service.actualizarPortafolio(perfilId, fotos));
     }
 
 }
