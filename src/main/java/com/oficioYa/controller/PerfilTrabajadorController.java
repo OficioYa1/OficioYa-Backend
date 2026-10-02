@@ -83,4 +83,14 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     public ResponseEntity<PerfilTrabajadorResponseDTO> desactivarDisponibleAhora(@PathVariable Long id) {
         return ResponseEntity.ok(mapper.toResponse(perfilService.desactivarDisponibleAhora(id)));
     }
+
+    @Override
+    @PutMapping("/{id}/oficio-principal")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficioPrincipal(
+            @PathVariable Long id,
+            @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.oficioya.model.dto.request.OficioPrincipalRequestDTO request) {
+        PerfilTrabajador actualizado = perfilService.registrarOficioPrincipal(id, request.getOficioId());
+        return ResponseEntity.ok(mapper.toResponse(actualizado));
+    }
+
 }
