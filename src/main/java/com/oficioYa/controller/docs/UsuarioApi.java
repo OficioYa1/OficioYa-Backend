@@ -79,4 +79,13 @@ public interface UsuarioApi {
     ResponseEntity<MensajeResponseDTO> editarPerfilContratante(
             @PathVariable Long id, 
             @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request);
+
+    @Operation(summary = "RF-58 — Eliminar cuenta propia", description = "Realiza el borrado lógico de una cuenta de usuario, pasándola a estado inactivo para conservar el historial en plataforma.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Cuenta dada de baja exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MensajeResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "La cuenta ya se encuentra dada de baja", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
+    })
+    @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
+    ResponseEntity<MensajeResponseDTO> eliminarCuenta(@PathVariable Long id);
 }

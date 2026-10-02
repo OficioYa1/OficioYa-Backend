@@ -75,4 +75,10 @@ public class UsuarioController implements UsuarioApi {
         usuarioService.editarPerfilContratante(id, request);
         return ResponseEntity.ok(new MensajeResponseDTO("Perfil de contratante actualizado exitosamente"));
     }
+
+    @Override
+    public ResponseEntity<MensajeResponseDTO> eliminarCuenta(@PathVariable Long id) {
+        usuarioService.eliminarCuenta(id);
+        return ResponseEntity.ok(new MensajeResponseDTO("Cuenta eliminada exitosamente"));
+    }
 }
