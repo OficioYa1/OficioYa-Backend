@@ -1,5 +1,6 @@
 package com.oficioya.controller.docs;
 
+import com.oficioya.model.dto.request.DatosOperativosRequestDTO;
 import com.oficioya.model.dto.request.DisponibilidadSemanalRequestDTO;
 import com.oficioya.model.dto.request.MetodosPagoRequestDTO;
 import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
@@ -127,5 +128,16 @@ public interface PerfilTrabajadorApi {
     ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficiosSecundarios(
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
             com.oficioya.model.dto.request.OficiosSecundariosRequestDTO request);
+
+
+    @Operation(summary = "Actualizar datos operativos (RF-04 y RF-05)", description = "Actualiza la zona de cobertura y la tarifa por hora del trabajador.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Datos operativos actualizados"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (ej. tarifa negativa)"),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado")
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> actualizarDatosOperativos(
+            @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
+            DatosOperativosRequestDTO request);
 
 }
