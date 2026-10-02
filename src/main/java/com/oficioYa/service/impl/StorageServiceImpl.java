@@ -31,7 +31,9 @@ public class StorageServiceImpl implements IStorageService {
 
         try {
             // Crear el directorio si no existe
-            Path uploadPath = Paths.get(uploadDir);
+            // Se usa user.dir para asegurar que se guarde en la raíz del proyecto y no en la carpeta temporal de Tomcat
+            Path rootPath = Paths.get(System.getProperty("user.dir"));
+            Path uploadPath = rootPath.resolve(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
