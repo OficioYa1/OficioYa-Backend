@@ -219,4 +219,14 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         return entityMapper.toDomain(actualizado);
     }
 
+
+    @Override
+    @Transactional(readOnly = true)
+    public PerfilTrabajador obtenerPerfilPorId(Long perfilId) {
+        log.info("Consultando perfil de trabajador por ID: {}", perfilId);
+        PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
+        return entityMapper.toDomain(perfil);
+    }
+
 }
