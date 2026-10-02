@@ -15,5 +15,15 @@ public interface IUsuarioService {
      * @return PerfilContratanteResponseDTO con la información del perfil.
      */
     PerfilContratanteResponseDTO obtenerPerfilContratante(Long id);
+
+    /**
+     * Edita la información básica de un trabajador (RF-57).
+     */
+    void editarPerfilTrabajador(Long usuarioId, com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request);
+
+    /**
+     * Edita la información básica de un contratante (RF-57).
+     */
+    void editarPerfilContratante(Long usuarioId, com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request);
 }
 
