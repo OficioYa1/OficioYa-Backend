@@ -1,5 +1,6 @@
 package com.oficioya.controller;
 
+import com.oficioya.model.dto.request.DetallesEspecificosRequestDTO;
 import com.oficioya.controller.docs.PerfilTrabajadorApi;
 import com.oficioya.mapper.PerfilTrabajadorMapper;
 import com.oficioya.model.domain.PerfilTrabajador;
@@ -100,6 +101,16 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
             @PathVariable Long id,
             @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.oficioya.model.dto.request.OficiosSecundariosRequestDTO request) {
         PerfilTrabajador actualizado = perfilService.registrarOficiosSecundarios(id, request.getOficiosIds());
+        return ResponseEntity.ok(mapper.toResponse(actualizado));
+    }
+
+
+    @Override
+    @PatchMapping("/{id}/detalles-especificos")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarDetallesEspecificos(
+            @PathVariable Long id,
+            @Valid @RequestBody DetallesEspecificosRequestDTO request) {
+        PerfilTrabajador actualizado = perfilService.actualizarDetallesEspecificos(id, request.getDetallesEspecificos());
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
