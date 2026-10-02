@@ -81,4 +81,13 @@ public class UsuarioController implements UsuarioApi {
         usuarioService.eliminarCuenta(id);
         return ResponseEntity.ok(new MensajeResponseDTO("Cuenta eliminada exitosamente"));
     }
+
+    @Override
+    @PostMapping(value = "/{id}/foto", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MensajeResponseDTO> actualizarFotoPerfil(
+            @PathVariable Long id, 
+            @org.springframework.web.bind.annotation.RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        usuarioService.actualizarFotoPerfil(id, file);
+        return ResponseEntity.ok(new MensajeResponseDTO("Foto de perfil actualizada exitosamente"));
+    }
 }

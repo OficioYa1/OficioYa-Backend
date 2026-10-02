@@ -5,6 +5,7 @@ import com.oficioya.model.domain.Usuario;
 import com.oficioya.persistence.entity.UsuarioEntity;
 import com.oficioya.repository.UsuarioRepository;
 import com.oficioya.service.IUsuarioService;
+import com.oficioya.service.IStorageService;
 import com.oficioya.validator.IUsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
 public class UsuarioServiceImpl implements IUsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final IStorageService storageService;
     private final PerfilTrabajadorRepository perfilRepository;
     private final IUsuarioValidator usuarioValidator;
     private final UsuarioEntityMapper entityMapper;
@@ -226,5 +228,31 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuarioRepository.save(usuario);
 
         log.info("Cuenta de usuario ID {} dada de baja exitosamente", usuarioId);
+    }
+
+    @Override
+    @Transactional
+    public void actualizarFotoPerfil(Long usuarioId, org.springframework.web.multipart.MultipartFile archivo) {
+        log.info("Iniciando actualización de foto de perfil para usuario ID: {}", usuarioId);
+
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> {
+                    log.error("Usuario con ID {} no encontrado", usuarioId);
+                    return new UsuarioNoEncontradoException("Usuario no encontrado");
+                });
+
+        if (!usuario.isActivo()) {
+             log.error("El usuario con ID {} está inactivo", usuarioId);
+             throw new EstadoInvalidoException("No se puede actualizar la foto de una cuenta inactiva");
+        }
+
+        // Delegar el guardado físico al servicio de Storage
+        String fotoUrl = storageService.guardarImagen(archivo);
+
+        // Actualizar la entidad con la URL generada
+        usuario.setFotoPerfil(fotoUrl);
+        usuarioRepository.save(usuario);
+
+        log.info("Foto de perfil actualizada exitosamente para usuario ID: {}", usuarioId);
     }
 }
