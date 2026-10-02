@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.web.multipart.MultipartFile;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -68,6 +69,9 @@ class UsuarioServiceImplTest {
 
     @Mock
     private PerfilContratanteMapper perfilContratanteMapper;
+
+    @Mock
+    private IStorageService storageService;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
@@ -568,5 +572,72 @@ class UsuarioServiceImplTest {
             usuarioService.eliminarCuenta(usuarioId);
         });
         verify(usuarioRepository, never()).save(any());
+    }
+
+
+    // =========================================================================
+    // TESTS PARA RF-59: FOTO DE PERFIL
+    // =========================================================================
+
+    @Test
+    @DisplayName("actualizarFotoPerfil - Flujo Exitoso - Actualiza foto")
+    void actualizarFotoPerfil_flujoExitoso() {
+        // Arrange
+        Long usuarioId = 1L;
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setActivo(true);
+        
+        MultipartFile archivo = mock(MultipartFile.class);
+        String urlEsperada = "/uploads/perfiles/foto.jpg";
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+        when(storageService.guardarImagen(archivo)).thenReturn(urlEsperada);
+
+        // Act
+        usuarioService.actualizarFotoPerfil(usuarioId, archivo);
+
+        // Assert
+        assertEquals(urlEsperada, usuario.getFotoPerfil());
+        verify(usuarioRepository, times(1)).save(usuario);
+        verify(storageService, times(1)).guardarImagen(archivo);
+    }
+
+    @Test
+    @DisplayName("actualizarFotoPerfil - Usuario inactivo - Lanza EstadoInvalidoException")
+    void actualizarFotoPerfil_usuarioInactivo() {
+        // Arrange
+        Long usuarioId = 1L;
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setActivo(false); // Inactivo
+        
+        MultipartFile archivo = mock(MultipartFile.class);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+
+        // Act & Assert
+        assertThrows(EstadoInvalidoException.class, () -> {
+            usuarioService.actualizarFotoPerfil(usuarioId, archivo);
+        });
+        verify(usuarioRepository, never()).save(any());
+        verify(storageService, never()).guardarImagen(any());
+    }
+
+    @Test
+    @DisplayName("actualizarFotoPerfil - Usuario no existe - Lanza UsuarioNoEncontradoException")
+    void actualizarFotoPerfil_usuarioInexistente() {
+        // Arrange
+        Long usuarioId = 99L;
+        MultipartFile archivo = mock(MultipartFile.class);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(UsuarioNoEncontradoException.class, () -> {
+            usuarioService.actualizarFotoPerfil(usuarioId, archivo);
+        });
+        verify(usuarioRepository, never()).save(any());
+        verify(storageService, never()).guardarImagen(any());
     }
 }

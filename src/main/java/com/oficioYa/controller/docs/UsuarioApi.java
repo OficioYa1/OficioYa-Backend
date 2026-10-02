@@ -88,4 +88,16 @@ public interface UsuarioApi {
     })
     @org.springframework.web.bind.annotation.DeleteMapping("/{id}")
     ResponseEntity<MensajeResponseDTO> eliminarCuenta(@PathVariable Long id);
+
+    @Operation(summary = "RF-59 — Subir foto de perfil", description = "Sube y asocia una foto de perfil (JPG, PNG) al usuario especificado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Foto subida y actualizada exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MensajeResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "El archivo enviado está vacío o no es una imagen válida", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "El usuario se encuentra inactivo", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
+    })
+    @org.springframework.web.bind.annotation.PostMapping(value = "/{id}/foto", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<MensajeResponseDTO> actualizarFotoPerfil(
+            @PathVariable Long id, 
+            @org.springframework.web.bind.annotation.RequestParam("file") org.springframework.web.multipart.MultipartFile file);
 }

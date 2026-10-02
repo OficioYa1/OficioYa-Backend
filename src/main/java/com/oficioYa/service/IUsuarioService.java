@@ -30,5 +30,10 @@ public interface IUsuarioService {
      * Da de baja lógicamente la cuenta de un usuario (RF-58).
      */
     void eliminarCuenta(Long usuarioId);
+
+    /**
+     * Sube y actualiza la foto de perfil del usuario (RF-59).
+     */
+    void actualizarFotoPerfil(Long usuarioId, org.springframework.web.multipart.MultipartFile archivo);
 }
 
