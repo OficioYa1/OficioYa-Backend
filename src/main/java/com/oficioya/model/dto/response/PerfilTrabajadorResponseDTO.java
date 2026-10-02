@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Set;
 
 @Data
@@ -21,4 +22,6 @@ public class PerfilTrabajadorResponseDTO {
     private Double calificacionPromedio;
     private Integer trabajosCompletados;
     private Boolean disponibleAhora;
+    @Schema(description = "Fotos del portafolio de trabajo del usuario")
+    private List<String> fotosPortafolio;
 }

@@ -103,4 +103,12 @@ public class PerfilTrabajadorEntity {
             inverseJoinColumns = @JoinColumn(name = "oficio_id")
     )
     private List<OficioEntity> oficios = new ArrayList<>();
+
+    /** RF-07: Portafolio de trabajo (lista de URLs de fotos) */
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(name = "perfil_fotos_portafolio", joinColumns = @JoinColumn(name = "perfil_id"))
+    @Column(name = "foto_url")
+    private List<String> fotosPortafolio = new ArrayList<>();
+
 }
