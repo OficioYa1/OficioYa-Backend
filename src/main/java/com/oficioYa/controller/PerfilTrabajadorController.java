@@ -1,5 +1,6 @@
 package com.oficioya.controller;
 
+import com.oficioya.model.dto.request.PortafolioRequestDTO;
 import com.oficioya.model.dto.request.DetallesEspecificosRequestDTO;
 import com.oficioya.controller.docs.PerfilTrabajadorApi;
 import com.oficioya.mapper.PerfilTrabajadorMapper;
@@ -111,6 +112,16 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
             @PathVariable Long id,
             @Valid @RequestBody DetallesEspecificosRequestDTO request) {
         PerfilTrabajador actualizado = perfilService.actualizarDetallesEspecificos(id, request.getDetallesEspecificos());
+        return ResponseEntity.ok(mapper.toResponse(actualizado));
+    }
+
+
+    @Override
+    @PatchMapping("/{id}/portafolio")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarPortafolio(
+            @PathVariable Long id,
+            @Valid @RequestBody PortafolioRequestDTO request) {
+        PerfilTrabajador actualizado = perfilService.actualizarPortafolio(id, request.getFotosPortafolio());
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
