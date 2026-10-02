@@ -30,6 +30,7 @@ public class PerfilTrabajador {
     private Double calificacionPromedio;
     private String fotosPortafolio;
     private int trabajosCompletados;
+    private Oficio oficioPrincipal;
     @Builder.Default
     private List<Oficio> oficios = new ArrayList<>();
     
