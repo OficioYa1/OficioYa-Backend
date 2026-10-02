@@ -184,4 +184,21 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         return entityMapper.toDomain(actualizado);
     }
 
+
+    @Override
+    @Transactional
+    public PerfilTrabajador actualizarDatosOperativos(Long perfilId, BigDecimal tarifaPorHora, String zonaCobertura) {
+        log.info("Actualizando datos operativos (tarifa y cobertura) para el perfil {}", perfilId);
+        
+        PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
+        
+        perfil.setTarifaPorHora(tarifaPorHora);
+        perfil.setZonaCobertura(zonaCobertura);
+        
+        PerfilTrabajadorEntity actualizado = perfilRepository.save(perfil);
+        
+        return entityMapper.toDomain(actualizado);
+    }
+
 }

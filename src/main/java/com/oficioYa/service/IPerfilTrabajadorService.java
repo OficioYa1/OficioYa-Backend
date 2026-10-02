@@ -34,4 +34,5 @@ public interface IPerfilTrabajadorService {
     PerfilTrabajador desactivarDisponibleAhora(Long perfilId);
     PerfilTrabajador registrarOficioPrincipal(Long perfilId, Long oficioId);
     PerfilTrabajador registrarOficiosSecundarios(Long perfilId, List<Long> oficiosIds);
+    PerfilTrabajador actualizarDatosOperativos(Long perfilId, BigDecimal tarifaPorHora, String zonaCobertura);
 }
