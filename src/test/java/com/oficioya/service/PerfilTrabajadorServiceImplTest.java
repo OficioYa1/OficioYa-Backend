@@ -1,5 +1,7 @@
 package com.oficioya.service;
 
+import com.oficioya.repository.OficioRepository;
+import com.oficioya.persistence.entity.OficioEntity;
 import com.oficioya.exception.ConflictoException;
 import com.oficioya.exception.EstadoInvalidoException;
 import com.oficioya.exception.RecursoNoEncontradoException;
@@ -40,6 +42,7 @@ import static org.mockito.Mockito.*;
 class PerfilTrabajadorServiceImplTest {
 
     @Mock private PerfilTrabajadorRepository perfilRepository;
+    @Mock private OficioRepository oficioRepository;
     @Mock private UsuarioRepository usuarioRepository;
     @Mock private IPerfilTrabajadorValidator validator;
     @Mock private PerfilTrabajadorEntityMapper entityMapper;
@@ -369,4 +372,87 @@ class PerfilTrabajadorServiceImplTest {
         // Act & Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.desactivarDisponibleAhora(99L));
     }
+
+    // =========================================================================
+    // TESTS PARA RF-02: REGISTRAR OFICIO PRINCIPAL
+    // =========================================================================
+
+    @Test
+    @DisplayName("registrarOficioPrincipal - Flujo Exitoso")
+    void registrarOficioPrincipal_flujoExitoso() {
+        // Arrange
+        Long perfilId = 1L;
+        Long oficioId = 10L;
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        OficioEntity oficio = new OficioEntity();
+        oficio.setId(oficioId);
+        oficio.setActivo(true);
+
+        com.oficioya.model.domain.PerfilTrabajador domain = new com.oficioya.model.domain.PerfilTrabajador();
+        domain.setId(perfilId);
+        
+
+        when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
+        when(oficioRepository.findById(oficioId)).thenReturn(java.util.Optional.of(oficio));
+        when(perfilRepository.save(any(PerfilTrabajadorEntity.class))).thenReturn(perfil);
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+
+        // Act
+        PerfilTrabajador result = service.registrarOficioPrincipal(perfilId, oficioId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(perfilId, result.getId());
+        verify(perfilRepository).findById(perfilId);
+        verify(oficioRepository).findById(oficioId);
+        verify(perfilRepository).save(perfil);
+    }
+
+    @Test
+    @DisplayName("registrarOficioPrincipal - Oficio Inactivo lanza excepcion")
+    void registrarOficioPrincipal_oficioInactivo_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 1L;
+        Long oficioId = 10L;
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        OficioEntity oficio = new OficioEntity();
+        oficio.setId(oficioId);
+        oficio.setActivo(false);
+
+        when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
+        when(oficioRepository.findById(oficioId)).thenReturn(java.util.Optional.of(oficio));
+
+        // Act & Assert
+        EstadoInvalidoException ex = assertThrows(EstadoInvalidoException.class, 
+                () -> service.registrarOficioPrincipal(perfilId, oficioId));
+        assertEquals("No se puede asignar un oficio inactivo como principal", ex.getMessage());
+        verify(perfilRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("registrarOficioPrincipal - Oficio No Encontrado lanza excepcion")
+    void registrarOficioPrincipal_oficioNoEncontrado_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 1L;
+        Long oficioId = 10L;
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
+        when(oficioRepository.findById(oficioId)).thenReturn(java.util.Optional.empty());
+
+        // Act & Assert
+        RecursoNoEncontradoException ex = assertThrows(RecursoNoEncontradoException.class, 
+                () -> service.registrarOficioPrincipal(perfilId, oficioId));
+        assertTrue(ex.getMessage().contains("Oficio no encontrado"));
+        verify(perfilRepository, never()).save(any());
+    }
+
 }
