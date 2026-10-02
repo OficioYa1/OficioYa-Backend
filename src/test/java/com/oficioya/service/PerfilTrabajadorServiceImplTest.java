@@ -569,4 +569,55 @@ class PerfilTrabajadorServiceImplTest {
         assertTrue(ex.getMessage().contains("ya es el oficio principal y no puede ser secundario"));
     }
 
+
+    // =========================================================================
+    // TESTS PARA RF-04 Y RF-05: DATOS OPERATIVOS
+    // =========================================================================
+
+    @Test
+    @DisplayName("actualizarDatosOperativos - Flujo Exitoso")
+    void actualizarDatosOperativos_flujoExitoso() {
+        // Arrange
+        Long perfilId = 1L;
+        BigDecimal tarifa = new BigDecimal("50000.00");
+        String zona = "Norte, Centro";
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        PerfilTrabajador domain = new PerfilTrabajador();
+        domain.setId(perfilId);
+        domain.setTarifaPorHora(tarifa);
+        domain.setZonaCobertura(zona);
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(perfilRepository.save(any(PerfilTrabajadorEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(entityMapper.toDomain(any(PerfilTrabajadorEntity.class))).thenReturn(domain);
+
+        // Act
+        PerfilTrabajador result = service.actualizarDatosOperativos(perfilId, tarifa, zona);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(tarifa, result.getTarifaPorHora());
+        assertEquals(zona, result.getZonaCobertura());
+        assertEquals(tarifa, perfil.getTarifaPorHora()); // Verificar entidad mutada
+        assertEquals(zona, perfil.getZonaCobertura()); // Verificar entidad mutada
+        
+        verify(perfilRepository).findById(perfilId);
+        verify(perfilRepository).save(perfil);
+    }
+
+    @Test
+    @DisplayName("actualizarDatosOperativos - Perfil no encontrado lanza excepcion")
+    void actualizarDatosOperativos_perfilNoEncontrado_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 99L;
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, 
+                () -> service.actualizarDatosOperativos(perfilId, new BigDecimal("100"), "Centro"));
+    }
+
 }
