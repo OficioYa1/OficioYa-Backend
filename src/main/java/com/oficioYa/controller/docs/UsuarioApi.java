@@ -57,4 +57,26 @@ public interface UsuarioApi {
     })
     ResponseEntity<PerfilContratanteResponseDTO> obtenerPerfilContratante(
             @PathVariable Long id);
+
+    @Operation(summary = "RF-57 — Editar perfil de trabajador", description = "Modifica la información básica (teléfono y zona de cobertura) de un trabajador.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Perfil actualizado exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MensajeResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Error de validación en los datos enviados", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "El usuario no tiene el rol de trabajador", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
+    })
+    ResponseEntity<MensajeResponseDTO> editarPerfilTrabajador(
+            @PathVariable Long id, 
+            @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request);
+
+    @Operation(summary = "RF-57 — Editar perfil de contratante", description = "Modifica la información básica (teléfono y descripción) de un contratante.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Perfil actualizado exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MensajeResponseDTO.class))),
+            @ApiResponse(responseCode = "400", description = "Error de validación en los datos enviados", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "El usuario no tiene el rol de contratante", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
+    })
+    ResponseEntity<MensajeResponseDTO> editarPerfilContratante(
+            @PathVariable Long id, 
+            @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request);
 }

@@ -55,4 +55,24 @@ public class UsuarioController implements UsuarioApi {
         PerfilContratanteResponseDTO perfil = usuarioService.obtenerPerfilContratante(id);
         return ResponseEntity.ok(perfil);
     }
+
+    @Override
+    @PutMapping("/{id}/perfil-trabajador")
+    public ResponseEntity<MensajeResponseDTO> editarPerfilTrabajador(
+            @PathVariable Long id, 
+            @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request) {
+        
+        usuarioService.editarPerfilTrabajador(id, request);
+        return ResponseEntity.ok(new MensajeResponseDTO("Perfil de trabajador actualizado exitosamente"));
+    }
+
+    @Override
+    @PutMapping("/{id}/perfil-contratante")
+    public ResponseEntity<MensajeResponseDTO> editarPerfilContratante(
+            @PathVariable Long id, 
+            @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request) {
+        
+        usuarioService.editarPerfilContratante(id, request);
+        return ResponseEntity.ok(new MensajeResponseDTO("Perfil de contratante actualizado exitosamente"));
+    }
 }
