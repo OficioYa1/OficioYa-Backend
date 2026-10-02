@@ -204,4 +204,27 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         log.info("Perfil de contratante ID {} actualizado exitosamente", usuarioId);
     }
+
+    @Override
+    @Transactional
+    public void eliminarCuenta(Long usuarioId) {
+        log.info("Iniciando proceso de eliminación de cuenta para el usuario ID: {}", usuarioId);
+
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> {
+                    log.error("Usuario con ID {} no encontrado para eliminación", usuarioId);
+                    return new UsuarioNoEncontradoException("Usuario no encontrado");
+                });
+
+        if (!usuario.isActivo()) {
+            log.error("La cuenta del usuario con ID {} ya se encuentra inactiva", usuarioId);
+            throw new EstadoInvalidoException("La cuenta ya se encuentra dada de baja");
+        }
+
+        // Borrado lógico (RF-58)
+        usuario.setActivo(false);
+        usuarioRepository.save(usuario);
+
+        log.info("Cuenta de usuario ID {} dada de baja exitosamente", usuarioId);
+    }
 }
