@@ -35,4 +35,5 @@ public interface IPerfilTrabajadorService {
     PerfilTrabajador registrarOficioPrincipal(Long perfilId, Long oficioId);
     PerfilTrabajador registrarOficiosSecundarios(Long perfilId, List<Long> oficiosIds);
     PerfilTrabajador actualizarDetallesEspecificos(Long perfilId, String detallesEspecificos);
+    PerfilTrabajador actualizarPortafolio(Long perfilId, List<String> fotos);
 }

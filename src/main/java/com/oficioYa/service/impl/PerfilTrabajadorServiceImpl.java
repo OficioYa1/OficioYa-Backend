@@ -200,4 +200,23 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         return entityMapper.toDomain(actualizado);
     }
 
+
+    @Override
+    @Transactional
+    public PerfilTrabajador actualizarPortafolio(Long perfilId, List<String> fotos) {
+        log.info("Actualizando portafolio para el perfil {}. Cantidad de fotos recibidas: {}", perfilId, fotos != null ? fotos.size() : 0);
+        
+        PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
+        
+        if (fotos != null) {
+            perfil.getFotosPortafolio().clear();
+            perfil.getFotosPortafolio().addAll(fotos);
+        }
+        
+        PerfilTrabajadorEntity actualizado = perfilRepository.save(perfil);
+        
+        return entityMapper.toDomain(actualizado);
+    }
+
 }
