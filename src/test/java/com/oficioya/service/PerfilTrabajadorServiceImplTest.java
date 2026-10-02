@@ -666,4 +666,48 @@ class PerfilTrabajadorServiceImplTest {
                 () -> service.actualizarPortafolio(perfilId, fotos));
     }
 
+
+    // =========================================================================
+    // TESTS PARA RF-65: OBTENER PERFIL (VER PORTAFOLIO)
+    // =========================================================================
+
+    @Test
+    @DisplayName("obtenerPerfilPorId - Flujo Exitoso")
+    void obtenerPerfilPorId_flujoExitoso() {
+        // Arrange
+        Long perfilId = 1L;
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+        
+        PerfilTrabajador domain = new PerfilTrabajador();
+        domain.setId(perfilId);
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+
+        // Act
+        PerfilTrabajador result = service.obtenerPerfilPorId(perfilId);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(perfilId, result.getId());
+        verify(perfilRepository).findById(perfilId);
+        verify(entityMapper).toDomain(perfil);
+    }
+
+    @Test
+    @DisplayName("obtenerPerfilPorId - Perfil no encontrado lanza excepcion")
+    void obtenerPerfilPorId_noEncontrado_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 99L;
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, 
+                () -> service.obtenerPerfilPorId(perfilId));
+        
+        verify(perfilRepository).findById(perfilId);
+        verifyNoInteractions(entityMapper);
+    }
+
 }

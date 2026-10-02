@@ -125,4 +125,12 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
+
+    @Override
+    @org.springframework.web.bind.annotation.GetMapping("/{id}")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilPorId(@PathVariable Long id) {
+        PerfilTrabajador perfil = perfilService.obtenerPerfilPorId(id);
+        return ResponseEntity.ok(mapper.toResponse(perfil));
+    }
+
 }

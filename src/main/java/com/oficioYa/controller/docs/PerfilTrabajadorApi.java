@@ -152,4 +152,13 @@ public interface PerfilTrabajadorApi {
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
             PortafolioRequestDTO request);
 
+
+    @Operation(summary = "Obtener perfil público y portafolio (RF-65)", description = "Retorna la información completa de un perfil de trabajador, incluyendo su portafolio de fotos y detalles.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Perfil retornado exitosamente"),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado")
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilPorId(
+            @Parameter(description = "ID del perfil de trabajador", required = true) Long id);
+
 }
