@@ -184,4 +184,20 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         return entityMapper.toDomain(actualizado);
     }
 
+
+    @Override
+    @Transactional
+    public PerfilTrabajador actualizarDetallesEspecificos(Long perfilId, String detallesEspecificos) {
+        log.info("Actualizando detalles específicos para el perfil {}", perfilId);
+        
+        PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
+        
+        perfil.setDetallesEspecificos(detallesEspecificos);
+        
+        PerfilTrabajadorEntity actualizado = perfilRepository.save(perfil);
+        
+        return entityMapper.toDomain(actualizado);
+    }
+
 }
