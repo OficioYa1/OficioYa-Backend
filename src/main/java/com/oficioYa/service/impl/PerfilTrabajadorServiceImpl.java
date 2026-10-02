@@ -1,6 +1,10 @@
 package com.oficioya.service.impl;
 
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.repository.OficioRepository;
+import com.oficioya.persistence.entity.OficioEntity;
 import com.oficioya.exception.RecursoNoEncontradoException;
+import com.oficioya.exception.EstadoInvalidoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
 import com.oficioya.model.domain.FranjaDisponibilidad;
@@ -27,6 +31,7 @@ import java.util.Set;
 public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
 
     private final PerfilTrabajadorRepository perfilRepository;
+    private final OficioRepository oficioRepository;
     private final UsuarioRepository usuarioRepository;
     private final IPerfilTrabajadorValidator validator;
     private final PerfilTrabajadorEntityMapper entityMapper;
@@ -127,4 +132,26 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         log.info("Perfil de trabajador actualizado: id={}", guardado.getId());
         return entityMapper.toDomain(guardado);
     }
+
+    @Override
+    @Transactional
+    public PerfilTrabajador registrarOficioPrincipal(Long perfilId, Long oficioId) {
+        log.info("Registrando oficio principal {} para el perfil {}", oficioId, perfilId);
+        
+        PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
+                
+        OficioEntity oficio = oficioRepository.findById(oficioId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Oficio no encontrado con ID: " + oficioId));
+                
+        if (!oficio.isActivo()) {
+            throw new EstadoInvalidoException("No se puede asignar un oficio inactivo como principal");
+        }
+        
+        perfil.setOficioPrincipal(oficio);
+        PerfilTrabajadorEntity actualizado = perfilRepository.save(perfil);
+        
+        return entityMapper.toDomain(actualizado);
+    }
+
 }

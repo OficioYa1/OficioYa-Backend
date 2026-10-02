@@ -1,5 +1,6 @@
 package com.oficioya.service;
 
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
 import com.oficioya.model.domain.FranjaDisponibilidad;
 import com.oficioya.model.domain.MetodoPago;
 import com.oficioya.model.domain.PerfilTrabajador;
@@ -31,4 +32,5 @@ public interface IPerfilTrabajadorService {
 
     /** RF-31: desactiva "Disponible ahora" y retira al trabajador de la búsqueda inmediata. */
     PerfilTrabajador desactivarDisponibleAhora(Long perfilId);
+    PerfilTrabajador registrarOficioPrincipal(Long perfilId, Long oficioId);
 }

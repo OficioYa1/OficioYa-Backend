@@ -27,8 +27,8 @@ import java.util.Set;
 @Table(name = "perfiles_trabajador")
 @lombok.Getter
 @lombok.Setter
-@lombok.ToString(exclude = {"usuario", "oficios", "disponibilidadSemanal", "metodosPago"})
-@lombok.EqualsAndHashCode(exclude = {"usuario", "oficios", "disponibilidadSemanal", "metodosPago"})
+@lombok.ToString(exclude = {"usuario", "oficios", "oficioPrincipal", "disponibilidadSemanal", "metodosPago"})
+@lombok.EqualsAndHashCode(exclude = {"usuario", "oficios", "oficioPrincipal", "disponibilidadSemanal", "metodosPago"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -82,6 +82,11 @@ public class PerfilTrabajadorEntity {
     @Builder.Default
     @Column(name = "calificacion_promedio")
     private Double calificacionPromedio = 0.0;
+
+    /** RF-02: Oficio principal */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "oficio_principal_id")
+    private OficioEntity oficioPrincipal;
 
 
     /** Número total de trabajos completados */

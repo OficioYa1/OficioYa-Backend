@@ -104,4 +104,17 @@ public interface PerfilTrabajadorApi {
     })
     ResponseEntity<PerfilTrabajadorResponseDTO> desactivarDisponibleAhora(
             @Parameter(description = "ID del perfil de trabajador") Long id);
+
+    @Operation(summary = "Registrar oficio principal (RF-02)", description = "Asigna el oficio principal al perfil del trabajador.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Oficio principal registrado"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Perfil u Oficio no encontrado",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficioPrincipal(
+            @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
+            com.oficioya.model.dto.request.OficioPrincipalRequestDTO request);
+
 }
