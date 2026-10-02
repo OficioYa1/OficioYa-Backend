@@ -409,4 +409,108 @@ class UsuarioServiceImplTest {
         assertThrows(RecursoNoEncontradoException.class,
                 () -> usuarioService.obtenerPerfilContratante(usuarioId));
     }
+
+
+    // =========================================================================
+    // TESTS PARA RF-57: EDITAR INFORMACIÓN BÁSICA DEL PERFIL
+    // =========================================================================
+
+    @Test
+    @DisplayName("editarPerfilTrabajador - Flujo Exitoso - Actualiza teléfono y zona")
+    void editarPerfilTrabajador_flujoExitoso_actualizaDatos() {
+        // Arrange
+        Long usuarioId = 1L;
+        com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO("3001234567", "Norte de la ciudad");
+
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setRol(RolUsuario.TRABAJADOR);
+        usuario.setTelefono("0000000000");
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setUsuario(usuario);
+        perfil.setZonaCobertura("Sin definir");
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+        when(perfilRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfil));
+
+        // Act
+        usuarioService.editarPerfilTrabajador(usuarioId, request);
+
+        // Assert
+        assertEquals("3001234567", usuario.getTelefono());
+        assertEquals("Norte de la ciudad", perfil.getZonaCobertura());
+        verify(usuarioRepository, times(1)).save(usuario);
+        verify(perfilRepository, times(1)).save(perfil);
+    }
+
+    @Test
+    @DisplayName("editarPerfilTrabajador - Rol Incorrecto - Lanza EstadoInvalidoException")
+    void editarPerfilTrabajador_rolIncorrecto_lanzaExcepcion() {
+        // Arrange
+        Long usuarioId = 2L;
+        com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO("3001234567", "Sur");
+
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setRol(RolUsuario.CONTRATANTE); // Rol incorrecto
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+
+        // Act & Assert
+        assertThrows(EstadoInvalidoException.class, () -> {
+            usuarioService.editarPerfilTrabajador(usuarioId, request);
+        });
+        verify(usuarioRepository, never()).save(any());
+        verify(perfilRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("editarPerfilContratante - Flujo Exitoso - Actualiza teléfono y descripción")
+    void editarPerfilContratante_flujoExitoso_actualizaDatos() {
+        // Arrange
+        Long usuarioId = 3L;
+        com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO("3119876543", "Busco plomero urgente");
+
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setRol(RolUsuario.CONTRATANTE);
+        usuario.setTelefono("1111111111");
+
+        PerfilContratanteEntity perfil = new PerfilContratanteEntity();
+        perfil.setUsuario(usuario);
+        perfil.setDescripcion(null);
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+        when(perfilContratanteRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfil));
+
+        // Act
+        usuarioService.editarPerfilContratante(usuarioId, request);
+
+        // Assert
+        assertEquals("3119876543", usuario.getTelefono());
+        assertEquals("Busco plomero urgente", perfil.getDescripcion());
+        verify(usuarioRepository, times(1)).save(usuario);
+        verify(perfilContratanteRepository, times(1)).save(perfil);
+    }
+
+    @Test
+    @DisplayName("editarPerfilContratante - Usuario No Encontrado - Lanza UsuarioNoEncontradoException")
+    void editarPerfilContratante_usuarioNoExiste_lanzaExcepcion() {
+        // Arrange
+        Long usuarioId = 99L;
+        com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO("3119876543", "Test");
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(UsuarioNoEncontradoException.class, () -> {
+            usuarioService.editarPerfilContratante(usuarioId, request);
+        });
+        verify(usuarioRepository, never()).save(any());
+    }
 }
