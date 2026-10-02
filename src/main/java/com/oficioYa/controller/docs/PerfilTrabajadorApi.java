@@ -1,5 +1,6 @@
 package com.oficioya.controller.docs;
 
+import com.oficioya.model.dto.request.PortafolioRequestDTO;
 import com.oficioya.model.dto.request.DetallesEspecificosRequestDTO;
 import com.oficioya.model.dto.request.DisponibilidadSemanalRequestDTO;
 import com.oficioya.model.dto.request.MetodosPagoRequestDTO;
@@ -139,5 +140,16 @@ public interface PerfilTrabajadorApi {
     ResponseEntity<PerfilTrabajadorResponseDTO> actualizarDetallesEspecificos(
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
             DetallesEspecificosRequestDTO request);
+
+
+    @Operation(summary = "Actualizar portafolio del trabajador (RF-07)", description = "Permite al trabajador guardar una lista de URLs de fotos para su portafolio.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Portafolio actualizado exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (ej. más de 20 fotos)"),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado")
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> actualizarPortafolio(
+            @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
+            PortafolioRequestDTO request);
 
 }
