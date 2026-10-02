@@ -154,4 +154,34 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         return entityMapper.toDomain(actualizado);
     }
 
+
+    @Override
+    @Transactional
+    public PerfilTrabajador registrarOficiosSecundarios(Long perfilId, List<Long> oficiosIds) {
+        log.info("Registrando {} oficios secundarios para el perfil {}", oficiosIds.size(), perfilId);
+        
+        PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
+        
+        List<OficioEntity> oficiosEncontrados = oficioRepository.findAllById(oficiosIds);
+        
+        if (oficiosEncontrados.size() != oficiosIds.size()) {
+            throw new RecursoNoEncontradoException("Uno o más oficios secundarios proporcionados no existen en el catálogo");
+        }
+        
+        for (OficioEntity oficio : oficiosEncontrados) {
+            if (!oficio.isActivo()) {
+                throw new EstadoInvalidoException("El oficio '" + oficio.getNombre() + "' se encuentra inactivo y no puede ser asignado");
+            }
+            if (perfil.getOficioPrincipal() != null && perfil.getOficioPrincipal().getId().equals(oficio.getId())) {
+                throw new EstadoInvalidoException("El oficio '" + oficio.getNombre() + "' ya es el oficio principal y no puede ser secundario");
+            }
+        }
+        
+        perfil.setOficios(oficiosEncontrados);
+        PerfilTrabajadorEntity actualizado = perfilRepository.save(perfil);
+        
+        return entityMapper.toDomain(actualizado);
+    }
+
 }

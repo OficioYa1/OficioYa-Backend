@@ -455,4 +455,118 @@ class PerfilTrabajadorServiceImplTest {
         verify(perfilRepository, never()).save(any());
     }
 
+
+    // =========================================================================
+    // TESTS PARA RF-03: REGISTRAR OFICIOS SECUNDARIOS
+    // =========================================================================
+
+    @Test
+    @DisplayName("registrarOficiosSecundarios - Flujo Exitoso")
+    void registrarOficiosSecundarios_flujoExitoso() {
+        // Arrange
+        Long perfilId = 1L;
+        List<Long> oficiosIds = List.of(2L, 3L);
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        OficioEntity oficio2 = new OficioEntity();
+        oficio2.setId(2L);
+        oficio2.setActivo(true);
+        
+        OficioEntity oficio3 = new OficioEntity();
+        oficio3.setId(3L);
+        oficio3.setActivo(true);
+
+        com.oficioya.model.domain.PerfilTrabajador domain = new com.oficioya.model.domain.PerfilTrabajador();
+        domain.setId(perfilId);
+
+        when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
+        when(oficioRepository.findAllById(oficiosIds)).thenReturn(List.of(oficio2, oficio3));
+        when(perfilRepository.save(any(PerfilTrabajadorEntity.class))).thenReturn(perfil);
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+
+        // Act
+        PerfilTrabajador result = service.registrarOficiosSecundarios(perfilId, oficiosIds);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(perfilId, result.getId());
+        verify(perfilRepository).findById(perfilId);
+        verify(oficioRepository).findAllById(oficiosIds);
+        verify(perfilRepository).save(perfil);
+    }
+
+    @Test
+    @DisplayName("registrarOficiosSecundarios - Oficio faltante lanza excepcion")
+    void registrarOficiosSecundarios_oficioFaltante_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 1L;
+        List<Long> oficiosIds = List.of(2L, 99L);
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        OficioEntity oficio2 = new OficioEntity();
+        oficio2.setId(2L);
+
+        when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
+        // Devuelve solo 1 oficio, pero se solicitaron 2
+        when(oficioRepository.findAllById(oficiosIds)).thenReturn(List.of(oficio2));
+
+        // Act & Assert
+        RecursoNoEncontradoException ex = assertThrows(RecursoNoEncontradoException.class, 
+                () -> service.registrarOficiosSecundarios(perfilId, oficiosIds));
+        assertTrue(ex.getMessage().contains("Uno o más oficios secundarios"));
+    }
+    
+    @Test
+    @DisplayName("registrarOficiosSecundarios - Oficio Inactivo lanza excepcion")
+    void registrarOficiosSecundarios_oficioInactivo_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 1L;
+        List<Long> oficiosIds = List.of(2L);
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        OficioEntity oficio2 = new OficioEntity();
+        oficio2.setId(2L);
+        oficio2.setActivo(false); // Inactivo
+        oficio2.setNombre("Pintor");
+
+        when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
+        when(oficioRepository.findAllById(oficiosIds)).thenReturn(List.of(oficio2));
+
+        // Act & Assert
+        EstadoInvalidoException ex = assertThrows(EstadoInvalidoException.class, 
+                () -> service.registrarOficiosSecundarios(perfilId, oficiosIds));
+        assertTrue(ex.getMessage().contains("inactivo y no puede ser asignado"));
+    }
+    
+    @Test
+    @DisplayName("registrarOficiosSecundarios - Es oficio principal lanza excepcion")
+    void registrarOficiosSecundarios_oficioEsPrincipal_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 1L;
+        List<Long> oficiosIds = List.of(2L);
+
+        OficioEntity oficio2 = new OficioEntity();
+        oficio2.setId(2L);
+        oficio2.setActivo(true);
+        oficio2.setNombre("Plomero");
+        
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+        perfil.setOficioPrincipal(oficio2); // El mismo oficio ya es el principal
+
+        when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
+        when(oficioRepository.findAllById(oficiosIds)).thenReturn(List.of(oficio2));
+
+        // Act & Assert
+        EstadoInvalidoException ex = assertThrows(EstadoInvalidoException.class, 
+                () -> service.registrarOficiosSecundarios(perfilId, oficiosIds));
+        assertTrue(ex.getMessage().contains("ya es el oficio principal y no puede ser secundario"));
+    }
+
 }

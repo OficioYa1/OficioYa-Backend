@@ -117,4 +117,15 @@ public interface PerfilTrabajadorApi {
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
             com.oficioya.model.dto.request.OficioPrincipalRequestDTO request);
 
+
+    @Operation(summary = "Registrar oficios secundarios (RF-03)", description = "Sobreescribe la lista de oficios secundarios del perfil.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Oficios secundarios registrados"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (ej. más de 5 oficios o intentando registrar el principal)"),
+            @ApiResponse(responseCode = "404", description = "Perfil o algún oficio no encontrado")
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficiosSecundarios(
+            @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
+            com.oficioya.model.dto.request.OficiosSecundariosRequestDTO request);
+
 }

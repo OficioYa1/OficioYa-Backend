@@ -33,4 +33,5 @@ public interface IPerfilTrabajadorService {
     /** RF-31: desactiva "Disponible ahora" y retira al trabajador de la búsqueda inmediata. */
     PerfilTrabajador desactivarDisponibleAhora(Long perfilId);
     PerfilTrabajador registrarOficioPrincipal(Long perfilId, Long oficioId);
+    PerfilTrabajador registrarOficiosSecundarios(Long perfilId, List<Long> oficiosIds);
 }

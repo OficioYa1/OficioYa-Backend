@@ -93,4 +93,14 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
 
+
+    @Override
+    @PutMapping("/{id}/oficios-secundarios")
+    public ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficiosSecundarios(
+            @PathVariable Long id,
+            @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.oficioya.model.dto.request.OficiosSecundariosRequestDTO request) {
+        PerfilTrabajador actualizado = perfilService.registrarOficiosSecundarios(id, request.getOficiosIds());
+        return ResponseEntity.ok(mapper.toResponse(actualizado));
+    }
+
 }
