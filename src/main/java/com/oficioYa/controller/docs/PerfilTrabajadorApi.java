@@ -1,5 +1,6 @@
 package com.oficioya.controller.docs;
 
+import com.oficioya.model.dto.request.DetallesEspecificosRequestDTO;
 import com.oficioya.model.dto.request.DisponibilidadSemanalRequestDTO;
 import com.oficioya.model.dto.request.MetodosPagoRequestDTO;
 import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
@@ -127,5 +128,16 @@ public interface PerfilTrabajadorApi {
     ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficiosSecundarios(
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
             com.oficioya.model.dto.request.OficiosSecundariosRequestDTO request);
+
+
+    @Operation(summary = "Actualizar detalles específicos del oficio (RF-09)", description = "Permite al trabajador añadir detalles libres sobre su trabajo.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Detalles específicos actualizados exitosamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos (ej. texto demasiado largo o vacío)"),
+            @ApiResponse(responseCode = "404", description = "Perfil no encontrado")
+    })
+    ResponseEntity<PerfilTrabajadorResponseDTO> actualizarDetallesEspecificos(
+            @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
+            DetallesEspecificosRequestDTO request);
 
 }

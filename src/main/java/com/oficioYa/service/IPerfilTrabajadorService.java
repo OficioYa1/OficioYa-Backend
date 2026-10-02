@@ -34,4 +34,5 @@ public interface IPerfilTrabajadorService {
     PerfilTrabajador desactivarDisponibleAhora(Long perfilId);
     PerfilTrabajador registrarOficioPrincipal(Long perfilId, Long oficioId);
     PerfilTrabajador registrarOficiosSecundarios(Long perfilId, List<Long> oficiosIds);
+    PerfilTrabajador actualizarDetallesEspecificos(Long perfilId, String detallesEspecificos);
 }
