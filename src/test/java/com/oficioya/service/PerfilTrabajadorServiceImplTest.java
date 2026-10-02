@@ -569,4 +569,51 @@ class PerfilTrabajadorServiceImplTest {
         assertTrue(ex.getMessage().contains("ya es el oficio principal y no puede ser secundario"));
     }
 
+
+    // =========================================================================
+    // TESTS PARA RF-09: DETALLES ESPECIFICOS
+    // =========================================================================
+
+    @Test
+    @DisplayName("actualizarDetallesEspecificos - Flujo Exitoso")
+    void actualizarDetallesEspecificos_flujoExitoso() {
+        // Arrange
+        Long perfilId = 1L;
+        String detalles = "Solo trabajo con pintura acrílica y rodillo especial.";
+
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        PerfilTrabajador domain = new PerfilTrabajador();
+        domain.setId(perfilId);
+        domain.setDetallesEspecificos(detalles);
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(perfilRepository.save(any(PerfilTrabajadorEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(entityMapper.toDomain(any(PerfilTrabajadorEntity.class))).thenReturn(domain);
+
+        // Act
+        PerfilTrabajador result = service.actualizarDetallesEspecificos(perfilId, detalles);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(detalles, result.getDetallesEspecificos());
+        assertEquals(detalles, perfil.getDetallesEspecificos()); // Verificar entidad mutada
+        
+        verify(perfilRepository).findById(perfilId);
+        verify(perfilRepository).save(perfil);
+    }
+
+    @Test
+    @DisplayName("actualizarDetallesEspecificos - Perfil no encontrado lanza excepcion")
+    void actualizarDetallesEspecificos_perfilNoEncontrado_lanzaExcepcion() {
+        // Arrange
+        Long perfilId = 99L;
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RecursoNoEncontradoException.class, 
+                () -> service.actualizarDetallesEspecificos(perfilId, "Detalles cualquiera"));
+    }
+
 }
