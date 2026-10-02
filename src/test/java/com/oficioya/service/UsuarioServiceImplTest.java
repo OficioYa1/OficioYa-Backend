@@ -513,4 +513,60 @@ class UsuarioServiceImplTest {
         });
         verify(usuarioRepository, never()).save(any());
     }
+
+
+    // =========================================================================
+    // TESTS PARA RF-58: ELIMINAR CUENTA (BORRADO LÓGICO)
+    // =========================================================================
+
+    @Test
+    @DisplayName("eliminarCuenta - Flujo Exitoso - Cambia estado a inactivo")
+    void eliminarCuenta_flujoExitoso_inactivaUsuario() {
+        // Arrange
+        Long usuarioId = 1L;
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setActivo(true); // Activo inicialmente
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+
+        // Act
+        usuarioService.eliminarCuenta(usuarioId);
+
+        // Assert
+        assertFalse(usuario.isActivo()); // Debe pasar a false
+        verify(usuarioRepository, times(1)).save(usuario);
+    }
+
+    @Test
+    @DisplayName("eliminarCuenta - Usuario no existe - Lanza UsuarioNoEncontradoException")
+    void eliminarCuenta_usuarioInexistente_lanzaExcepcion() {
+        // Arrange
+        Long usuarioId = 99L;
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(UsuarioNoEncontradoException.class, () -> {
+            usuarioService.eliminarCuenta(usuarioId);
+        });
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("eliminarCuenta - Usuario ya está inactivo - Lanza EstadoInvalidoException")
+    void eliminarCuenta_usuarioYaInactivo_lanzaExcepcion() {
+        // Arrange
+        Long usuarioId = 2L;
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setId(usuarioId);
+        usuario.setActivo(false); // Ya está inactivo
+
+        when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
+
+        // Act & Assert
+        assertThrows(EstadoInvalidoException.class, () -> {
+            usuarioService.eliminarCuenta(usuarioId);
+        });
+        verify(usuarioRepository, never()).save(any());
+    }
 }

@@ -25,5 +25,10 @@ public interface IUsuarioService {
      * Edita la información básica de un contratante (RF-57).
      */
     void editarPerfilContratante(Long usuarioId, com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request);
+
+    /**
+     * Da de baja lógicamente la cuenta de un usuario (RF-58).
+     */
+    void eliminarCuenta(Long usuarioId);
 }
 
