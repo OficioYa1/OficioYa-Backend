@@ -154,13 +154,56 @@ El proyecto sigue una arquitectura REST Multicapa (Controller - Service - Reposi
 
 ### Diagrama de Componentes General
 
-![OficioYa_Diagrama_Componentes.drawio.png](docs/uml/OficioYa_Diagrama_Componentes.drawio.png)
+![DiagramGeneralComponent.png](docs/images/DiagramGeneralComponent.png)
+
+
+El **Diagrama de Componentes General** ilustra la arquitectura macro del sistema **OficioYa**, diseñada bajo el patrón de **Cliente-Servidor con un Backend Monolítico**. Este diagrama expone los subsistemas principales y los protocolos de comunicación que permiten el funcionamiento de la plataforma en el contexto del Sprint 02.
+
+**Componentes y Nodos Principales:**
+
+* **Cliente Web (Frontend):** Representa la interfaz de usuario construida como una *Single Page Application* (SPA). Este componente es el consumidor exclusivo de la API y gestiona la experiencia del usuario (vistas de catálogo, formularios de registro y visualización de solicitudes).
+* **OficioYa Backend (Monolito Modular):** Es el componente central del sistema, desarrollado sobre **Spring Boot 3**. Se despliega como una única unidad ejecutable (Monolito), pero internamente está organizado en módulos de negocio. Actúa como el orquestador principal, exponiendo una API RESTful documentada mediante Swagger.
+* **Base de Datos Relacional:** El componente de persistencia estructurada. Durante este sprint de desarrollo, está implementado sobre una base de datos en memoria **H2** para facilitar las pruebas, gestionada a través de JPA/Hibernate *(El sistema ya cuenta con los drivers preparados para migrar a PostgreSQL en producción)*.
+* **Sistema de Archivos (File Storage):** Un volumen o directorio de almacenamiento local (`uploads/perfiles/`) utilizado para persistir archivos binarios, específicamente las fotografías de perfil de los trabajadores.
+
+**Relaciones e Interacciones:**
+La comunicación entre el Cliente y el Backend se realiza estrictamente a través de peticiones **HTTP/JSON** sin estado (REST). Por su parte, el Backend se comunica con la base de datos relacional mediante el protocolo **JDBC**, mientras que las operaciones con el Sistema de Archivos se realizan mediante flujos de entrada/salida (I/O) estándar del sistema operativo.
+
 
 ### Diagrama de Componentes especificos
 
-![DiagramaComponentesEspecifico.drawio.png](docs/uml/DiagramaComponentesEspecifico.drawio.png)
+![DiagramEspecificComponent.png](docs/images/DiagramEspecificComponent.png)
+
+
+El **Diagrama de Componentes Específico** profundiza en la estructura interna (caja blanca) del backend. Demuestra cómo está construido el monolito siguiendo una estricta **Arquitectura en Capas Lógicas**, orientada al dominio y altamente desacoplada gracias al uso de Inyección de Dependencias (IoC de Spring).
+
+**Capas Lógicas Representadas:**
+1. **Capa de Controladores (Controllers):** Componentes (`UsuarioController`, `SolicitudController`, etc.) anotados con `@RestController`. Su única responsabilidad es recibir peticiones HTTP, delegar la conversión de los DTOs y enrutar la petición a la capa de servicios. Cuenta con un `GlobalExceptionHandler` que intercepta las excepciones y unifica las respuestas de error.
+2. **Capa de Mapeo (Mappers con MapStruct):** Se evidencia una separación estratégica de responsabilidades:
+  * *Mappers de DTO:* Convierten los datos de entrada (Requests) en objetos de dominio puros.
+  * *Mappers de Entidad:* Convierten objetos de dominio en Entidades JPA listas para persistir, aislando la persistencia de las reglas de negocio.
+3. **Capa de Servicios (Lógica de Negocio):** Es el corazón transaccional de la aplicación. Se aplica el principio de Inversión de Dependencias: los controladores no dependen de implementaciones concretas, sino de interfaces formales (ej. `IUsuarioService`). Las clases `ServiceImpl` orquestan el flujo interno.
+4. **Capa de Validación:** Componentes aislados (ej. `PerfilTrabajadorValidatorImpl`) que encapsulan las reglas de negocio estrictas. Los servicios delegan en estos validadores antes de proceder con cualquier modificación de datos.
+5. **Capa de Repositorios (Persistencia):** Interfaces de Spring Data JPA que abstraen el acceso a datos. Destaca el uso de `PerfilTrabajadorSpecs` para construir consultas dinámicas (Filtros de Búsqueda) utilizando la API Criteria de JPA.
+   
+**Dinámica de Dependencias:**
+El diagrama es completamente fiel a las inyecciones de código reales del proyecto. Utiliza la notación UML de **"Socket y Lollipop"** para demostrar que la comunicación entre capas (Controller ➔ Service ➔ Validator) se realiza a través de interfaces formales. El componente que "pide" el servicio extiende un *Socket* para acoplarse al componente que "provee" el servicio, representado por el *Lollipop*. Esto certifica que el sistema de OficioYa es modular, testeable y respeta rigurosamente los principios SOLID.
 
 ### Diagrama de Clases
 
-![OficioYa_Diagrama_Clases.drawio.png](docs/uml/OficioYa_Diagrama_Clases.drawio.png)
+![DiagramClass.png](docs/images/DiagramClass.png)
+
+
+El **Diagrama de Clases** expone la estructura estática del "corazón" de la aplicación: el Modelo de Dominio. A diferencia de los diagramas de componentes que muestran la infraestructura, este diagrama ilustra las entidades puras de negocio (POJOs), sus atributos, comportamientos y cómo se relacionan entre sí para resolver los requerimientos del Sprint 02, manteniéndose agnóstico a frameworks externos o bases de datos.
+
+**Estructura y Entidades Centrales:**
+* **Núcleo de Identidad y Roles:** La clase central es `Usuario`, la cual administra la autenticación y datos básicos. De esta clase se desprenden relaciones de composición (1 a 1) hacia las facetas operativas del sistema: `PerfilContratante` y `PerfilTrabajador`. Esta separación permite que un mismo usuario pueda actuar en ambos roles sin duplicar información de acceso.
+* **Catálogo y Perfil Profesional:** El `PerfilTrabajador` encapsula información financiera y operativa (tarifas, descripción, calificación). Presenta una relación de agregación múltiple con la entidad `Oficio`, permitiendo que el sistema mantenga un catálogo centralizado de habilidades estandarizadas.
+* **Núcleo Transaccional:** La entidad `Solicitud` actúa como el eje transaccional del sistema, vinculando operativamente a un contratante con el perfil de un trabajador para un oficio específico. Registra detalles críticos como descripciones, fechas programadas y montos económicos.
+
+**Patrones de Diseño Destacados (State Pattern):**
+El valor arquitectónico más alto de este diagrama es la implementación del **Patrón de Diseño de Comportamiento "State" (Estado)** para gestionar el complejo ciclo de vida de una `Solicitud`.
+* En lugar de delegar el control de estados a bloques espagueti de `if/switch`, la `Solicitud` delega su comportamiento a una jerarquía de clases polimórficas que heredan de `AbstractSolicitudState`.
+* Cada estado (Ej. *Pendiente, Aceptada, Finalizada, Cancelada*) es una clase concreta con responsabilidad única, que dicta si una transición hacia otro estado es legal o no.
+* Una clase `SolicitudStateFactory` actúa como creadora y gestora de estas transiciones, asegurando la integridad del negocio y lanzando una `EstadoInvalidoException` ante cualquier intento de flujo no permitido. Esto garantiza un dominio rico y previene estados corruptos en el sistema.
 
