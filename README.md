@@ -1,6 +1,18 @@
 # 🛠️ OficioYa 
 Este repositorio contiene la arquitectura, el análisis de diseño y el código base del backend para el proyecto OficioYa.
 
+
+# Diagrama de contexto
+
+![DiagramContext.png](docs/uml/DiagramContext.png)
+
+## Explicacion
+
+Este diagrama ilustra el ecosistema completo de OficioY. En el centro se ubica nuestra plataforma, la cual sirve como puente entre tres actores principales: el Contratante (quien busca el servicio), el Trabajador Independiente (quien lo provee) y el Administrador (quien modera la seguridad de la plataforma).
+
+Para poder ofrecer una experiencia moderna y en tiempo real, nuestro sistema no trabaja solo, sino que se apoya en tres sistemas externos vitales: Mapbox para la geolocalización y cálculo de cercanía de los trabajadores; Firebase (FCM) para disparar las notificaciones push inmediatas cuando se acepta una solicitud; y Cloudinary para almacenar de forma optimizada todo el peso multimedia (como fotos de perfil y portafolios). Finalmente, toda la orquestación de la información es resguardada por nuestro esquema de Persistencia Mixta (PostgreSQL y MongoDB), garantizando transacciones seguras y catálogos dinámicos de alta velocidad.
+
+
 # Patrones de Diseño
 ---
 
@@ -193,11 +205,24 @@ El diagrama es completamente fiel a las inyecciones de código reales del proyec
 
 ![DiagramClass.png](docs/images/DiagramClass.png)
 
+<details>
+  <summary><b>Haz clic aquí para ver el Diagrama de Clases completo 🔍</b></summary>
 
-El **Diagrama de Clases** expone la estructura estática del "corazón" de la aplicación: el Modelo de Dominio. A diferencia de los diagramas de componentes que muestran la infraestructura, este diagrama ilustra las entidades puras de negocio (POJOs), sus atributos, comportamientos y cómo se relacionan entre sí para resolver los requerimientos del Sprint 02, manteniéndose agnóstico a frameworks externos o bases de datos.
+  <br> <!-- un saltito de línea para que se vea ordenado -->
+
+  ![DiagramClassPart1.png](docs/uml/DiagramClassPart1.png)
+  ![DiagramClassPart2.png](docs/uml/DiagramClassPart2.png)
+  ![DiagramClassPart3.png](docs/uml/DiagramClassPart3.png)
+  ![DiagramClassPart4.png](docs/uml/DiagramClassPart4.png)
+  ![DiagramClassPart5.png](docs/uml/DiagramClassPart5.png)
+
+</details>
+
+
+El **Diagrama de Clases** expone la estructura estática del "corazón" de la aplicación: el Modelo de Dominio. A diferencia de los diagramas de componentes que muestran la infraestructura, este diagrama ilustra las entidades puras de negocio, sus atributos, comportamientos y cómo se relacionan entre sí.
 
 **Estructura y Entidades Centrales:**
-* **Núcleo de Identidad y Roles:** La clase central es `Usuario`, la cual administra la autenticación y datos básicos. De esta clase se desprenden relaciones de composición (1 a 1) hacia las facetas operativas del sistema: `PerfilContratante` y `PerfilTrabajador`. Esta separación permite que un mismo usuario pueda actuar en ambos roles sin duplicar información de acceso.
+* **Núcleo de Identidad y Roles:** La clase central es `Usuario`, la cual administra la autenticación y datos básicos. De esta clase se desprenden relaciones de composición (1 a 1) hacia los roles operativas del sistema: `PerfilContratante` y `PerfilTrabajador`. Esta separación permite que un mismo usuario pueda actuar en ambos roles sin duplicar información de acceso.
 * **Catálogo y Perfil Profesional:** El `PerfilTrabajador` encapsula información financiera y operativa (tarifas, descripción, calificación). Presenta una relación de agregación múltiple con la entidad `Oficio`, permitiendo que el sistema mantenga un catálogo centralizado de habilidades estandarizadas.
 * **Núcleo Transaccional:** La entidad `Solicitud` actúa como el eje transaccional del sistema, vinculando operativamente a un contratante con el perfil de un trabajador para un oficio específico. Registra detalles críticos como descripciones, fechas programadas y montos económicos.
 
@@ -207,3 +232,44 @@ El valor arquitectónico más alto de este diagrama es la implementación del **
 * Cada estado (Ej. *Pendiente, Aceptada, Finalizada, Cancelada*) es una clase concreta con responsabilidad única, que dicta si una transición hacia otro estado es legal o no.
 * Una clase `SolicitudStateFactory` actúa como creadora y gestora de estas transiciones, asegurando la integridad del negocio y lanzando una `EstadoInvalidoException` ante cualquier intento de flujo no permitido. Esto garantiza un dominio rico y previene estados corruptos en el sistema.
 
+---
+
+# 🗄️ Arquitectura de Base de Datos (Persistencia Mixta)
+
+Según la **Opción 3 (Persistencia Mixta)** de los lineamientos del Sprint 02, el proyecto OficioYa segmenta su persistencia para aprovechar las ventajas de SQL y NoSQL.
+
+### 🏛️ Justificación Técnica de nuestra Arquitectura Mixta
+
+A medida que fuimos definiendo las necesidades de OficioYa, nos dimos cuenta de que no toda nuestra información se comportaba igual. Por eso, decidimos usar una base de datos híbrida, tomando lo mejor del mundo relacional y del mundo NoSQL. Aquí explicamos cómo dividimos la información y por qué:
+
+**1. ¿Qué guardamos en PostgreSQL y por qué?**
+Toda la información "core" y transaccional del negocio vive en Postgres. Esto incluye a los **Usuarios**, los **Perfiles (Contratante y Trabajador)**, los **Oficios** y, muy especialmente, las **Solicitudes** de servicio.
+* **¿Por qué?** Porque en OficioYa, una solicitud de trabajo funciona como un contrato entre dos partes. Para esto necesitamos la garantía absoluta de las propiedades **A.C.I.D.** (Atomicidad, Consistencia, Aislamiento, Durabilidad) que ofrece el modelo relacional. Si ocurre un fallo mientras se procesa o cambia de estado una solicitud, Postgres nos asegura que la transacción se revierte por completo.
+* Además, utilizamos un **Modelo Broadcast (Tipo Rappi/Uber)**. Al crear una solicitud, la base de datos la registra obligatoriamente con el `contratante_id`, pero permite que el `trabajador_id` sea nulo. Así, la solicitud queda "flotando" en el mercado hasta que el primer trabajador la acepta, garantizando agilidad y concurrencia bajo las normas SQL.
+
+**2. ¿Qué guardamos en MongoDB y por qué?**
+Decidimos aislar todo lo relacionado con el **Portafolio multimedia** de los trabajadores en MongoDB.
+* **¿Por qué?** Un portafolio de trabajos anteriores es muy dinámico. Guardar un arreglo dinámico de URLs en PostgreSQL nos obligaría a ejecutar pesadas consultas `JOIN`.
+* Gracias al **Modelo de Documentos** de Mongo, podemos guardar todo ese listado de strings de forma súper ágil dentro de un solo documento BSON.
+* **¿Cómo los conectamos?** Para unir Mongo con Postgres utilizamos el **Patrón Referenciado**. Dentro de la colección de Portafolios en Mongo guardamos el campo `perfilTrabajadorId`. Este actúa como una referencia lógica hacia el perfil que vive en Postgres, permitiéndonos disfrutar de la rapidez de NoSQL sin romper el orden relacional.
+
+
+---
+
+## Modelo Entidad-Relación (PostgreSQL)
+
+![DiagramEntityRelation.png](docs/uml/DiagramEntityRelation.png)
+
+### Explicacion
+
+Para entender este diagrama físico, hay que ver a la tabla de `USUARIOS` como el centro del esquema. Por reglas de negocio, cuando una persona se registra en la plataforma se le crea automáticamente un perfil de contratante (relación de uno a uno). Sin embargo, si esa persona decide que también quiere ofrecer sus servicios, se le habilita de forma opcional un perfil de trabajador. Adicionalmente, el diagrama expone tablas que no son entidades principales pero que el motor relacional crea obligatoriamente para almacenar colecciones, como `PERFIL_DISPONIBILIDAD` y `PERFIL_METODOS_PAGO`. En cuanto a los oficios, cada trabajador tiene una conexión directa a un solo oficio principal, pero como puede ofrecer múltiples oficios secundarios (y un oficio lo pueden realizar varios trabajadores), rompimos la relación de "muchos a muchos" creando una tabla intermedia física con llaves compuestas llamada `TRABAJADOR_OFICIOS`. Finalmente, conectamos la tabla de `SOLICITUDES` directamente al Usuario y no a los perfiles, preparando el terreno para el uso de tokens JWT; notarás que el ID de quien crea la solicitud es obligatorio, pero el del trabajador que la recibe es opcional, lo cual nos permite publicar una solicitud al aire libre (estilo Rappi) y que quede flotando en la base de datos hasta que un trabajador la acepte.
+
+---
+
+## Modelo de Documentos (MongoDB)
+
+![DiagramModel-Document.png](docs/uml/DiagramModel-Document.png)
+
+### Explicacion
+
+Por otro lado, este diagrama representa nuestra colección en MongoDB, la cual nos libera de la rigidez de las tablas y uniones de SQL. En lugar de forzar tablas adicionales para cada imagen, Mongo nos permite guardar todo el historial fotográfico del trabajador como una simple matriz de textos dentro de un mismo bloque, el cual se ilustra aquí como el documento aislado del portafolio. Ahora bien, este portafolio no vive totalmente desconectado del resto del sistema; para unir este modelo de documentos con nuestra base relacional utilizamos un patrón referenciado. Esto significa que dentro de Mongo guardamos lógicamente el ID del perfil del trabajador, creando un puente o flecha invisible que nos permite saber a quién le pertenecen esas fotos 
