@@ -28,8 +28,13 @@ class BusquedaTrabajadorServiceImplTest {
 
     @Mock
     private PerfilTrabajadorEntityMapper mapper;
+    
+    @Mock
+    private com.oficioya.repository.OficioRepository oficioRepository;
+    
+    @Mock
+    private com.oficioya.validator.IBusquedaValidator busquedaValidator;
 
-    @InjectMocks
     private BusquedaTrabajadorServiceImpl service;
 
     private PerfilTrabajador p1, p2, p3, p4, p5;
@@ -37,6 +42,13 @@ class BusquedaTrabajadorServiceImplTest {
 
     @BeforeEach
     void setUp() {
+        service = new BusquedaTrabajadorServiceImpl(
+            repository, mapper, oficioRepository, busquedaValidator,
+            Arrays.asList(
+                new com.oficioya.service.strategy.impl.BusquedaPorMeritoStrategy(),
+                new com.oficioya.service.strategy.impl.BusquedaPorDistanciaStrategy(new com.oficioya.adapter.impl.MockMapboxAdapter())
+            )
+        );
         // Arrange general
         p1 = new PerfilTrabajador(); p1.setZonaCobertura("Norte"); p1.setCalificacionPromedio(5.0); p1.setTrabajosCompletados(10);
         p2 = new PerfilTrabajador(); p2.setZonaCobertura("Norte"); p2.setCalificacionPromedio(5.0); p2.setTrabajosCompletados(2);

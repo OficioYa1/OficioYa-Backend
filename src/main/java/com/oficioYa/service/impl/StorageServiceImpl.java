@@ -6,10 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
@@ -29,35 +25,26 @@ public class StorageServiceImpl implements IStorageService {
             throw new EstadoInvalidoException("El archivo debe ser una imagen (JPG, JPEG, PNG)");
         }
 
+        // ADAPTER PATTERN (MOCK): Simulación de subida a Cloudinary
+        // No guardamos físicamente en disco, sino que devolvemos una URL simulada de la nube.
+        String originalFilename = file.getOriginalFilename();
+        String extension = originalFilename != null && originalFilename.contains(".") ? 
+                originalFilename.substring(originalFilename.lastIndexOf(".")) : ".jpg";
+        
+        String uniqueFilename = UUID.randomUUID().toString() + extension;
+        
+        log.info("Mock Cloudinary: Simulando subida del archivo {}...", originalFilename);
+        
+        // Simular un pequeño retardo de red (opcional)
         try {
-            // Crear el directorio si no existe
-            // Se usa user.dir para asegurar que se guarde en la raíz del proyecto y no en la carpeta temporal de Tomcat
-            Path rootPath = Paths.get(System.getProperty("user.dir"));
-            Path uploadPath = rootPath.resolve(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
-            }
-
-            // Generar un nombre único para evitar colisiones
-            String originalFilename = file.getOriginalFilename();
-            String extension = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-            String uniqueFilename = UUID.randomUUID().toString() + extension;
-
-            // Guardar el archivo físicamente
-            Path filePath = uploadPath.resolve(uniqueFilename);
-            file.transferTo(filePath.toFile());
-
-            log.info("Archivo guardado exitosamente: {}", filePath.toString());
-
-            // Devolver la URL virtual para que el frontend pueda consumirla luego
-            return "/" + uploadDir + uniqueFilename;
-
-        } catch (IOException e) {
-            log.error("Error al guardar el archivo", e);
-            throw new RuntimeException("No se pudo guardar la imagen de perfil", e);
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
+
+        String fakeCloudinaryUrl = "https://mock.cloudinary.com/oficioya/image/upload/v1/" + uniqueFilename;
+        log.info("Mock Cloudinary: Archivo subido exitosamente a la nube. URL generada: {}", fakeCloudinaryUrl);
+
+        return fakeCloudinaryUrl;
     }
 }

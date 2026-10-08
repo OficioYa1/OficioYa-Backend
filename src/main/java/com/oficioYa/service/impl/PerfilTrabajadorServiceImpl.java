@@ -212,12 +212,6 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
         
-        if (fotos != null) {
-            // Actualizamos la entidad de Postgres
-            perfil.getFotosPortafolio().clear();
-            perfil.getFotosPortafolio().addAll(fotos);
-        }
-        
         // 1. Validamos y guardamos en PostgreSQL (gestionado por @Transactional)
         PerfilTrabajadorEntity actualizado = perfilRepository.save(perfil);
         

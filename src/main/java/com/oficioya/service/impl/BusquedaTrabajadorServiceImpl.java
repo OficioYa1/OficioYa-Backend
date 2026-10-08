@@ -9,6 +9,7 @@ import com.oficioya.repository.OficioRepository;
 import com.oficioya.repository.PerfilTrabajadorRepository;
 import com.oficioya.repository.spec.PerfilTrabajadorSpecs;
 import com.oficioya.service.IBusquedaTrabajadorService;
+import com.oficioya.service.strategy.IOrdenamientoStrategy;
 import com.oficioya.util.InterpreteNecesidadUtil;
 import com.oficioya.validator.IBusquedaValidator;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +33,7 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
     private final PerfilTrabajadorEntityMapper mapper;
     private final OficioRepository oficioRepository;
     private final IBusquedaValidator busquedaValidator;
-
-    private static final java.util.Map<String, Comparator<PerfilTrabajador>> SORTER_STRATEGIES = java.util.Map.of(
-            "REPUTACION", Comparator.comparing(PerfilTrabajador::getCalificacionPromedio, Comparator.nullsLast(Comparator.reverseOrder()))
-                    .thenComparing(PerfilTrabajador::getTrabajosCompletados, Comparator.nullsLast(Comparator.reverseOrder())),
-            "DISTANCIA", Comparator.comparing(PerfilTrabajador::getZonaCobertura, Comparator.nullsLast(Comparator.naturalOrder()))
-    );
+    private final List<IOrdenamientoStrategy> estrategiasOrdenamiento;
 
     @Override
     public List<PerfilTrabajador> buscarTrabajadores(String zona, Long oficioId, Double calificacionMinima, String orden) {
@@ -53,12 +49,15 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
                     .collect(Collectors.toList());
         }
 
-        String safeOrden = (orden != null) ? orden.toUpperCase() : "DISTANCIA";
-        Comparator<PerfilTrabajador> comparator = SORTER_STRATEGIES.getOrDefault(safeOrden, SORTER_STRATEGIES.get("DISTANCIA"));
+        IOrdenamientoStrategy estrategia = estrategiasOrdenamiento.stream()
+                .filter(e -> e.aplica(orden))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No hay estrategia para el orden: " + orden));
 
-        return candidatos.stream()
-                .sorted(comparator)
-                .collect(Collectors.toList());
+        CriteriosBusqueda temp = new CriteriosBusqueda();
+        temp.setZona(zona);
+
+        return estrategia.ordenar(candidatos, temp);
     }
 
     @Override
@@ -80,9 +79,16 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
         Specification<PerfilTrabajadorEntity> spec =
                 PerfilTrabajadorSpecs.desdeCriterios(criterios, oficiosDelTexto, terminos);
 
-        List<PerfilTrabajador> resultado = repository.findAll(spec, ordenSolicitado(criterios.getOrden())).stream()
+        List<PerfilTrabajador> perfiles = repository.findAll(spec).stream()
                 .map(mapper::toDomain)
-                .toList();
+                .collect(Collectors.toList());
+
+        IOrdenamientoStrategy estrategia = estrategiasOrdenamiento.stream()
+                .filter(e -> e.aplica(criterios.getOrden()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No hay estrategia para el orden: " + criterios.getOrden()));
+
+        List<PerfilTrabajador> resultado = estrategia.ordenar(perfiles, criterios);
 
         if (resultado.isEmpty()) {
             log.warn("Búsqueda sin resultados para los criterios dados");
@@ -110,14 +116,5 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
         return terminos.stream().anyMatch(texto::contains);
     }
 
-    /**
-     * REPUTACION (por defecto): mejor calificación y más trabajos completados primero.
-     * DISTANCIA: provisional por zona hasta tener coordenadas (RF-63, fuera del Sprint 02).
-     */
-    private Sort ordenSolicitado(String orden) {
-        if (orden != null && orden.equalsIgnoreCase("DISTANCIA")) {
-            return Sort.by(Sort.Order.asc("zonaCobertura"), Sort.Order.desc("calificacionPromedio"), Sort.Order.asc("id"));
-        }
-        return Sort.by(Sort.Order.desc("calificacionPromedio"), Sort.Order.desc("trabajosCompletados"), Sort.Order.asc("id"));
-    }
+
 }
