@@ -276,17 +276,14 @@ class UsuarioServiceImplTest {
         PerfilTrabajador perfilDomain = new PerfilTrabajador();
         perfilDomain.setId(10L);
 
-        PerfilTrabajadorResponseDTO responseDTO = new PerfilTrabajadorResponseDTO();
-        responseDTO.setId(10L);
-        responseDTO.setZonaCobertura("Norte");
+        perfilDomain.setZonaCobertura("Norte");
 
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         when(perfilRepository.findByUsuarioId(1L)).thenReturn(Optional.of(perfilEntity));
         when(perfilEntityMapper.toDomain(perfilEntity)).thenReturn(perfilDomain);
-        when(perfilMapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
         // Act
-        PerfilTrabajadorResponseDTO result = usuarioService.obtenerPerfilTrabajador(1L);
+        PerfilTrabajador result = usuarioService.obtenerPerfilTrabajador(1L);
 
         // Assert
         assertNotNull(result);
@@ -352,16 +349,14 @@ class UsuarioServiceImplTest {
         perfilEntity.setCalificacionPromedio(4.5);
 
         PerfilContratante perfilDomain = new PerfilContratante();
-        PerfilContratanteResponseDTO responseDTO = new PerfilContratanteResponseDTO();
-        responseDTO.setCalificacionPromedio(4.5);
+        perfilDomain.setCalificacionPromedio(4.5);
 
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
         when(perfilContratanteRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfilEntity));
         when(perfilContratanteEntityMapper.toDomain(perfilEntity)).thenReturn(perfilDomain);
-        when(perfilContratanteMapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
         // Act
-        PerfilContratanteResponseDTO result = usuarioService.obtenerPerfilContratante(usuarioId);
+        PerfilContratante result = usuarioService.obtenerPerfilContratante(usuarioId);
 
         // Assert
         assertNotNull(result);
@@ -440,7 +435,7 @@ class UsuarioServiceImplTest {
         when(perfilRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfil));
 
         // Act
-        usuarioService.editarPerfilTrabajador(usuarioId, request);
+        usuarioService.editarPerfilTrabajador(usuarioId, request.telefono(), request.zonaCobertura());
 
         // Assert
         assertEquals("3001234567", usuario.getTelefono());
@@ -465,7 +460,7 @@ class UsuarioServiceImplTest {
 
         // Act & Assert
         assertThrows(EstadoInvalidoException.class, () -> {
-            usuarioService.editarPerfilTrabajador(usuarioId, request);
+            usuarioService.editarPerfilTrabajador(usuarioId, request.telefono(), request.zonaCobertura());
         });
         verify(usuarioRepository, never()).save(any());
         verify(perfilRepository, never()).save(any());
@@ -492,7 +487,7 @@ class UsuarioServiceImplTest {
         when(perfilContratanteRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.of(perfil));
 
         // Act
-        usuarioService.editarPerfilContratante(usuarioId, request);
+        usuarioService.editarPerfilContratante(usuarioId, request.telefono(), request.descripcion());
 
         // Assert
         assertEquals("3119876543", usuario.getTelefono());
@@ -513,7 +508,7 @@ class UsuarioServiceImplTest {
 
         // Act & Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> {
-            usuarioService.editarPerfilContratante(usuarioId, request);
+            usuarioService.editarPerfilContratante(usuarioId, request.telefono(), request.descripcion());
         });
         verify(usuarioRepository, never()).save(any());
     }
