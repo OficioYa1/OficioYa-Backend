@@ -13,6 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.mapper.SolicitudEntityMapper;
+import com.oficioya.mapper.UsuarioEntityMapper;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.validator.ISolicitudValidator;
 import com.oficioya.persistence.entity.SolicitudEntity;
 
 @Slf4j
@@ -24,6 +27,8 @@ public class SolicitudServiceImpl implements ISolicitudService {
     private final UsuarioRepository usuarioRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final SolicitudEntityMapper mapper;
+    private final UsuarioEntityMapper usuarioMapper;
+    private final ISolicitudValidator solicitudValidator;
 
     private Solicitud recuperarDominio(Long solicitudId) {
         SolicitudEntity entity = solicitudRepository.findById(solicitudId)
@@ -39,8 +44,11 @@ public class SolicitudServiceImpl implements ISolicitudService {
     @Transactional(rollbackFor = Exception.class)
     public Solicitud crearSolicitud(Solicitud solicitud, Long contratanteId) {
         log.info("Creando nueva solicitud para el contratante ID: {}", contratanteId);
+        solicitudValidator.validarContratante(contratanteId);
+        solicitud.setContratante(usuarioMapper.toDomain(
+                usuarioRepository.findById(contratanteId)
+                        .orElseThrow(() -> new UsuarioNoEncontradoException("Contratante no encontrado"))));
         solicitud.setEstadoEnum(com.oficioya.persistence.entity.EstadoSolicitud.CREADA);
-        // La entidad Usuario contratante deberia setearse en un caso real
         SolicitudEntity entity = mapper.toEntity(solicitud);
         entity = solicitudRepository.save(entity);
         return mapper.toDomain(entity);

@@ -22,6 +22,8 @@ public class UsuarioController implements UsuarioApi {
 
     private final IUsuarioService usuarioService;
     private final UsuarioDTOMapper dtoMapper;
+    private final com.oficioya.mapper.PerfilTrabajadorMapper perfilTrabajadorMapper;
+    private final com.oficioya.mapper.PerfilContratanteMapper perfilContratanteMapper;
 
     @Override
     @PostMapping("/registro")
@@ -45,14 +47,14 @@ public class UsuarioController implements UsuarioApi {
     @Override
     @GetMapping("/{id}/perfil-trabajador")
     public ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilTrabajador(@PathVariable Long id) {
-        PerfilTrabajadorResponseDTO response = usuarioService.obtenerPerfilTrabajador(id);
+        PerfilTrabajadorResponseDTO response = perfilTrabajadorMapper.toResponse(usuarioService.obtenerPerfilTrabajador(id));
         return ResponseEntity.ok(response);
     }
 
     @Override
     @GetMapping("/{id}/perfil-contratante")
     public ResponseEntity<PerfilContratanteResponseDTO> obtenerPerfilContratante(@PathVariable Long id) {
-        PerfilContratanteResponseDTO perfil = usuarioService.obtenerPerfilContratante(id);
+        PerfilContratanteResponseDTO perfil = perfilContratanteMapper.toResponse(usuarioService.obtenerPerfilContratante(id));
         return ResponseEntity.ok(perfil);
     }
 
@@ -62,7 +64,7 @@ public class UsuarioController implements UsuarioApi {
             @PathVariable Long id, 
             @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request) {
         
-        usuarioService.editarPerfilTrabajador(id, request);
+        usuarioService.editarPerfilTrabajador(id, request.telefono(), request.zonaCobertura());
         return ResponseEntity.ok(new MensajeResponseDTO("Perfil de trabajador actualizado exitosamente"));
     }
 
@@ -72,7 +74,7 @@ public class UsuarioController implements UsuarioApi {
             @PathVariable Long id, 
             @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request) {
         
-        usuarioService.editarPerfilContratante(id, request);
+        usuarioService.editarPerfilContratante(id, request.telefono(), request.descripcion());
         return ResponseEntity.ok(new MensajeResponseDTO("Perfil de contratante actualizado exitosamente"));
     }
 
