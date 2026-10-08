@@ -27,30 +27,25 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(PerfilTrabajadorController.class)
 class PerfilTrabajadorControllerTest {
 
+    @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private IPerfilTrabajadorService perfilService;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private PerfilTrabajadorMapper mapper;
 
-    @InjectMocks
-    private PerfilTrabajadorController controller;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-    private ObjectMapper objectMapper;
     private PerfilTrabajador perfilDomain;
     private PerfilTrabajadorResponseDTO responseDTO;
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-        objectMapper = new ObjectMapper();
 
         perfilDomain = new PerfilTrabajador();
         perfilDomain.setId(1L);

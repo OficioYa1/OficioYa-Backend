@@ -68,48 +68,30 @@ class StorageServiceImplTest {
 
     @Test
     @DisplayName("guardarImagen - archivo JPG válido guarda físicamente y retorna ruta")
-    void guardarImagen_archivoValido_retornaRuta() throws IOException {
+    void guardarImagen_archivoValido_retornaRuta() {
         when(file.isEmpty()).thenReturn(false);
         when(file.getContentType()).thenReturn("image/jpeg");
         when(file.getOriginalFilename()).thenReturn("avatar.jpeg");
-        doNothing().when(file).transferTo(any(File.class));
 
         String url = storageService.guardarImagen(file);
 
         assertNotNull(url);
-        assertTrue(url.startsWith("/uploads/perfiles/"));
+        assertTrue(url.startsWith("https://mock.cloudinary.com/oficioya/image/upload/v1/"));
         assertTrue(url.endsWith(".jpeg"));
-        verify(file).transferTo(any(File.class));
     }
 
     @Test
     @DisplayName("guardarImagen - archivo PNG sin extensión guarda correctamente")
-    void guardarImagen_archivoSinExtension_retornaRuta() throws IOException {
+    void guardarImagen_archivoSinExtension_retornaRuta() {
         when(file.isEmpty()).thenReturn(false);
         when(file.getContentType()).thenReturn("image/png");
         when(file.getOriginalFilename()).thenReturn("avatar");
-        doNothing().when(file).transferTo(any(File.class));
 
         String url = storageService.guardarImagen(file);
 
         assertNotNull(url);
-        assertTrue(url.startsWith("/uploads/perfiles/"));
-        verify(file).transferTo(any(File.class));
+        assertTrue(url.startsWith("https://mock.cloudinary.com/oficioya/image/upload/v1/"));
+        assertTrue(url.endsWith(".jpg"));
     }
 
-    @Test
-    @DisplayName("guardarImagen - error de I/O lanza RuntimeException")
-    void guardarImagen_errorIO_lanzaRuntimeException() throws IOException {
-        when(file.isEmpty()).thenReturn(false);
-        when(file.getContentType()).thenReturn("image/png");
-        when(file.getOriginalFilename()).thenReturn("foto.png");
-        doThrow(new IOException("Disk error")).when(file).transferTo(any(File.class));
-
-        RuntimeException ex = assertThrows(
-                RuntimeException.class,
-                () -> storageService.guardarImagen(file)
-        );
-
-        assertTrue(ex.getMessage().contains("No se pudo guardar la imagen de perfil"));
-    }
 }

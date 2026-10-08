@@ -23,29 +23,20 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(BusquedaController.class)
 class BusquedaControllerTest {
 
+    @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private IBusquedaTrabajadorService busquedaService;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private PerfilTrabajadorMapper mapper;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private BusquedaMapper busquedaMapper;
-
-    @InjectMocks
-    private BusquedaController controller;
-
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-    }
 
     @Test
     @DisplayName("GET /api/v1/busqueda/trabajadores - exitoso retorna lista 200 OK")

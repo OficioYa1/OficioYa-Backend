@@ -34,34 +34,28 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(UsuarioController.class)
 class UsuarioControllerTest {
 
+    @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private IUsuarioService usuarioService;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private UsuarioDTOMapper dtoMapper;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private PerfilTrabajadorMapper perfilTrabajadorMapper;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private PerfilContratanteMapper perfilContratanteMapper;
 
-    @InjectMocks
-    private UsuarioController usuarioController;
-
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(usuarioController)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test
