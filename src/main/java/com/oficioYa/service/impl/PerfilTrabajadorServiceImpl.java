@@ -14,6 +14,8 @@ import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
 import com.oficioya.persistence.entity.UsuarioEntity;
 import com.oficioya.repository.PerfilTrabajadorRepository;
 import com.oficioya.repository.UsuarioRepository;
+import com.oficioya.repository.PortafolioMongoRepository;
+import com.oficioya.persistence.document.PortafolioMongoDocument;
 import com.oficioya.service.IPerfilTrabajadorService;
 import com.oficioya.validator.IPerfilTrabajadorValidator;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +37,7 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
     private final UsuarioRepository usuarioRepository;
     private final IPerfilTrabajadorValidator validator;
     private final PerfilTrabajadorEntityMapper entityMapper;
+    private final PortafolioMongoRepository portafolioMongoRepository;
 
     @Override
     @Transactional
@@ -210,11 +213,31 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
                 .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
         
         if (fotos != null) {
+            // Actualizamos la entidad de Postgres
             perfil.getFotosPortafolio().clear();
             perfil.getFotosPortafolio().addAll(fotos);
         }
         
+        // 1. Validamos y guardamos en PostgreSQL (gestionado por @Transactional)
         PerfilTrabajadorEntity actualizado = perfilRepository.save(perfil);
+        
+        // 2. Transacción distribuida manual hacia MongoDB
+        // Buscamos si ya existe un portafolio para este perfil
+        PortafolioMongoDocument portafolioDocument = portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)
+                .orElse(PortafolioMongoDocument.builder().perfilTrabajadorId(perfilId).build());
+        
+        // Actualizamos los datos
+        portafolioDocument.setFotosUrl(fotos);
+
+        try {
+            // Guardamos en Mongo
+            portafolioMongoRepository.save(portafolioDocument);
+        } catch (Exception e) {
+            log.error("Error al guardar en MongoDB el portafolio del perfil {}: {}", perfilId, e.getMessage());
+            // Si MongoDB falla, lanzamos una RuntimeException para que Spring @Transactional
+            // intercepte y haga un ROLLBACK de los cambios hechos en PostgreSQL.
+            throw new RuntimeException("Fallo al guardar en la base de datos de documentos. Revirtiendo transacción general.", e);
+        }
         
         return entityMapper.toDomain(actualizado);
     }
