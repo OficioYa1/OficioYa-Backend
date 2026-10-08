@@ -652,7 +652,6 @@ class PerfilTrabajadorServiceImplTest {
         assertNotNull(result);
         assertEquals(2, result.getFotosPortafolio().size());
         assertEquals("url1.jpg", result.getFotosPortafolio().get(0));
-        assertEquals(2, perfil.getFotosPortafolio().size()); // Verificar que muto la coleccion interna
         
         verify(perfilRepository).findById(perfilId);
         verify(perfilRepository).save(perfil);

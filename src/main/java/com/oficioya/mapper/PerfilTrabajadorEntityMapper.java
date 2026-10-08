@@ -11,6 +11,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {UsuarioEntityMapper.class, OficioEntityMapper.class})
 public interface PerfilTrabajadorEntityMapper {
+    @Mapping(target = "fotosPortafolio", ignore = true)
     PerfilTrabajador toDomain(PerfilTrabajadorEntity entity);
     
     PerfilTrabajadorEntity toEntity(PerfilTrabajador domain);
