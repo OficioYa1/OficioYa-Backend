@@ -24,28 +24,22 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
+@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(SolicitudController.class)
 class SolicitudControllerTest {
 
+    @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private ISolicitudService solicitudService;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private SolicitudMapper mapper;
 
-    @InjectMocks
-    private SolicitudController solicitudController;
-
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(solicitudController)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-        objectMapper = new ObjectMapper();
     }
 
     @Test

@@ -19,23 +19,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(MockitoExtension.class)
+@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(OficioController.class)
 class OficioControllerTest {
 
+    @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
     private IOficioService oficioService;
-
-    @InjectMocks
-    private OficioController controller;
-
-    @BeforeEach
-    void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(controller)
-                .setControllerAdvice(new GlobalExceptionHandler())
-                .build();
-    }
 
     @Test
     @DisplayName("GET /api/v1/oficios - exitoso retorna lista de oficios 200 OK")
