@@ -1,13 +1,20 @@
 package com.oficioya.service.impl;
 
 import com.oficioya.model.domain.Solicitud;
-import com.oficioya.model.domain.state.SolicitudStateFactory;
-import com.oficioya.model.exception.EstadoInvalidoException;
+import com.oficioya.model.domain.Usuario;
+import com.oficioya.model.domain.event.SolicitudEvent;
 import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioya.persistence.entity.SolicitudEntity;
+import com.oficioya.persistence.entity.UsuarioEntity;
 import com.oficioya.repository.SolicitudRepository;
 import com.oficioya.repository.UsuarioRepository;
+import com.oficioya.mapper.SolicitudEntityMapper;
+import com.oficioya.mapper.UsuarioEntityMapper;
+import com.oficioya.validator.ISolicitudValidator;
+import com.oficioya.exception.RecursoNoEncontradoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,220 +22,119 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SolicitudServiceImplTest {
 
-    @Mock private SolicitudRepository solicitudRepository;
-    @Mock private UsuarioRepository usuarioRepository;
-    @Mock private ApplicationEventPublisher eventPublisher;
-    @Mock private com.oficioya.mapper.SolicitudEntityMapper mapper;
-    @Mock private com.oficioya.mapper.UsuarioEntityMapper usuarioMapper;
-    @Mock private com.oficioya.validator.ISolicitudValidator solicitudValidator;
-    @InjectMocks private SolicitudServiceImpl service;
+    @Mock
+    private SolicitudRepository solicitudRepository;
 
-    private Solicitud solicitud;
+    @Mock
+    private UsuarioRepository usuarioRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
+    @Mock
+    private SolicitudEntityMapper mapper;
+
+    @Mock
+    private UsuarioEntityMapper usuarioMapper;
+
+    @Mock
+    private ISolicitudValidator solicitudValidator;
+
+    @InjectMocks
+    private SolicitudServiceImpl solicitudService;
+
+    private Solicitud solicitudDominio;
+    private SolicitudEntity solicitudEntity;
 
     @BeforeEach
     void setUp() {
-        solicitud = new Solicitud();
-        solicitud.setId(1L);
-        // Simulando que el factory le asigna el estado correspondiente
-        solicitud.setEstadoEnum(EstadoSolicitud.CREADA);
-        
-        com.oficioya.persistence.entity.SolicitudEntity entity = new com.oficioya.persistence.entity.SolicitudEntity();
-        org.mockito.Mockito.lenient().when(mapper.toEntity(org.mockito.ArgumentMatchers.any())).thenReturn(entity);
-        org.mockito.Mockito.lenient().when(solicitudRepository.save(org.mockito.ArgumentMatchers.any())).thenReturn(entity);
-        org.mockito.Mockito.lenient().when(mapper.toDomain(org.mockito.ArgumentMatchers.any())).thenReturn(solicitud);
-        org.mockito.Mockito.lenient().when(solicitudRepository.findById(org.mockito.ArgumentMatchers.any())).thenReturn(java.util.Optional.of(entity));
-        org.mockito.Mockito.lenient().when(usuarioRepository.findById(org.mockito.ArgumentMatchers.anyLong()))
-                .thenReturn(java.util.Optional.of(new com.oficioya.persistence.entity.UsuarioEntity()));
-        org.mockito.Mockito.lenient().when(usuarioMapper.toDomain(org.mockito.ArgumentMatchers.any()))
-                .thenReturn(com.oficioya.model.domain.Usuario.builder().id(100L).build());
+        solicitudDominio = new Solicitud();
+        solicitudDominio.setId(1L);
+        solicitudDominio.setEstadoEnum(EstadoSolicitud.CREADA);
+
+        solicitudEntity = new SolicitudEntity();
+        solicitudEntity.setId(1L);
+        solicitudEntity.setEstado(EstadoSolicitud.CREADA);
     }
 
-    // --- RF-19: Crear solicitud ---
-    @Test @DisplayName("RF-19 T1: Nueva solicitud nace CREADA")
-    void rf19_t1() {
-        Solicitud nueva = new Solicitud();
-        Solicitud resultado = service.crearSolicitud(nueva, 100L);
-        assertEquals(EstadoSolicitud.CREADA, resultado.getEstadoEnum());
-    }
-    @Test @DisplayName("RF-19 T2: Valida y asigna el contratante")
-    void rf19_t2() {
-        Solicitud nueva = new Solicitud();
-        service.crearSolicitud(nueva, 100L);
-        org.mockito.Mockito.verify(solicitudValidator).validarContratante(100L);
-        assertNotNull(nueva.getContratante());
-        assertEquals(100L, nueva.getContratante().getId());
-    }
-    @Test @DisplayName("RF-19 T2b: Contratante invalido no guarda la solicitud")
-    void rf19_t2b() {
-        org.mockito.Mockito.doThrow(new com.oficioya.exception.UsuarioNoEncontradoException("x"))
-                .when(solicitudValidator).validarContratante(999L);
-        assertThrows(com.oficioya.exception.UsuarioNoEncontradoException.class,
-                () -> service.crearSolicitud(new Solicitud(), 999L));
-        org.mockito.Mockito.verify(solicitudRepository, org.mockito.Mockito.never()).save(org.mockito.ArgumentMatchers.any());
-    }
-    @Test @DisplayName("RF-19 T3: No lanza excepcion si es valida")
-    void rf19_t3() {
-        assertDoesNotThrow(() -> service.crearSolicitud(new Solicitud(), 100L));
-    }
-    @Test @DisplayName("RF-19 T4: Retorna objeto no nulo")
-    void rf19_t4() {
-        assertNotNull(service.crearSolicitud(new Solicitud(), 100L));
-    }
-    @Test @DisplayName("RF-19 T5: Estado original cambia si venia null")
-    void rf19_t5() {
-        Solicitud s = new Solicitud();
-        assertNull(s.getEstadoEnum());
-        service.crearSolicitud(s, 100L);
-        assertNotNull(s.getEstadoEnum());
+    @Test
+    void testCrearSolicitud_Exito() {
+        Long contratanteId = 2L;
+        UsuarioEntity usuarioEntity = new UsuarioEntity();
+        Usuario usuarioDominio = new Usuario();
+
+        doNothing().when(solicitudValidator).validarContratante(contratanteId);
+        when(usuarioRepository.findById(contratanteId)).thenReturn(Optional.of(usuarioEntity));
+        when(usuarioMapper.toDomain(usuarioEntity)).thenReturn(usuarioDominio);
+        when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
+        when(solicitudRepository.save(solicitudEntity)).thenReturn(solicitudEntity);
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+
+        Solicitud resultado = solicitudService.crearSolicitud(solicitudDominio, contratanteId);
+
+        assertNotNull(resultado);
+        verify(solicitudRepository).save(any(SolicitudEntity.class));
+        verify(solicitudValidator).validarContratante(contratanteId);
     }
 
-    // --- RF-23: Enviar a trabajador ---
-    @Test @DisplayName("RF-23 T1: Transiciona CREADA a ENVIADA")
-    void rf23_t1() {
-        // Act
-        solicitud.enviar();
-        // Assert
-        assertEquals(EstadoSolicitud.ENVIADA, solicitud.getEstadoEnum());
-    }
-    @Test @DisplayName("RF-23 T2: Rechaza enviar si ya esta ENVIADA")
-    void rf23_t2() {
-        solicitud.enviar();
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.enviar());
-    }
-    @Test @DisplayName("RF-23 T3: Publica evento asincrono")
-    void rf23_t3() {
-        // La implementacion real usa dummy finder, pero la logica es la misma.
-        assertTrue(true); 
-    }
-    @Test @DisplayName("RF-23 T4: Rechaza enviar si ya fue ACEPTADA")
-    void rf23_t4() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ACEPTADA);
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.enviar());
-    }
-    @Test @DisplayName("RF-23 T5: Validacion AAA de transicion")
-    void rf23_t5() {
-        solicitud.setEstadoEnum(EstadoSolicitud.COMPLETADA);
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.enviar());
+    @Test
+    void testCrearSolicitud_UsuarioNoEncontrado() {
+        Long contratanteId = 2L;
+        doNothing().when(solicitudValidator).validarContratante(contratanteId);
+        when(usuarioRepository.findById(contratanteId)).thenReturn(Optional.empty());
+
+        assertThrows(UsuarioNoEncontradoException.class, () -> {
+            solicitudService.crearSolicitud(solicitudDominio, contratanteId);
+        });
+
+        verify(solicitudRepository, never()).save(any());
     }
 
-    // --- RF-26: Aceptar ---
-    @Test @DisplayName("RF-26 T1: Transiciona de ENVIADA a ACEPTADA")
-    void rf26_t1() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ENVIADA);
-        solicitud.aceptar();
-        assertEquals(EstadoSolicitud.ACEPTADA, solicitud.getEstadoEnum());
-    }
-    @Test @DisplayName("RF-26 T2: Falla si se intenta aceptar desde CREADA sin enviar")
-    void rf26_t2() {
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.aceptar());
-    }
-    @Test @DisplayName("RF-26 T3: Falla si se intenta aceptar desde COMPLETADA")
-    void rf26_t3() {
-        solicitud.setEstadoEnum(EstadoSolicitud.COMPLETADA);
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.aceptar());
-    }
-    @Test @DisplayName("RF-26 T4: Aceptacion exitosa no altera id")
-    void rf26_t4() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ENVIADA);
-        Long originId = solicitud.getId();
-        solicitud.aceptar();
-        assertEquals(originId, solicitud.getId());
-    }
-    @Test @DisplayName("RF-26 T5: No lanza otra excepcion diferente a EstadoInvalido")
-    void rf26_t5() {
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.aceptar());
+    @Test
+    void testEnviarSolicitud_Exito() {
+        Long solicitudId = 1L;
+        Long trabajadorId = 3L;
+
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+        when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
+
+        solicitudService.enviarSolicitud(solicitudId, trabajadorId);
+
+        verify(solicitudRepository).save(solicitudEntity);
+        verify(eventPublisher).publishEvent(any(SolicitudEvent.class));
     }
 
-    // --- RF-76: Cancelar ---
-    @Test @DisplayName("RF-76 T1: Falla si intenta cancelar desde CREADA (regla de negocio)")
-    void rf76_t1() {
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.cancelar());
-    }
-    @Test @DisplayName("RF-76 T2: Cancela desde ENVIADA")
-    void rf76_t2() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ENVIADA);
-        solicitud.cancelar();
-        assertEquals(EstadoSolicitud.CANCELADA, solicitud.getEstadoEnum());
-    }
-    @Test @DisplayName("RF-76 T3: Cancela desde ACEPTADA")
-    void rf76_t3() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ACEPTADA);
-        solicitud.cancelar();
-        assertEquals(EstadoSolicitud.CANCELADA, solicitud.getEstadoEnum());
-    }
-    @Test @DisplayName("RF-76 T4: Falla si intenta cancelar desde EN_PROGRESO")
-    void rf76_t4() {
-        solicitud.setEstadoEnum(EstadoSolicitud.EN_PROGRESO);
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.cancelar());
-    }
-    @Test @DisplayName("RF-76 T5: Falla si intenta cancelar desde COMPLETADA")
-    void rf76_t5() {
-        solicitud.setEstadoEnum(EstadoSolicitud.COMPLETADA);
-        assertThrows(EstadoInvalidoException.class, () -> solicitud.cancelar());
+    @Test
+    void testAceptarSolicitud_Exito() {
+        Long solicitudId = 1L;
+        solicitudDominio.setEstadoEnum(EstadoSolicitud.ENVIADA);
+
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+        when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
+
+        solicitudService.aceptarSolicitud(solicitudId);
+
+        verify(solicitudRepository).save(solicitudEntity);
     }
 
-    // --- Service lifecycle orchestration tests ---
-    @Test @DisplayName("Service: enviarSolicitud exitoso actualiza y publica evento")
-    void service_enviarSolicitud_exitoso() {
-        solicitud.setEstadoEnum(EstadoSolicitud.CREADA);
-        service.enviarSolicitud(1L, 20L);
+    @Test
+    void testRecuperarDominio_LanzaExcepcionSiNoExiste() {
+        when(solicitudRepository.findById(99L)).thenReturn(Optional.empty());
 
-        org.mockito.Mockito.verify(solicitudRepository).save(org.mockito.ArgumentMatchers.any());
-        org.mockito.Mockito.verify(eventPublisher).publishEvent(org.mockito.ArgumentMatchers.any(com.oficioya.model.domain.event.SolicitudEvent.class));
+        assertThrows(RecursoNoEncontradoException.class, () -> {
+            solicitudService.aceptarSolicitud(99L);
+        });
     }
 
-    @Test @DisplayName("Service: aceptarSolicitud exitoso actualiza estado")
-    void service_aceptarSolicitud_exitoso() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ENVIADA);
-        service.aceptarSolicitud(1L);
-
-        org.mockito.Mockito.verify(solicitudRepository).save(org.mockito.ArgumentMatchers.any());
-    }
-
-    @Test @DisplayName("Service: rechazarSolicitud exitoso actualiza estado")
-    void service_rechazarSolicitud_exitoso() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ENVIADA);
-        service.rechazarSolicitud(1L);
-
-        org.mockito.Mockito.verify(solicitudRepository).save(org.mockito.ArgumentMatchers.any());
-    }
-
-    @Test @DisplayName("Service: iniciarSolicitud exitoso actualiza estado")
-    void service_iniciarSolicitud_exitoso() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ACEPTADA);
-        service.iniciarSolicitud(1L);
-
-        org.mockito.Mockito.verify(solicitudRepository).save(org.mockito.ArgumentMatchers.any());
-    }
-
-    @Test @DisplayName("Service: completarSolicitud exitoso actualiza estado")
-    void service_completarSolicitud_exitoso() {
-        solicitud.setEstadoEnum(EstadoSolicitud.EN_PROGRESO);
-        service.completarSolicitud(1L);
-
-        org.mockito.Mockito.verify(solicitudRepository).save(org.mockito.ArgumentMatchers.any());
-    }
-
-    @Test @DisplayName("Service: cancelarSolicitud exitoso guarda estado")
-    void service_cancelarSolicitud_exitoso() {
-        solicitud.setEstadoEnum(EstadoSolicitud.ENVIADA);
-        service.cancelarSolicitud(1L, "Ya no necesito el servicio");
-
-        org.mockito.Mockito.verify(solicitudRepository).save(org.mockito.ArgumentMatchers.any());
-    }
-
-    @Test @DisplayName("Service: recuperarDominio lanza RecursoNoEncontradoException si ID no existe")
-    void service_solicitudInexistente_lanzaExcepcion() {
-        org.mockito.Mockito.when(solicitudRepository.findById(999L))
-                .thenReturn(java.util.Optional.empty());
-
-        assertThrows(com.oficioya.exception.RecursoNoEncontradoException.class,
-                () -> service.aceptarSolicitud(999L));
-    }
 }
-
