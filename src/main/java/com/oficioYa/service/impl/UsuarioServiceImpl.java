@@ -16,18 +16,16 @@ import java.time.LocalDateTime;
 
 import com.oficioya.repository.PerfilTrabajadorRepository;
 import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
-import com.oficioya.mapper.PerfilTrabajadorMapper;
 import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.domain.PerfilContratante;
 import com.oficioya.exception.RecursoNoEncontradoException;
 import com.oficioya.exception.EstadoInvalidoException;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.persistence.entity.RolUsuario;
 import com.oficioya.repository.PerfilContratanteRepository;
 import com.oficioya.mapper.PerfilContratanteEntityMapper;
-import com.oficioya.mapper.PerfilContratanteMapper;
 import com.oficioya.persistence.entity.PerfilContratanteEntity;
-import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
 
 
 @Slf4j
@@ -41,10 +39,8 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private final IUsuarioValidator usuarioValidator;
     private final UsuarioEntityMapper entityMapper;
     private final PerfilTrabajadorEntityMapper perfilEntityMapper;
-    private final PerfilTrabajadorMapper perfilMapper;
     private final PerfilContratanteRepository perfilContratanteRepository;
     private final PerfilContratanteEntityMapper perfilContratanteEntityMapper;
-    private final PerfilContratanteMapper perfilContratanteMapper;
 
 
     @Override
@@ -93,7 +89,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
     }
 
     @Override
-    public PerfilTrabajadorResponseDTO obtenerPerfilTrabajador(Long usuarioId) {
+    public PerfilTrabajador obtenerPerfilTrabajador(Long usuarioId) {
         log.info("Consultando perfil de trabajador para el usuario ID: {}", usuarioId);
 
         UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
@@ -113,12 +109,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
                     return new RecursoNoEncontradoException("Perfil de trabajador no encontrado");
                 });
 
-        return perfilMapper.toResponse(perfilEntityMapper.toDomain(perfilEntity));
+        return perfilEntityMapper.toDomain(perfilEntity);
     }
 
 
     @Override
-    public PerfilContratanteResponseDTO obtenerPerfilContratante(Long usuarioId) {
+    public PerfilContratante obtenerPerfilContratante(Long usuarioId) {
         log.info("Consultando perfil de contratante para el usuario ID: {}", usuarioId);
 
         UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
@@ -138,12 +134,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
                     return new RecursoNoEncontradoException("Perfil de contratante no encontrado");
                 });
 
-        return perfilContratanteMapper.toResponse(perfilContratanteEntityMapper.toDomain(perfilEntity));
+        return perfilContratanteEntityMapper.toDomain(perfilEntity);
     }
 
     @Override
     @Transactional
-    public void editarPerfilTrabajador(Long usuarioId, com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request) {
+    public void editarPerfilTrabajador(Long usuarioId, String telefono, String zonaCobertura) {
         log.info("Editando perfil básico de trabajador para el usuario ID: {}", usuarioId);
 
         UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
@@ -164,11 +160,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 });
 
         // Actualizamos Usuario (teléfono)
-        usuario.setTelefono(request.telefono());
+        usuario.setTelefono(telefono);
         usuarioRepository.save(usuario);
 
         // Actualizamos Perfil (zona de cobertura)
-        perfilEntity.setZonaCobertura(request.zonaCobertura());
+        perfilEntity.setZonaCobertura(zonaCobertura);
         perfilRepository.save(perfilEntity);
 
         log.info("Perfil de trabajador ID {} actualizado exitosamente", usuarioId);
@@ -176,7 +172,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Override
     @Transactional
-    public void editarPerfilContratante(Long usuarioId, com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request) {
+    public void editarPerfilContratante(Long usuarioId, String telefono, String descripcion) {
         log.info("Editando perfil básico de contratante para el usuario ID: {}", usuarioId);
 
         UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
@@ -197,11 +193,11 @@ public class UsuarioServiceImpl implements IUsuarioService {
                 });
 
         // Actualizamos Usuario (teléfono)
-        usuario.setTelefono(request.telefono());
+        usuario.setTelefono(telefono);
         usuarioRepository.save(usuario);
 
         // Actualizamos Perfil (descripción)
-        perfilEntity.setDescripcion(request.descripcion());
+        perfilEntity.setDescripcion(descripcion);
         perfilContratanteRepository.save(perfilEntity);
 
         log.info("Perfil de contratante ID {} actualizado exitosamente", usuarioId);
