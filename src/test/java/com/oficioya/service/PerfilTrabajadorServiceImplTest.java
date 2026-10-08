@@ -16,6 +16,8 @@ import com.oficioya.persistence.entity.FranjaDisponibilidadEmbeddable;
 import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
 import com.oficioya.persistence.entity.UsuarioEntity;
 import com.oficioya.repository.PerfilTrabajadorRepository;
+import com.oficioya.repository.PortafolioMongoRepository;
+import com.oficioya.persistence.document.PortafolioMongoDocument;
 import com.oficioya.repository.UsuarioRepository;
 import com.oficioya.service.impl.PerfilTrabajadorServiceImpl;
 import com.oficioya.validator.IPerfilTrabajadorValidator;
@@ -47,6 +49,7 @@ class PerfilTrabajadorServiceImplTest {
     @Mock private UsuarioRepository usuarioRepository;
     @Mock private IPerfilTrabajadorValidator validator;
     @Mock private PerfilTrabajadorEntityMapper entityMapper;
+    @Mock private PortafolioMongoRepository portafolioMongoRepository;
 
     @InjectMocks private PerfilTrabajadorServiceImpl service;
 
@@ -639,6 +642,8 @@ class PerfilTrabajadorServiceImplTest {
         when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
         when(perfilRepository.save(any(PerfilTrabajadorEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(entityMapper.toDomain(any(PerfilTrabajadorEntity.class))).thenReturn(domain);
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.empty());
+        when(portafolioMongoRepository.save(any(PortafolioMongoDocument.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
         PerfilTrabajador result = service.actualizarPortafolio(perfilId, fotos);
@@ -651,6 +656,7 @@ class PerfilTrabajadorServiceImplTest {
         
         verify(perfilRepository).findById(perfilId);
         verify(perfilRepository).save(perfil);
+        verify(portafolioMongoRepository).save(any(PortafolioMongoDocument.class));
     }
 
     @Test
