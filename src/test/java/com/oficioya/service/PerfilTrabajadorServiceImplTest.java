@@ -690,6 +690,7 @@ class PerfilTrabajadorServiceImplTest {
 
         when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
         when(entityMapper.toDomain(perfil)).thenReturn(domain);
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.empty());
 
         // Act
         PerfilTrabajador result = service.obtenerPerfilPorId(perfilId);
@@ -699,6 +700,34 @@ class PerfilTrabajadorServiceImplTest {
         assertEquals(perfilId, result.getId());
         verify(perfilRepository).findById(perfilId);
         verify(entityMapper).toDomain(perfil);
+        verify(portafolioMongoRepository).findByPerfilTrabajadorId(perfilId);
+    }
+
+    @Test
+    @DisplayName("obtenerPerfilPorId - Con fotos en MongoDB actualiza fotos en dominio")
+    void obtenerPerfilPorId_conFotosEnMongo_retornaFotosMongo() {
+        Long perfilId = 1L;
+        PerfilTrabajadorEntity perfil = new PerfilTrabajadorEntity();
+        perfil.setId(perfilId);
+
+        PerfilTrabajador domain = new PerfilTrabajador();
+        domain.setId(perfilId);
+
+        PortafolioMongoDocument mongoDoc = PortafolioMongoDocument.builder()
+                .perfilTrabajadorId(perfilId)
+                .fotosUrl(List.of("https://mongo.cdn/foto1.jpg", "https://mongo.cdn/foto2.jpg"))
+                .build();
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.of(mongoDoc));
+
+        PerfilTrabajador result = service.obtenerPerfilPorId(perfilId);
+
+        assertNotNull(result);
+        assertEquals(2, result.getFotosPortafolio().size());
+        assertEquals("https://mongo.cdn/foto1.jpg", result.getFotosPortafolio().get(0));
+        verify(portafolioMongoRepository).findByPerfilTrabajadorId(perfilId);
     }
 
     @Test

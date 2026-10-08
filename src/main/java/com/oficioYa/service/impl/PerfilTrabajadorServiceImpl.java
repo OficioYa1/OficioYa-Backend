@@ -249,7 +249,17 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         log.info("Consultando perfil de trabajador por ID: {}", perfilId);
         PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Perfil de trabajador no encontrado con ID: " + perfilId));
-        return entityMapper.toDomain(perfil);
+        PerfilTrabajador domain = entityMapper.toDomain(perfil);
+
+        // Sincronizar fotos de portafolio desde MongoDB
+        portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)
+                .ifPresent(doc -> {
+                    if (doc.getFotosUrl() != null && !doc.getFotosUrl().isEmpty()) {
+                        domain.setFotosPortafolio(doc.getFotosUrl());
+                    }
+                });
+
+        return domain;
     }
 
 }
