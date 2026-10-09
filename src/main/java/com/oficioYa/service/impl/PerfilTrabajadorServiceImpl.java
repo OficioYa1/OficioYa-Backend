@@ -260,9 +260,14 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
     public List<String> obtenerEspecializaciones(Long perfilId, Long oficioId) {
         log.info("Consultando especializaciones para perfil {} y oficio {}", perfilId, oficioId);
         return portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)
-                .map(com.oficioya.persistence.document.PortafolioMongoDocument::getEspecializacionesPorOficioId)
-                .map(map -> map != null ? map.getOrDefault(oficioId.toString(), List.of()) : List.of())
-                .orElse(List.of());
+                .map(doc -> {
+                    var map = doc.getEspecializacionesPorOficioId();
+                    if (map != null && map.containsKey(oficioId.toString())) {
+                        return map.get(oficioId.toString());
+                    }
+                    return java.util.Collections.<String>emptyList();
+                })
+                .orElse(java.util.Collections.emptyList());
     }
 
     @Override

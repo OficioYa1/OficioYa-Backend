@@ -73,6 +73,9 @@ class UsuarioServiceImplTest {
     @Mock
     private IStorageService storageService;
 
+    @Mock
+    private IReferidoService referidoService;
+
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
 
@@ -103,6 +106,8 @@ class UsuarioServiceImplTest {
                 .fechaRegistro(LocalDateTime.now())
                 .activo(true)
                 .build();
+                
+        org.springframework.test.util.ReflectionTestUtils.setField(usuarioService, "referidoService", referidoService);
     }
 
     // ══════════════════════════════════════════════════════════════════

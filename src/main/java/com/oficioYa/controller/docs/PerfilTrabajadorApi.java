@@ -8,6 +8,7 @@ import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
 import com.oficioya.model.dto.request.TarifaRequestDTO;
 import com.oficioya.model.dto.request.ZonaCoberturaRequestDTO;
 import com.oficioya.model.dto.response.ErrorResponseDTO;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
 import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Tag(name = "Perfil del Trabajador", description = "Configuración operativa del perfil de un trabajador (zona, tarifa, disponibilidad, pagos)")
 public interface PerfilTrabajadorApi {

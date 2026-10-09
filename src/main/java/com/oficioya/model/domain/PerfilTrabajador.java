@@ -35,4 +35,10 @@ public class PerfilTrabajador {
     @Builder.Default
     private List<Oficio> oficios = new ArrayList<>();
     
+    // Verificacion de identidad
+    private String documentosIdentidadUrl;
+    private String certificadoAntecedentesUrl;
+    private String fotoPerfilVerificadaUrl;
+    @Builder.Default
+    private EstadoVerificacion estadoVerificacion = EstadoVerificacion.NO_VERIFICADO;
 }

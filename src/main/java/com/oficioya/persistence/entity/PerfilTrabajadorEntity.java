@@ -104,5 +104,20 @@ public class PerfilTrabajadorEntity {
     )
     private List<OficioEntity> oficios = new ArrayList<>();
 
+    // --- Verificacion de Identidad (RF-40 a RF-43) ---
+
+    @Column(name = "documentos_identidad_url")
+    private String documentosIdentidadUrl;
+
+    @Column(name = "certificado_antecedentes_url")
+    private String certificadoAntecedentesUrl;
+
+    @Column(name = "foto_perfil_verificada_url")
+    private String fotoPerfilVerificadaUrl;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado_verificacion", nullable = false)
+    private com.oficioya.model.domain.EstadoVerificacion estadoVerificacion = com.oficioya.model.domain.EstadoVerificacion.NO_VERIFICADO;
 
 }
