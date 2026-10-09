@@ -92,4 +92,10 @@ public class UsuarioController implements UsuarioApi {
         usuarioService.actualizarFotoPerfil(id, file);
         return ResponseEntity.ok(new MensajeResponseDTO("Foto de perfil actualizada exitosamente"));
     }
+
+    @Override
+    public ResponseEntity<MensajeResponseDTO> recuperarCuenta(@RequestParam("correo") String correo) {
+        usuarioService.recuperarCuenta(correo);
+        return ResponseEntity.ok(new MensajeResponseDTO("Si el correo existe, recibirá un enlace de recuperación pronto."));
+    }
 }

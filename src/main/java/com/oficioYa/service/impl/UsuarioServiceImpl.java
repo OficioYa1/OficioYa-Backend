@@ -251,4 +251,24 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         log.info("Foto de perfil actualizada exitosamente para usuario ID: {}", usuarioId);
     }
+
+    @Override
+    public void recuperarCuenta(String correo) {
+        log.info("Iniciando recuperación de cuenta para el correo: {}", correo);
+
+        UsuarioEntity usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> {
+                    log.error("Correo {} no encontrado para recuperación de cuenta", correo);
+                    return new UsuarioNoEncontradoException("No existe ninguna cuenta asociada a este correo");
+                });
+
+        if (!usuario.isActivo()) {
+            log.error("La cuenta asociada al correo {} está inactiva", correo);
+            throw new EstadoInvalidoException("La cuenta se encuentra inactiva, contacte a soporte");
+        }
+
+        // Lógica simulada de envío de correo/SMS
+        log.info("Simulando envío de enlace de recuperación al correo: {}", correo);
+        // TODO: Integrar con servicio real de envío de correos (ej. SendGrid, JavaMailSender) en el futuro
+    }
 }
