@@ -24,4 +24,8 @@ public class PerfilTrabajadorResponseDTO {
     private Boolean disponibleAhora;
     @Schema(description = "Fotos del portafolio de trabajo del usuario")
     private List<String> fotosPortafolio;
+    private String documentosIdentidadUrl;
+    private String certificadoAntecedentesUrl;
+    private String fotoPerfilVerificadaUrl;
+    private com.oficioya.model.domain.EstadoVerificacion estadoVerificacion;
 }
