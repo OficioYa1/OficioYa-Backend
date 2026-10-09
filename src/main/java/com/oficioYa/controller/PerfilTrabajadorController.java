@@ -10,6 +10,7 @@ import com.oficioya.model.dto.request.MetodosPagoRequestDTO;
 import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
 import com.oficioya.model.dto.request.TarifaRequestDTO;
 import com.oficioya.model.dto.request.ZonaCoberturaRequestDTO;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
 import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
 import com.oficioya.service.IPerfilTrabajadorService;
 import jakarta.validation.Valid;
