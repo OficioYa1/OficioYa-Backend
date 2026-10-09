@@ -35,5 +35,10 @@ public interface IUsuarioService {
      * Sube y actualiza la foto de perfil del usuario (RF-59).
      */
     void actualizarFotoPerfil(Long usuarioId, org.springframework.web.multipart.MultipartFile archivo);
+
+    /**
+     * Inicia el flujo de recuperación de cuenta para un usuario (RF-75).
+     */
+    void recuperarCuenta(String correo);
 }
 
