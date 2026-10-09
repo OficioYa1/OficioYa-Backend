@@ -256,4 +256,32 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         return domain;
     }
 
+    @Override
+    public List<String> obtenerEspecializaciones(Long perfilId, Long oficioId) {
+        log.info("Consultando especializaciones para perfil {} y oficio {}", perfilId, oficioId);
+        return portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)
+                .map(com.oficioya.persistence.document.PortafolioMongoDocument::getEspecializacionesPorOficioId)
+                .map(map -> map != null ? map.getOrDefault(oficioId.toString(), List.of()) : List.of())
+                .orElse(List.of());
+    }
+
+    @Override
+    public PerfilTrabajador actualizarEspecializaciones(Long perfilId, Long oficioId, List<String> especializaciones) {
+        log.info("Actualizando especializaciones para perfil {} y oficio {}", perfilId, oficioId);
+        
+        PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Perfil no encontrado"));
+
+        com.oficioya.persistence.document.PortafolioMongoDocument portafolio = portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)
+                .orElse(com.oficioya.persistence.document.PortafolioMongoDocument.builder().perfilTrabajadorId(perfilId).build());
+
+        if (portafolio.getEspecializacionesPorOficioId() == null) {
+            portafolio.setEspecializacionesPorOficioId(new java.util.HashMap<>());
+        }
+        
+        portafolio.getEspecializacionesPorOficioId().put(oficioId.toString(), especializaciones);
+        portafolioMongoRepository.save(portafolio);
+        
+        return entityMapper.toDomain(perfil);
+    }
 }

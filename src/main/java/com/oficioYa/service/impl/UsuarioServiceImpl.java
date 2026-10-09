@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDateTime;
 
@@ -42,6 +44,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private final PerfilContratanteRepository perfilContratanteRepository;
     private final PerfilContratanteEntityMapper perfilContratanteEntityMapper;
 
+    @Autowired
+    @Lazy
+    private com.oficioya.service.IReferidoService referidoService;
+
 
     @Override
     @Transactional
@@ -69,6 +75,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         log.info("Usuario registrado exitosamente: id={}, correo={}", guardada.getId(), guardada.getCorreo());
 
+
+        // OFY-69: Procesar si fue invitado por un referente para contar referidos e insignias
+        referidoService.procesarRegistroReferido(guardada.getCorreo());
 
         return entityMapper.toDomain(guardada);
     }
@@ -250,5 +259,25 @@ public class UsuarioServiceImpl implements IUsuarioService {
         usuarioRepository.save(usuario);
 
         log.info("Foto de perfil actualizada exitosamente para usuario ID: {}", usuarioId);
+    }
+
+    @Override
+    public void recuperarCuenta(String correo) {
+        log.info("Iniciando recuperación de cuenta para el correo: {}", correo);
+
+        UsuarioEntity usuario = usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> {
+                    log.error("Correo {} no encontrado para recuperación de cuenta", correo);
+                    return new UsuarioNoEncontradoException("No existe ninguna cuenta asociada a este correo");
+                });
+
+        if (!usuario.isActivo()) {
+            log.error("La cuenta asociada al correo {} está inactiva", correo);
+            throw new EstadoInvalidoException("La cuenta se encuentra inactiva, contacte a soporte");
+        }
+
+        // Lógica simulada de envío de correo/SMS
+        log.info("Simulando envío de enlace de recuperación al correo: {}", correo);
+        // TODO: Integrar con servicio real de envío de correos (ej. SendGrid, JavaMailSender) en el futuro
     }
 }

@@ -36,5 +36,11 @@ public interface IPerfilTrabajadorService {
     PerfilTrabajador registrarOficiosSecundarios(Long perfilId, List<Long> oficiosIds);
     PerfilTrabajador actualizarDetallesEspecificos(Long perfilId, String detallesEspecificos);
     PerfilTrabajador actualizarPortafolio(Long perfilId, List<String> fotos);
+
+    // OFY-66: Consultar especializaciones registradas del trabajador
+    List<String> obtenerEspecializaciones(Long perfilId, Long oficioId);
+
+    // OFY-67: Editar especializaciones del trabajador
+    PerfilTrabajador actualizarEspecializaciones(Long perfilId, Long oficioId, List<String> especializaciones);
     PerfilTrabajador obtenerPerfilPorId(Long perfilId);
 }

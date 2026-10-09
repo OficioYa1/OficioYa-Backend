@@ -161,4 +161,16 @@ public interface PerfilTrabajadorApi {
     ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilPorId(
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id);
 
+    @Operation(summary = "RF-66 — Consultar especializaciones", description = "Muestra las especializaciones que el trabajador ha registrado para un oficio específico.")
+    @org.springframework.web.bind.annotation.GetMapping("/{id}/oficios/{oficioId}/especializaciones")
+    ResponseEntity<java.util.List<String>> obtenerEspecializaciones(
+            @PathVariable Long id, 
+            @PathVariable Long oficioId);
+
+    @Operation(summary = "RF-67 — Editar especializaciones", description = "Actualiza la lista de especializaciones de un trabajador asociadas a un oficio específico.")
+    @org.springframework.web.bind.annotation.PutMapping("/{id}/oficios/{oficioId}/especializaciones")
+    ResponseEntity<MensajeResponseDTO> actualizarEspecializaciones(
+            @PathVariable Long id, 
+            @PathVariable Long oficioId, 
+            @RequestBody java.util.List<String> especializaciones);
 }

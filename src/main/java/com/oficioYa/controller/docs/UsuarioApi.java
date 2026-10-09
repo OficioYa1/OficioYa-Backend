@@ -100,4 +100,13 @@ public interface UsuarioApi {
     ResponseEntity<MensajeResponseDTO> actualizarFotoPerfil(
             @PathVariable Long id, 
             @org.springframework.web.bind.annotation.RequestParam("file") org.springframework.web.multipart.MultipartFile file);
+
+    @Operation(summary = "RF-75 — Recuperar cuenta", description = "Inicia el flujo de recuperación de contraseña enviando un enlace de recuperación al correo registrado.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Enlace de recuperación enviado exitosamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MensajeResponseDTO.class))),
+            @ApiResponse(responseCode = "404", description = "Correo no encontrado", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class))),
+            @ApiResponse(responseCode = "422", description = "La cuenta se encuentra inactiva", content = @Content(mediaType = "application/json", schema = @Schema(implementation = com.oficioya.model.dto.response.ErrorResponseDTO.class)))
+    })
+    @org.springframework.web.bind.annotation.PostMapping("/recuperar-cuenta")
+    ResponseEntity<MensajeResponseDTO> recuperarCuenta(@org.springframework.web.bind.annotation.RequestParam("correo") String correo);
 }

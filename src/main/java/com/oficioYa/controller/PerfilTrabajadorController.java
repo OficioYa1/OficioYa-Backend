@@ -133,4 +133,21 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
         return ResponseEntity.ok(mapper.toResponse(perfil));
     }
 
+    // PENDIENTE: Agregar @PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE')")
+    @Override
+    public ResponseEntity<java.util.List<String>> obtenerEspecializaciones(
+            @PathVariable Long id, 
+            @PathVariable Long oficioId) {
+        return ResponseEntity.ok(perfilService.obtenerEspecializaciones(id, oficioId));
+    }
+
+    // PENDIENTE: Agregar @PreAuthorize("hasRole('TRABAJADOR')")
+    @Override
+    public ResponseEntity<MensajeResponseDTO> actualizarEspecializaciones(
+            @PathVariable Long id, 
+            @PathVariable Long oficioId, 
+            @RequestBody java.util.List<String> especializaciones) {
+        perfilService.actualizarEspecializaciones(id, oficioId, especializaciones);
+        return ResponseEntity.ok(new MensajeResponseDTO("Especializaciones actualizadas exitosamente"));
+    }
 }
