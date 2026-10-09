@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDateTime;
 
@@ -42,6 +44,10 @@ public class UsuarioServiceImpl implements IUsuarioService {
     private final PerfilContratanteRepository perfilContratanteRepository;
     private final PerfilContratanteEntityMapper perfilContratanteEntityMapper;
 
+    @Autowired
+    @Lazy
+    private com.oficioya.service.IReferidoService referidoService;
+
 
     @Override
     @Transactional
@@ -69,6 +75,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
         log.info("Usuario registrado exitosamente: id={}, correo={}", guardada.getId(), guardada.getCorreo());
 
+
+        // OFY-69: Procesar si fue invitado por un referente para contar referidos e insignias
+        referidoService.procesarRegistroReferido(guardada.getCorreo());
 
         return entityMapper.toDomain(guardada);
     }

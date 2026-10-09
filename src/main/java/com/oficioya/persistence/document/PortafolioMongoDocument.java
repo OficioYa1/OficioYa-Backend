@@ -22,4 +22,7 @@ public class PortafolioMongoDocument {
     private Long perfilTrabajadorId; // Referencia a la BD Postgres
     
     private List<String> fotosUrl;
+    
+    // OFY-66, OFY-67: Especializaciones por Oficio (Llave = oficioId as String)
+    private java.util.Map<String, List<String>> especializacionesPorOficioId;
 }

@@ -59,4 +59,8 @@ public class UsuarioEntity {
     @Column(name = "activo", nullable = false)
     private boolean activo = true;  // RF-58 (eliminar = desactivar)
 
+    @Builder.Default
+    @Column(name = "embajador", nullable = false)
+    private boolean embajador = false; // RF-69 Insignia Referidos
+
 }
