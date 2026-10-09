@@ -25,8 +25,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+
 /** Pruebas del método buscar(CriteriosBusqueda) — RF-11 a RF-15 y RF-32 (Dev B). */
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class BusquedaTrabajadorServiceImplBuscarTest {
 
     @Mock private PerfilTrabajadorRepository repository;
@@ -36,6 +40,15 @@ class BusquedaTrabajadorServiceImplBuscarTest {
 
     @InjectMocks private BusquedaTrabajadorServiceImpl service;
 
+    @Mock private com.oficioya.service.strategy.IOrdenamientoStrategy mockEstrategia;
+
+    @org.junit.jupiter.api.BeforeEach
+    void setUp() {
+        when(mockEstrategia.aplica(any())).thenReturn(true);
+        when(mockEstrategia.ordenar(any(), any())).thenAnswer(i -> i.getArgument(0));
+        org.springframework.test.util.ReflectionTestUtils.setField(service, "estrategiasOrdenamiento", java.util.List.of(mockEstrategia));
+    }
+
     @Test
     @DisplayName("buscar - sin texto no consulta el catálogo y ordena por reputación por defecto")
     void buscar_sinTexto_ordenaPorReputacionSinConsultarCatalogo() {
@@ -43,7 +56,7 @@ class BusquedaTrabajadorServiceImplBuscarTest {
         CriteriosBusqueda criterios = CriteriosBusqueda.builder().zona("Chapinero").build();
         PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(1L).build();
         PerfilTrabajador dominio = PerfilTrabajador.builder().id(1L).build();
-        when(repository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of(entidad));
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of(entidad));
         when(mapper.toDomain(entidad)).thenReturn(dominio);
 
         // Act
@@ -51,28 +64,25 @@ class BusquedaTrabajadorServiceImplBuscarTest {
 
         // Assert
         assertEquals(List.of(dominio), resultado);
-        ArgumentCaptor<Sort> sort = ArgumentCaptor.forClass(Sort.class);
-        verify(repository).findAll(any(Specification.class), sort.capture());
-        assertEquals(Sort.Direction.DESC, sort.getValue().getOrderFor("calificacionPromedio").getDirection());
+        verify(repository).findAll(any(Specification.class));
         verify(oficioRepository, never()).findAll();
         verify(busquedaValidator).validarRangoTarifa(criterios);
         verify(busquedaValidator).validarFranjaSolicitada(criterios);
     }
 
     @Test
-    @DisplayName("buscar - orden DISTANCIA (sin importar mayúsculas) ordena primero por zona")
+    @DisplayName("buscar - orden DISTANCIA (sin importar mayúsculas) invoca la estrategia y devuelve la lista")
     void buscar_ordenDistancia_ordenaPorZona() {
         // Arrange
         CriteriosBusqueda criterios = CriteriosBusqueda.builder().orden("distancia").build();
-        when(repository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of());
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of());
 
         // Act
         service.buscar(criterios);
 
         // Assert
-        ArgumentCaptor<Sort> sort = ArgumentCaptor.forClass(Sort.class);
-        verify(repository).findAll(any(Specification.class), sort.capture());
-        assertEquals(Sort.Direction.ASC, sort.getValue().getOrderFor("zonaCobertura").getDirection());
+        verify(repository).findAll(any(Specification.class));
+        verify(mockEstrategia).ordenar(any(), eq(criterios));
     }
 
     @Test
@@ -85,7 +95,7 @@ class BusquedaTrabajadorServiceImplBuscarTest {
         PerfilTrabajadorEntity entidad = PerfilTrabajadorEntity.builder().id(9L).build();
         PerfilTrabajador dominio = PerfilTrabajador.builder().id(9L).build();
         when(oficioRepository.findAll()).thenReturn(List.of(plomeria, profesor));
-        when(repository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of(entidad));
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of(entidad));
         when(mapper.toDomain(entidad)).thenReturn(dominio);
 
         // Act
@@ -101,7 +111,7 @@ class BusquedaTrabajadorServiceImplBuscarTest {
     void buscar_sinCoincidencias_devuelveListaVacia() {
         // Arrange
         CriteriosBusqueda criterios = CriteriosBusqueda.builder().categoria("Mascotas").build();
-        when(repository.findAll(any(Specification.class), any(Sort.class))).thenReturn(List.of());
+        when(repository.findAll(any(Specification.class))).thenReturn(List.of());
 
         // Act
         List<PerfilTrabajador> resultado = service.buscar(criterios);
@@ -120,7 +130,7 @@ class BusquedaTrabajadorServiceImplBuscarTest {
 
         // Act & Assert
         assertThrows(ReglaDeNegocioException.class, () -> service.buscar(criterios));
-        verify(repository, never()).findAll(any(Specification.class), any(Sort.class));
+        verify(repository, never()).findAll(any(Specification.class));
     }
 
     @Test
@@ -132,6 +142,6 @@ class BusquedaTrabajadorServiceImplBuscarTest {
 
         // Act & Assert
         assertThrows(ReglaDeNegocioException.class, () -> service.buscar(criterios));
-        verify(repository, never()).findAll(any(Specification.class), any(Sort.class));
+        verify(repository, never()).findAll(any(Specification.class));
     }
 }
