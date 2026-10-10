@@ -1,7 +1,7 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.model.domain.EstadoVerificacion;
-import com.oficioYa.service.IVerificacionIdentidadService;
+import com.oficioya.model.domain.EstadoVerificacion;
+import com.oficioya.service.IVerificacionIdentidadService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class VerificacionIdentidadControllerTest {
     @org.springframework.test.context.bean.override.mockito.MockitoBean
-    private com.oficioYa.security.jwt.JwtService jwtService;
+    private com.oficioya.security.jwt.JwtService jwtService;
 
     @Mock
     private IVerificacionIdentidadService verificacionService;

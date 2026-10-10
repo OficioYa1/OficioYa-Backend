@@ -1,6 +1,6 @@
-package com.oficioYa.model.domain;
+package com.oficioya.model.domain;
 
-import com.oficioYa.persistence.entity.RolUsuario;
+import com.oficioya.persistence.entity.RolUsuario;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

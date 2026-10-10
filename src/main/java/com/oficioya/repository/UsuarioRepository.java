@@ -1,6 +1,6 @@
-package com.oficioYa.repository;
+package com.oficioya.repository;
 
-import  com.oficioYa.persistence.entity.UsuarioEntity;
+import  com.oficioya.persistence.entity.UsuarioEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;

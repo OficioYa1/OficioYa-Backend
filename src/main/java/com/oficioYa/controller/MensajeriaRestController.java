@@ -1,9 +1,9 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.controller.docs.MensajeriaRestApi;
-import com.oficioYa.model.dto.request.MensajeChatRequestDTO;
-import com.oficioYa.model.dto.response.MensajeChatResponseDTO;
-import com.oficioYa.service.IMensajeriaRestService;
+import com.oficioya.controller.docs.MensajeriaRestApi;
+import com.oficioya.model.dto.request.MensajeChatRequestDTO;
+import com.oficioya.model.dto.response.MensajeChatResponseDTO;
+import com.oficioya.service.IMensajeriaRestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

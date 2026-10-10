@@ -1,6 +1,6 @@
-package com.oficioYa.model.domain.event;
+package com.oficioya.model.domain.event;
 
-import com.oficioYa.model.domain.Solicitud;
+import com.oficioya.model.domain.Solicitud;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

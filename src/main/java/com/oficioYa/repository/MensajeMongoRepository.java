@@ -1,6 +1,6 @@
-package com.oficioYa.repository;
+package com.oficioya.repository;
 
-import com.oficioYa.persistence.document.MensajeDocument;
+import com.oficioya.persistence.document.MensajeDocument;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

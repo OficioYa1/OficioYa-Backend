@@ -1,9 +1,9 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioYa.model.domain.FranjaDisponibilidad;
-import com.oficioYa.model.domain.MetodoPago;
-import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.model.domain.FranjaDisponibilidad;
+import com.oficioya.model.domain.MetodoPago;
+import com.oficioya.model.domain.PerfilTrabajador;
 
 import java.math.BigDecimal;
 import java.util.List;

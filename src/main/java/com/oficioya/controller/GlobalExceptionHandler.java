@@ -1,18 +1,18 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.exception.CorreoYaRegistradoException;
-import com.oficioYa.exception.EstadoInvalidoException;
-import com.oficioYa.exception.UsuarioNoEncontradoException;
-import com.oficioYa.exception.RecursoNoEncontradoException;
-import com.oficioYa.model.dto.response.ErrorResponseDTO;
+import com.oficioya.exception.CorreoYaRegistradoException;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.exception.RecursoNoEncontradoException;
+import com.oficioya.model.dto.response.ErrorResponseDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.oficioYa.exception.ConflictoException;
-import com.oficioYa.model.exception.ReglaDeNegocioException;
+import com.oficioya.exception.ConflictoException;
+import com.oficioya.model.exception.ReglaDeNegocioException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 

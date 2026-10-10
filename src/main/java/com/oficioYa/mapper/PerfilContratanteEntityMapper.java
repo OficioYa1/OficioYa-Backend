@@ -1,7 +1,7 @@
-package com.oficioYa.mapper;
+package com.oficioya.mapper;
 
-import com.oficioYa.model.domain.PerfilContratante;
-import com.oficioYa.persistence.entity.PerfilContratanteEntity;
+import com.oficioya.model.domain.PerfilContratante;
+import com.oficioya.persistence.entity.PerfilContratanteEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring", uses = {UsuarioEntityMapper.class})

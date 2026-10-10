@@ -1,4 +1,4 @@
-package com.oficioYa.model.dto.request;
+package com.oficioya.model.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -1,9 +1,9 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.model.domain.Usuario;
+import com.oficioya.model.domain.Usuario;
 
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.model.domain.PerfilContratante;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.domain.PerfilContratante;
 
 public interface IUsuarioService {
     Usuario registrarUsuario(Usuario usuario);

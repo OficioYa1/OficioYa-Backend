@@ -1,14 +1,14 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.mapper.PerfilTrabajadorEntityMapper;
-import com.oficioYa.model.domain.CriteriosBusqueda;
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.model.exception.ReglaDeNegocioException;
-import com.oficioYa.persistence.entity.OficioEntity;
-import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioYa.repository.OficioRepository;
-import com.oficioYa.repository.PerfilTrabajadorRepository;
-import com.oficioYa.validator.IBusquedaValidator;
+import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioya.model.domain.CriteriosBusqueda;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.exception.ReglaDeNegocioException;
+import com.oficioya.persistence.entity.OficioEntity;
+import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioya.repository.OficioRepository;
+import com.oficioya.repository.PerfilTrabajadorRepository;
+import com.oficioya.validator.IBusquedaValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +40,7 @@ class BusquedaTrabajadorServiceImplBuscarTest {
 
     @InjectMocks private BusquedaTrabajadorServiceImpl service;
 
-    @Mock private com.oficioYa.service.strategy.IOrdenamientoStrategy mockEstrategia;
+    @Mock private com.oficioya.service.strategy.IOrdenamientoStrategy mockEstrategia;
 
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
