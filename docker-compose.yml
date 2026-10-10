@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Base de datos Relacional (PostgreSQL) para entidades core
+  postgres:
+    image: postgres:15-alpine
+    container_name: oficioya-postgres
+    environment:
+      POSTGRES_DB: oficioyadb
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - oficioya-network
+
+  # Base de datos NoSQL (MongoDB) para historial o datos no estructurados
+  mongodb:
+    image: mongo:6-jammy
+    container_name: oficioya-mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+      MONGO_INITDB_DATABASE: oficioyadb_nosql
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - oficioya-network
+
+  # Backend Application (Spring Boot)
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oficioya-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/oficioyadb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=rootpassword
+      - SPRING_DATA_MONGODB_URI=mongodb://root:rootpassword@mongodb:27017/oficioyadb_nosql?authSource=admin
+    depends_on:
+      - postgres
+      - mongodb
+    networks:
+      - oficioya-network
+
+volumes:
+  postgres_data:
+  mongodb_data:
+
+networks:
+  oficioya-network:
+    driver: bridge
