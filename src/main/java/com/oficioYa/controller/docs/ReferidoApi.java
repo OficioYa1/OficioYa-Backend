@@ -1,6 +1,6 @@
-package com.oficioya.controller.docs;
+package com.oficioYa.controller.docs;
 
-import com.oficioya.model.dto.response.MensajeResponseDTO;
+import com.oficioYa.model.dto.response.MensajeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;

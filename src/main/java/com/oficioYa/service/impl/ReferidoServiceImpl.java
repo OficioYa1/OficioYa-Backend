@@ -1,12 +1,12 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.exception.EstadoInvalidoException;
-import com.oficioya.exception.UsuarioNoEncontradoException;
-import com.oficioya.persistence.entity.ReferidoEntity;
-import com.oficioya.persistence.entity.UsuarioEntity;
-import com.oficioya.repository.ReferidoRepository;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.service.IReferidoService;
+import com.oficioYa.exception.EstadoInvalidoException;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.persistence.entity.ReferidoEntity;
+import com.oficioYa.persistence.entity.UsuarioEntity;
+import com.oficioYa.repository.ReferidoRepository;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.service.IReferidoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

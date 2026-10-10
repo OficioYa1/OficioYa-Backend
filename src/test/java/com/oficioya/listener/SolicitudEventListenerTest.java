@@ -1,8 +1,8 @@
-package com.oficioya.listener;
+package com.oficioYa.listener;
 
-import com.oficioya.model.domain.Solicitud;
-import com.oficioya.model.domain.event.SolicitudEvent;
-import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioYa.model.domain.Solicitud;
+import com.oficioYa.model.domain.event.SolicitudEvent;
+import com.oficioYa.persistence.entity.EstadoSolicitud;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

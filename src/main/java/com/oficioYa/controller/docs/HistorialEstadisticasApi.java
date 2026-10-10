@@ -1,8 +1,8 @@
-package com.oficioya.controller.docs;
+package com.oficioYa.controller.docs;
 
-import com.oficioya.model.dto.response.DashboardResumenDTO;
-import com.oficioya.model.dto.response.EstadisticasResponseDTO;
-import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioYa.model.dto.response.DashboardResumenDTO;
+import com.oficioYa.model.dto.response.EstadisticasResponseDTO;
+import com.oficioYa.model.dto.response.SolicitudResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioYa.exception.EstadoInvalidoException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

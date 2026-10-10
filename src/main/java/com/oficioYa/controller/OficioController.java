@@ -1,8 +1,8 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.controller.docs.OficioApi;
-import com.oficioya.model.dto.response.OficioResponseDTO;
-import com.oficioya.service.IOficioService;
+import com.oficioYa.controller.docs.OficioApi;
+import com.oficioYa.model.dto.response.OficioResponseDTO;
+import com.oficioYa.service.IOficioService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

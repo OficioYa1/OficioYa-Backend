@@ -1,10 +1,10 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.controller.docs.ModeracionApi;
-import com.oficioya.model.dto.request.ReporteRequestDTO;
-import com.oficioya.model.dto.response.MensajeResponseDTO;
-import com.oficioya.model.dto.response.ReporteResponseDTO;
-import com.oficioya.service.IModeracionService;
+import com.oficioYa.controller.docs.ModeracionApi;
+import com.oficioYa.model.dto.request.ReporteRequestDTO;
+import com.oficioYa.model.dto.response.MensajeResponseDTO;
+import com.oficioYa.model.dto.response.ReporteResponseDTO;
+import com.oficioYa.service.IModeracionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

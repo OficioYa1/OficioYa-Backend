@@ -1,13 +1,13 @@
-package com.oficioya.mapper;
+package com.oficioYa.mapper;
 
-import com.oficioya.model.domain.FranjaDisponibilidad;
-import com.oficioya.model.domain.Oficio;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.model.dto.request.FranjaDisponibilidadRequestDTO;
-import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
-import com.oficioya.model.dto.response.FranjaDisponibilidadResponseDTO;
-import com.oficioya.model.dto.response.OficioResumenResponseDTO;
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioYa.model.domain.FranjaDisponibilidad;
+import com.oficioYa.model.domain.Oficio;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.model.dto.request.FranjaDisponibilidadRequestDTO;
+import com.oficioYa.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
+import com.oficioYa.model.dto.response.FranjaDisponibilidadResponseDTO;
+import com.oficioYa.model.dto.response.OficioResumenResponseDTO;
+import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

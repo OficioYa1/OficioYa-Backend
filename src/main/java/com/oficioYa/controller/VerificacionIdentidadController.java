@@ -1,8 +1,8 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.controller.docs.VerificacionIdentidadApi;
-import com.oficioya.model.domain.EstadoVerificacion;
-import com.oficioya.service.IVerificacionIdentidadService;
+import com.oficioYa.controller.docs.VerificacionIdentidadApi;
+import com.oficioYa.model.domain.EstadoVerificacion;
+import com.oficioYa.service.IVerificacionIdentidadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;

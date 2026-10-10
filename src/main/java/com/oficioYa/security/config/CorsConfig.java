@@ -1,4 +1,4 @@
-package com.oficioya.security.config;
+package com.oficioYa.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

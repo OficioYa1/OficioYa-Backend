@@ -1,4 +1,4 @@
-package com.oficioya.persistence.entity;
+package com.oficioYa.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

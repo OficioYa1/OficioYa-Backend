@@ -1,9 +1,9 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oficioya.dto.AuthRequest;
-import com.oficioya.dto.SwitchRoleRequest;
-import com.oficioya.security.jwt.JwtService;
+import com.oficioYa.dto.AuthRequest;
+import com.oficioYa.dto.SwitchRoleRequest;
+import com.oficioYa.security.jwt.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

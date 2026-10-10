@@ -1,4 +1,4 @@
-package com.oficioya.security.jwt;
+package com.oficioYa.security.jwt;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

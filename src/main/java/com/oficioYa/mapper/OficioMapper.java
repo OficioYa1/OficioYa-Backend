@@ -1,7 +1,7 @@
-package com.oficioya.mapper;
+package com.oficioYa.mapper;
 
-import com.oficioya.model.dto.response.OficioResponseDTO;
-import com.oficioya.persistence.entity.OficioEntity;
+import com.oficioYa.model.dto.response.OficioResponseDTO;
+import com.oficioYa.persistence.entity.OficioEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

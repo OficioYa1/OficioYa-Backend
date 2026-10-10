@@ -1,6 +1,6 @@
-package com.oficioya.model.domain.state;
+package com.oficioYa.model.domain.state;
 
-import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioYa.persistence.entity.EstadoSolicitud;
 
 public class SolicitudStateFactory {
     public static SolicitudState getState(EstadoSolicitud estado) {

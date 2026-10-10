@@ -1,10 +1,10 @@
-package com.oficioya.service;
+package com.oficioYa.service;
 
-import com.oficioya.mapper.OficioMapper;
-import com.oficioya.model.dto.response.OficioResponseDTO;
-import com.oficioya.persistence.entity.OficioEntity;
-import com.oficioya.repository.OficioRepository;
-import com.oficioya.service.impl.OficioServiceImpl;
+import com.oficioYa.mapper.OficioMapper;
+import com.oficioYa.model.dto.response.OficioResponseDTO;
+import com.oficioYa.persistence.entity.OficioEntity;
+import com.oficioYa.repository.OficioRepository;
+import com.oficioYa.service.impl.OficioServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,9 +1,9 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.dto.AuthRequest;
-import com.oficioya.dto.AuthResponse;
-import com.oficioya.dto.SwitchRoleRequest;
-import com.oficioya.security.jwt.JwtService;
+import com.oficioYa.dto.AuthRequest;
+import com.oficioYa.dto.AuthResponse;
+import com.oficioYa.dto.SwitchRoleRequest;
+import com.oficioYa.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

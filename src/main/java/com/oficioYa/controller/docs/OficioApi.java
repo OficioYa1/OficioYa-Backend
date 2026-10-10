@@ -1,6 +1,6 @@
-package com.oficioya.controller.docs;
+package com.oficioYa.controller.docs;
 
-import com.oficioya.model.dto.response.OficioResponseDTO;
+import com.oficioYa.model.dto.response.OficioResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

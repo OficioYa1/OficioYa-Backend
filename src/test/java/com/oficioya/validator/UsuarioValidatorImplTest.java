@@ -1,9 +1,9 @@
-package com.oficioya.validator;
+package com.oficioYa.validator;
 
-import com.oficioya.exception.CorreoYaRegistradoException;
-import com.oficioya.exception.UsuarioNoEncontradoException;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.validator.impl.UsuarioValidatorImpl;
+import com.oficioYa.exception.CorreoYaRegistradoException;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.validator.impl.UsuarioValidatorImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

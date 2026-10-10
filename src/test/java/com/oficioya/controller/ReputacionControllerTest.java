@@ -1,10 +1,10 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.model.dto.request.ReporteResenaRequestDTO;
-import com.oficioya.model.dto.request.ResenaRequestDTO;
-import com.oficioya.model.dto.response.ReputacionPorOficioDTO;
-import com.oficioya.model.dto.response.ResenaResponseDTO;
-import com.oficioya.service.IReputacionService;
+import com.oficioYa.model.dto.request.ReporteResenaRequestDTO;
+import com.oficioYa.model.dto.request.ResenaRequestDTO;
+import com.oficioYa.model.dto.response.ReputacionPorOficioDTO;
+import com.oficioYa.model.dto.response.ResenaResponseDTO;
+import com.oficioYa.service.IReputacionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class ReputacionControllerTest {
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.oficioYa.security.jwt.JwtService jwtService;
 
     @Mock
     private IReputacionService reputacionService;

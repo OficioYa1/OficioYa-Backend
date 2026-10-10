@@ -1,11 +1,11 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.exception.RecursoNoEncontradoException;
-import com.oficioya.model.domain.EstadoVerificacion;
-import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioya.repository.PerfilTrabajadorRepository;
-import com.oficioya.service.IStorageService;
-import com.oficioya.service.IVerificacionIdentidadService;
+import com.oficioYa.exception.RecursoNoEncontradoException;
+import com.oficioYa.model.domain.EstadoVerificacion;
+import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioYa.repository.PerfilTrabajadorRepository;
+import com.oficioYa.service.IStorageService;
+import com.oficioYa.service.IVerificacionIdentidadService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

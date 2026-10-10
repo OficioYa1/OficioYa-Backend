@@ -1,8 +1,8 @@
-package com.oficioya.controller.docs;
+package com.oficioYa.controller.docs;
 
-import com.oficioya.model.dto.request.ReporteRequestDTO;
-import com.oficioya.model.dto.response.MensajeResponseDTO;
-import com.oficioya.model.dto.response.ReporteResponseDTO;
+import com.oficioYa.model.dto.request.ReporteRequestDTO;
+import com.oficioYa.model.dto.response.MensajeResponseDTO;
+import com.oficioYa.model.dto.response.ReporteResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

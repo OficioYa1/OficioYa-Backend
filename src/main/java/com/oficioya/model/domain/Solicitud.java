@@ -1,7 +1,7 @@
-package com.oficioya.model.domain;
+package com.oficioYa.model.domain;
 
-import com.oficioya.model.domain.state.*;
-import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioYa.model.domain.state.*;
+import com.oficioYa.persistence.entity.EstadoSolicitud;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

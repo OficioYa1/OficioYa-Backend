@@ -1,4 +1,4 @@
-package com.oficioya.model.domain;
+package com.oficioYa.model.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

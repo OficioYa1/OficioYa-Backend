@@ -1,7 +1,7 @@
-package com.oficioya.config;
+package com.oficioYa.config;
 
-import com.oficioya.persistence.entity.OficioEntity;
-import com.oficioya.repository.OficioRepository;
+import com.oficioYa.persistence.entity.OficioEntity;
+import com.oficioYa.repository.OficioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

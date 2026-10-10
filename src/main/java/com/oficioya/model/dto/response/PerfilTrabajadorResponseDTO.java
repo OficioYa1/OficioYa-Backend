@@ -1,6 +1,6 @@
-package com.oficioya.model.dto.response;
+package com.oficioYa.model.dto.response;
 
-import com.oficioya.model.domain.MetodoPago;
+import com.oficioYa.model.domain.MetodoPago;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -27,5 +27,5 @@ public class PerfilTrabajadorResponseDTO {
     private String documentosIdentidadUrl;
     private String certificadoAntecedentesUrl;
     private String fotoPerfilVerificadaUrl;
-    private com.oficioya.model.domain.EstadoVerificacion estadoVerificacion;
+    private com.oficioYa.model.domain.EstadoVerificacion estadoVerificacion;
 }

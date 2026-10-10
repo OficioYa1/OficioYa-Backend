@@ -1,6 +1,6 @@
-package com.oficioya.persistence.entity;
+package com.oficioYa.persistence.entity;
 
-import com.oficioya.model.domain.MetodoPago;
+import com.oficioYa.model.domain.MetodoPago;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -118,6 +118,6 @@ public class PerfilTrabajadorEntity {
     @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "estado_verificacion", nullable = false)
-    private com.oficioya.model.domain.EstadoVerificacion estadoVerificacion = com.oficioya.model.domain.EstadoVerificacion.NO_VERIFICADO;
+    private com.oficioYa.model.domain.EstadoVerificacion estadoVerificacion = com.oficioYa.model.domain.EstadoVerificacion.NO_VERIFICADO;
 
 }

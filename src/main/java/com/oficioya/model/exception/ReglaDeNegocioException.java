@@ -1,4 +1,4 @@
-package com.oficioya.model.exception;
+package com.oficioYa.model.exception;
 
 public class ReglaDeNegocioException extends RuntimeException {
     public ReglaDeNegocioException(String message) {

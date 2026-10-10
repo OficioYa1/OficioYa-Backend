@@ -1,7 +1,7 @@
-package com.oficioya.mapper;
+package com.oficioYa.mapper;
 
-import com.oficioya.model.domain.Usuario;
-import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioYa.model.domain.Usuario;
+import com.oficioYa.persistence.entity.UsuarioEntity;
 import org.mapstruct.Mapper;
 
 

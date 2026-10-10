@@ -1,7 +1,7 @@
-package com.oficioya.validator;
+package com.oficioYa.validator;
 
-import com.oficioya.model.domain.FranjaDisponibilidad;
-import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioYa.model.domain.FranjaDisponibilidad;
+import com.oficioYa.model.domain.PerfilTrabajador;
 
 import java.util.List;
 

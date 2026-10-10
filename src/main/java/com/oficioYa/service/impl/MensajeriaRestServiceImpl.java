@@ -1,10 +1,10 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.model.dto.request.MensajeChatRequestDTO;
-import com.oficioya.model.dto.response.MensajeChatResponseDTO;
-import com.oficioya.persistence.document.MensajeDocument;
-import com.oficioya.repository.MensajeMongoRepository;
-import com.oficioya.service.IMensajeriaRestService;
+import com.oficioYa.model.dto.request.MensajeChatRequestDTO;
+import com.oficioYa.model.dto.response.MensajeChatResponseDTO;
+import com.oficioYa.persistence.document.MensajeDocument;
+import com.oficioYa.repository.MensajeMongoRepository;
+import com.oficioYa.service.IMensajeriaRestService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

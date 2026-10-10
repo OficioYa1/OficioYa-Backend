@@ -1,22 +1,22 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.model.domain.Solicitud;
-import com.oficioya.model.domain.event.SolicitudEvent;
-import com.oficioya.repository.SolicitudRepository;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.service.ISolicitudService;
+import com.oficioYa.model.domain.Solicitud;
+import com.oficioYa.model.domain.event.SolicitudEvent;
+import com.oficioYa.repository.SolicitudRepository;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.service.ISolicitudService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.oficioya.exception.RecursoNoEncontradoException;
-import com.oficioya.mapper.SolicitudEntityMapper;
-import com.oficioya.mapper.UsuarioEntityMapper;
-import com.oficioya.exception.UsuarioNoEncontradoException;
-import com.oficioya.validator.ISolicitudValidator;
-import com.oficioya.persistence.entity.SolicitudEntity;
+import com.oficioYa.exception.RecursoNoEncontradoException;
+import com.oficioYa.mapper.SolicitudEntityMapper;
+import com.oficioYa.mapper.UsuarioEntityMapper;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.validator.ISolicitudValidator;
+import com.oficioYa.persistence.entity.SolicitudEntity;
 
 @Slf4j
 @Service
@@ -48,7 +48,7 @@ public class SolicitudServiceImpl implements ISolicitudService {
         solicitud.setContratante(usuarioMapper.toDomain(
                 usuarioRepository.findById(contratanteId)
                         .orElseThrow(() -> new UsuarioNoEncontradoException("Contratante no encontrado"))));
-        solicitud.setEstadoEnum(com.oficioya.persistence.entity.EstadoSolicitud.CREADA);
+        solicitud.setEstadoEnum(com.oficioYa.persistence.entity.EstadoSolicitud.CREADA);
         SolicitudEntity entity = mapper.toEntity(solicitud);
         entity = solicitudRepository.save(entity);
         return mapper.toDomain(entity);

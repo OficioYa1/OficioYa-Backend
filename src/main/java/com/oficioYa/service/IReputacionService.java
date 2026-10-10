@@ -1,9 +1,9 @@
-package com.oficioya.service;
+package com.oficioYa.service;
 
-import com.oficioya.model.dto.request.ReporteResenaRequestDTO;
-import com.oficioya.model.dto.request.ResenaRequestDTO;
-import com.oficioya.model.dto.response.ReputacionPorOficioDTO;
-import com.oficioya.model.dto.response.ResenaResponseDTO;
+import com.oficioYa.model.dto.request.ReporteResenaRequestDTO;
+import com.oficioYa.model.dto.request.ResenaRequestDTO;
+import com.oficioYa.model.dto.response.ReputacionPorOficioDTO;
+import com.oficioYa.model.dto.response.ResenaResponseDTO;
 
 import java.util.List;
 

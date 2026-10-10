@@ -1,8 +1,8 @@
-package com.oficioya.mapper;
+package com.oficioYa.mapper;
 
-import com.oficioya.model.domain.Solicitud;
-import com.oficioya.model.dto.request.SolicitudCreacionDTO;
-import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioYa.model.domain.Solicitud;
+import com.oficioYa.model.dto.request.SolicitudCreacionDTO;
+import com.oficioYa.model.dto.response.SolicitudResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

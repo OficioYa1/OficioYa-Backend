@@ -1,18 +1,18 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.model.domain.Solicitud;
-import com.oficioya.model.domain.Usuario;
-import com.oficioya.model.domain.event.SolicitudEvent;
-import com.oficioya.persistence.entity.EstadoSolicitud;
-import com.oficioya.persistence.entity.SolicitudEntity;
-import com.oficioya.persistence.entity.UsuarioEntity;
-import com.oficioya.repository.SolicitudRepository;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.mapper.SolicitudEntityMapper;
-import com.oficioya.mapper.UsuarioEntityMapper;
-import com.oficioya.validator.ISolicitudValidator;
-import com.oficioya.exception.RecursoNoEncontradoException;
-import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioYa.model.domain.Solicitud;
+import com.oficioYa.model.domain.Usuario;
+import com.oficioYa.model.domain.event.SolicitudEvent;
+import com.oficioYa.persistence.entity.EstadoSolicitud;
+import com.oficioYa.persistence.entity.SolicitudEntity;
+import com.oficioYa.persistence.entity.UsuarioEntity;
+import com.oficioYa.repository.SolicitudRepository;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.mapper.SolicitudEntityMapper;
+import com.oficioYa.mapper.UsuarioEntityMapper;
+import com.oficioYa.validator.ISolicitudValidator;
+import com.oficioYa.exception.RecursoNoEncontradoException;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

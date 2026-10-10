@@ -1,7 +1,7 @@
-package com.oficioya.listener;
+package com.oficioYa.listener;
 
-import com.oficioya.model.domain.Solicitud;
-import com.oficioya.model.domain.event.SolicitudEvent;
+import com.oficioYa.model.domain.Solicitud;
+import com.oficioYa.model.domain.event.SolicitudEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;

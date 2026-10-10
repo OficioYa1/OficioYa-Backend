@@ -1,4 +1,4 @@
-package com.oficioya.exception;
+package com.oficioYa.exception;
 
 /**
  * Lanzada cuando una operación entra en conflicto con el estado actual de los datos

@@ -1,12 +1,12 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.mapper.UsuarioEntityMapper;
-import com.oficioya.model.domain.Usuario;
-import com.oficioya.persistence.entity.UsuarioEntity;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.service.IUsuarioService;
-import com.oficioya.service.IStorageService;
-import com.oficioya.validator.IUsuarioValidator;
+import com.oficioYa.mapper.UsuarioEntityMapper;
+import com.oficioYa.model.domain.Usuario;
+import com.oficioYa.persistence.entity.UsuarioEntity;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.service.IUsuarioService;
+import com.oficioYa.service.IStorageService;
+import com.oficioYa.validator.IUsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,18 +16,18 @@ import org.springframework.context.annotation.Lazy;
 
 import java.time.LocalDateTime;
 
-import com.oficioya.repository.PerfilTrabajadorRepository;
-import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
-import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.model.domain.PerfilContratante;
-import com.oficioya.exception.RecursoNoEncontradoException;
-import com.oficioya.exception.EstadoInvalidoException;
-import com.oficioya.exception.UsuarioNoEncontradoException;
-import com.oficioya.persistence.entity.RolUsuario;
-import com.oficioya.repository.PerfilContratanteRepository;
-import com.oficioya.mapper.PerfilContratanteEntityMapper;
-import com.oficioya.persistence.entity.PerfilContratanteEntity;
+import com.oficioYa.repository.PerfilTrabajadorRepository;
+import com.oficioYa.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.model.domain.PerfilContratante;
+import com.oficioYa.exception.RecursoNoEncontradoException;
+import com.oficioYa.exception.EstadoInvalidoException;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.persistence.entity.RolUsuario;
+import com.oficioYa.repository.PerfilContratanteRepository;
+import com.oficioYa.mapper.PerfilContratanteEntityMapper;
+import com.oficioYa.persistence.entity.PerfilContratanteEntity;
 
 
 @Slf4j
@@ -46,7 +46,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
     @Autowired
     @Lazy
-    private com.oficioya.service.IReferidoService referidoService;
+    private com.oficioYa.service.IReferidoService referidoService;
 
 
     @Override

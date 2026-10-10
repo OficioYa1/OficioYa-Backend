@@ -1,7 +1,7 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.model.dto.response.OficioResponseDTO;
-import com.oficioya.service.IOficioService;
+import com.oficioYa.model.dto.response.OficioResponseDTO;
+import com.oficioYa.service.IOficioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,8 +19,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(OficioController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest(OficioController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class OficioControllerTest {
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.oficioYa.security.jwt.JwtService jwtService;
 
     @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;

@@ -1,10 +1,10 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.controller.docs.HistorialEstadisticasApi;
-import com.oficioya.model.dto.response.DashboardResumenDTO;
-import com.oficioya.model.dto.response.EstadisticasResponseDTO;
-import com.oficioya.model.dto.response.SolicitudResponseDTO;
-import com.oficioya.service.IHistorialEstadisticasService;
+import com.oficioYa.controller.docs.HistorialEstadisticasApi;
+import com.oficioYa.model.dto.response.DashboardResumenDTO;
+import com.oficioYa.model.dto.response.EstadisticasResponseDTO;
+import com.oficioYa.model.dto.response.SolicitudResponseDTO;
+import com.oficioYa.service.IHistorialEstadisticasService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

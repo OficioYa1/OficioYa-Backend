@@ -1,10 +1,10 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.model.dto.request.ReporteResenaRequestDTO;
-import com.oficioya.model.dto.request.ResenaRequestDTO;
-import com.oficioya.model.dto.response.ReputacionPorOficioDTO;
-import com.oficioya.model.dto.response.ResenaResponseDTO;
-import com.oficioya.service.IReputacionService;
+import com.oficioYa.model.dto.request.ReporteResenaRequestDTO;
+import com.oficioYa.model.dto.request.ResenaRequestDTO;
+import com.oficioYa.model.dto.response.ReputacionPorOficioDTO;
+import com.oficioYa.model.dto.response.ResenaResponseDTO;
+import com.oficioYa.service.IReputacionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

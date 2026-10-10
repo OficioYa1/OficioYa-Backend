@@ -1,23 +1,23 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioya.repository.OficioRepository;
-import com.oficioya.persistence.entity.OficioEntity;
-import com.oficioya.exception.RecursoNoEncontradoException;
-import com.oficioya.exception.EstadoInvalidoException;
-import com.oficioya.exception.UsuarioNoEncontradoException;
-import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
-import com.oficioya.model.domain.FranjaDisponibilidad;
-import com.oficioya.model.domain.MetodoPago;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioya.persistence.entity.UsuarioEntity;
-import com.oficioya.repository.PerfilTrabajadorRepository;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.repository.PortafolioMongoRepository;
-import com.oficioya.persistence.document.PortafolioMongoDocument;
-import com.oficioya.service.IPerfilTrabajadorService;
-import com.oficioya.validator.IPerfilTrabajadorValidator;
+import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioYa.repository.OficioRepository;
+import com.oficioYa.persistence.entity.OficioEntity;
+import com.oficioYa.exception.RecursoNoEncontradoException;
+import com.oficioYa.exception.EstadoInvalidoException;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioYa.model.domain.FranjaDisponibilidad;
+import com.oficioYa.model.domain.MetodoPago;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioYa.persistence.entity.UsuarioEntity;
+import com.oficioYa.repository.PerfilTrabajadorRepository;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.repository.PortafolioMongoRepository;
+import com.oficioYa.persistence.document.PortafolioMongoDocument;
+import com.oficioYa.service.IPerfilTrabajadorService;
+import com.oficioYa.validator.IPerfilTrabajadorValidator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -277,8 +277,8 @@ public class PerfilTrabajadorServiceImpl implements IPerfilTrabajadorService {
         PerfilTrabajadorEntity perfil = perfilRepository.findById(perfilId)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Perfil no encontrado"));
 
-        com.oficioya.persistence.document.PortafolioMongoDocument portafolio = portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)
-                .orElse(com.oficioya.persistence.document.PortafolioMongoDocument.builder().perfilTrabajadorId(perfilId).build());
+        com.oficioYa.persistence.document.PortafolioMongoDocument portafolio = portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)
+                .orElse(com.oficioYa.persistence.document.PortafolioMongoDocument.builder().perfilTrabajadorId(perfilId).build());
 
         if (portafolio.getEspecializacionesPorOficioId() == null) {
             portafolio.setEspecializacionesPorOficioId(new java.util.HashMap<>());

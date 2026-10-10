@@ -1,9 +1,9 @@
-package com.oficioya.validator.impl;
+package com.oficioYa.validator.impl;
 
-import com.oficioya.exception.CorreoYaRegistradoException;
-import com.oficioya.exception.UsuarioNoEncontradoException;
-import com.oficioya.repository.UsuarioRepository;
-import com.oficioya.validator.IUsuarioValidator;
+import com.oficioYa.exception.CorreoYaRegistradoException;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.repository.UsuarioRepository;
+import com.oficioYa.validator.IUsuarioValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

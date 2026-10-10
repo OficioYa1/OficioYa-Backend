@@ -1,4 +1,4 @@
-package com.oficioya.service;
+package com.oficioYa.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

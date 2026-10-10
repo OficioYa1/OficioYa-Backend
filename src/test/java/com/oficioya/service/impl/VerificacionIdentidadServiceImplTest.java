@@ -1,10 +1,10 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.exception.RecursoNoEncontradoException;
-import com.oficioya.model.domain.EstadoVerificacion;
-import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioya.repository.PerfilTrabajadorRepository;
-import com.oficioya.service.IStorageService;
+import com.oficioYa.exception.RecursoNoEncontradoException;
+import com.oficioYa.model.domain.EstadoVerificacion;
+import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioYa.repository.PerfilTrabajadorRepository;
+import com.oficioYa.service.IStorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +39,7 @@ class VerificacionIdentidadServiceImplTest {
     void setUp() {
         perfil = new PerfilTrabajadorEntity();
         perfil.setEstadoVerificacion(EstadoVerificacion.NO_VERIFICADO);
-        com.oficioya.persistence.entity.UsuarioEntity usuario = new com.oficioya.persistence.entity.UsuarioEntity();
+        com.oficioYa.persistence.entity.UsuarioEntity usuario = new com.oficioYa.persistence.entity.UsuarioEntity();
         usuario.setId(1L);
         perfil.setUsuario(usuario);
         

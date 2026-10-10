@@ -1,6 +1,6 @@
-package com.oficioya.model.dto.response;
+package com.oficioYa.model.dto.response;
 
-import com.oficioya.persistence.entity.RolUsuario;
+import com.oficioYa.persistence.entity.RolUsuario;
 import java.time.LocalDateTime;
 
 public record UsuarioResponseDTO(

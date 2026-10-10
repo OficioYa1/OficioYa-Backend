@@ -1,4 +1,4 @@
-package com.oficioya.exception;
+package com.oficioYa.exception;
 
 
 public class EstadoInvalidoException extends RuntimeException {

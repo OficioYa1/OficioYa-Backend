@@ -1,8 +1,8 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.controller.docs.ReferidoApi;
-import com.oficioya.model.dto.response.MensajeResponseDTO;
-import com.oficioya.service.IReferidoService;
+import com.oficioYa.controller.docs.ReferidoApi;
+import com.oficioYa.model.dto.response.MensajeResponseDTO;
+import com.oficioYa.service.IReferidoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

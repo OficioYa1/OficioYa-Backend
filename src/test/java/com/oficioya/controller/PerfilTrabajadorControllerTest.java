@@ -1,11 +1,11 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oficioya.mapper.PerfilTrabajadorMapper;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.model.dto.request.*;
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioya.service.IPerfilTrabajadorService;
+import com.oficioYa.mapper.PerfilTrabajadorMapper;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.model.dto.request.*;
+import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioYa.service.IPerfilTrabajadorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,8 +27,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(PerfilTrabajadorController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest(PerfilTrabajadorController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class PerfilTrabajadorControllerTest {
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.oficioYa.security.jwt.JwtService jwtService;
 
     @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;
@@ -122,7 +125,7 @@ class PerfilTrabajadorControllerTest {
     @DisplayName("PUT /{id}/metodos-pago - 200 OK")
     void actualizarMetodosPago_exitoso() throws Exception {
         MetodosPagoRequestDTO req = new MetodosPagoRequestDTO();
-        req.setMetodosPago(java.util.Set.of(com.oficioya.model.domain.MetodoPago.EFECTIVO));
+        req.setMetodosPago(java.util.Set.of(com.oficioYa.model.domain.MetodoPago.EFECTIVO));
 
         when(perfilService.actualizarMetodosPago(eq(1L), any())).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);

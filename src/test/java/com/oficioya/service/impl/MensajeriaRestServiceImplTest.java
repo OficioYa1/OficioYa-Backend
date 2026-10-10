@@ -1,9 +1,9 @@
-package com.oficioya.service.impl;
+package com.oficioYa.service.impl;
 
-import com.oficioya.model.dto.request.MensajeChatRequestDTO;
-import com.oficioya.model.dto.response.MensajeChatResponseDTO;
-import com.oficioya.persistence.document.MensajeDocument;
-import com.oficioya.repository.MensajeMongoRepository;
+import com.oficioYa.model.dto.request.MensajeChatRequestDTO;
+import com.oficioYa.model.dto.response.MensajeChatResponseDTO;
+import com.oficioYa.persistence.document.MensajeDocument;
+import com.oficioYa.repository.MensajeMongoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

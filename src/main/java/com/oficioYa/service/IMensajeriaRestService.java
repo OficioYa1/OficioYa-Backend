@@ -1,7 +1,7 @@
-package com.oficioya.service;
+package com.oficioYa.service;
 
-import com.oficioya.model.dto.request.MensajeChatRequestDTO;
-import com.oficioya.model.dto.response.MensajeChatResponseDTO;
+import com.oficioYa.model.dto.request.MensajeChatRequestDTO;
+import com.oficioYa.model.dto.response.MensajeChatResponseDTO;
 
 import java.util.List;
 

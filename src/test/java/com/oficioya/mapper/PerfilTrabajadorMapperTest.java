@@ -1,11 +1,11 @@
-package com.oficioya.mapper;
+package com.oficioYa.mapper;
 
-import com.oficioya.model.domain.FranjaDisponibilidad;
-import com.oficioya.model.domain.MetodoPago;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.model.dto.request.FranjaDisponibilidadRequestDTO;
-import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioYa.model.domain.FranjaDisponibilidad;
+import com.oficioYa.model.domain.MetodoPago;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.model.dto.request.FranjaDisponibilidadRequestDTO;
+import com.oficioYa.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
+import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -45,7 +45,7 @@ class PerfilTrabajadorMapperTest {
         // Arrange
         PerfilTrabajador dominio = PerfilTrabajador.builder()
                 .id(1L)
-                .usuario(com.oficioya.model.domain.Usuario.builder().id(7L).contrasena("secreta").build())
+                .usuario(com.oficioYa.model.domain.Usuario.builder().id(7L).contrasena("secreta").build())
                 .zonaCobertura("Norte")
                 .build();
 
@@ -83,7 +83,7 @@ class PerfilTrabajadorMapperTest {
         // Arrange
         PerfilTrabajador dominio = PerfilTrabajador.builder()
                 .id(1L)
-                .usuario(com.oficioya.model.domain.Usuario.builder().id(7L).build())
+                .usuario(com.oficioYa.model.domain.Usuario.builder().id(7L).build())
                 .disponibilidadSemanal(List.of(FranjaDisponibilidad.builder()
                         .dia(DayOfWeek.TUESDAY).horaInicio(LocalTime.of(9, 0)).horaFin(LocalTime.of(12, 0)).build()))
                 .metodosPago(Set.of(MetodoPago.NEQUI))

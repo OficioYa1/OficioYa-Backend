@@ -1,9 +1,9 @@
-package com.oficioya.mapper;
+package com.oficioYa.mapper;
 
-import com.oficioya.model.domain.FranjaDisponibilidad;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.persistence.entity.FranjaDisponibilidadEmbeddable;
-import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioYa.model.domain.FranjaDisponibilidad;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.persistence.entity.FranjaDisponibilidadEmbeddable;
+import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

@@ -1,4 +1,4 @@
-package com.oficioya.persistence.document;
+package com.oficioYa.persistence.document;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,8 +1,8 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.exception.*;
-import com.oficioya.model.dto.response.ErrorResponseDTO;
-import com.oficioya.model.exception.ReglaDeNegocioException;
+import com.oficioYa.exception.*;
+import com.oficioYa.model.dto.response.ErrorResponseDTO;
+import com.oficioYa.model.exception.ReglaDeNegocioException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

@@ -1,7 +1,7 @@
-package com.oficioya.model.domain.state;
+package com.oficioYa.model.domain.state;
 
-import com.oficioya.model.domain.Solicitud;
-import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioYa.model.domain.Solicitud;
+import com.oficioYa.persistence.entity.EstadoSolicitud;
 
 public class RechazadaState extends AbstractSolicitudState {
     

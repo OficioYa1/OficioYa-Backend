@@ -1,4 +1,4 @@
-package com.oficioya.security.jwt;
+package com.oficioYa.security.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,15 +1,15 @@
-package com.oficioya.controller.docs;
+package com.oficioYa.controller.docs;
 
-import com.oficioya.model.dto.request.PortafolioRequestDTO;
-import com.oficioya.model.dto.request.DetallesEspecificosRequestDTO;
-import com.oficioya.model.dto.request.DisponibilidadSemanalRequestDTO;
-import com.oficioya.model.dto.request.MetodosPagoRequestDTO;
-import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
-import com.oficioya.model.dto.request.TarifaRequestDTO;
-import com.oficioya.model.dto.request.ZonaCoberturaRequestDTO;
-import com.oficioya.model.dto.response.ErrorResponseDTO;
-import com.oficioya.model.dto.response.MensajeResponseDTO;
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioYa.model.dto.request.PortafolioRequestDTO;
+import com.oficioYa.model.dto.request.DetallesEspecificosRequestDTO;
+import com.oficioYa.model.dto.request.DisponibilidadSemanalRequestDTO;
+import com.oficioYa.model.dto.request.MetodosPagoRequestDTO;
+import com.oficioYa.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
+import com.oficioYa.model.dto.request.TarifaRequestDTO;
+import com.oficioYa.model.dto.request.ZonaCoberturaRequestDTO;
+import com.oficioYa.model.dto.response.ErrorResponseDTO;
+import com.oficioYa.model.dto.response.MensajeResponseDTO;
+import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -120,7 +120,7 @@ public interface PerfilTrabajadorApi {
     })
     ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficioPrincipal(
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
-            com.oficioya.model.dto.request.OficioPrincipalRequestDTO request);
+            com.oficioYa.model.dto.request.OficioPrincipalRequestDTO request);
 
 
     @Operation(summary = "Registrar oficios secundarios (RF-03)", description = "Sobreescribe la lista de oficios secundarios del perfil.")
@@ -131,7 +131,7 @@ public interface PerfilTrabajadorApi {
     })
     ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficiosSecundarios(
             @Parameter(description = "ID del perfil de trabajador", required = true) Long id,
-            com.oficioya.model.dto.request.OficiosSecundariosRequestDTO request);
+            com.oficioYa.model.dto.request.OficiosSecundariosRequestDTO request);
 
 
     @Operation(summary = "Actualizar detalles específicos del oficio (RF-09)", description = "Permite al trabajador añadir detalles libres sobre su trabajo.")

@@ -1,4 +1,4 @@
-package com.oficioya.exception;
+package com.oficioYa.exception;
 
 /**
  * Lanzada cuando se intenta crear un usuario con un correo que ya existe.

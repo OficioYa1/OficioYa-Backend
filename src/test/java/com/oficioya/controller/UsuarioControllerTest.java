@@ -1,21 +1,21 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oficioya.exception.UsuarioNoEncontradoException;
-import com.oficioya.mapper.PerfilContratanteMapper;
-import com.oficioya.mapper.PerfilTrabajadorMapper;
-import com.oficioya.mapper.UsuarioDTOMapper;
-import com.oficioya.model.domain.PerfilContratante;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.model.domain.Usuario;
-import com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO;
-import com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO;
-import com.oficioya.model.dto.request.UsuarioRegistroRequestDTO;
-import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioya.model.dto.response.UsuarioResponseDTO;
-import com.oficioya.persistence.entity.RolUsuario;
-import com.oficioya.service.IUsuarioService;
+import com.oficioYa.exception.UsuarioNoEncontradoException;
+import com.oficioYa.mapper.PerfilContratanteMapper;
+import com.oficioYa.mapper.PerfilTrabajadorMapper;
+import com.oficioYa.mapper.UsuarioDTOMapper;
+import com.oficioYa.model.domain.PerfilContratante;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.model.domain.Usuario;
+import com.oficioYa.model.dto.request.EditarPerfilContratanteRequestDTO;
+import com.oficioYa.model.dto.request.EditarPerfilTrabajadorRequestDTO;
+import com.oficioYa.model.dto.request.UsuarioRegistroRequestDTO;
+import com.oficioYa.model.dto.response.PerfilContratanteResponseDTO;
+import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioYa.model.dto.response.UsuarioResponseDTO;
+import com.oficioYa.persistence.entity.RolUsuario;
+import com.oficioYa.service.IUsuarioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(UsuarioController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest(UsuarioController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class UsuarioControllerTest {
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.oficioYa.security.jwt.JwtService jwtService;
 
     @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;

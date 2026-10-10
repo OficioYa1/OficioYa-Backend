@@ -1,8 +1,8 @@
-package com.oficioya.service;
+package com.oficioYa.service;
 
-import com.oficioya.model.dto.response.DashboardResumenDTO;
-import com.oficioya.model.dto.response.EstadisticasResponseDTO;
-import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioYa.model.dto.response.DashboardResumenDTO;
+import com.oficioYa.model.dto.response.EstadisticasResponseDTO;
+import com.oficioYa.model.dto.response.SolicitudResponseDTO;
 
 import java.util.List;
 

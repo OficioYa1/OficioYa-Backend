@@ -1,10 +1,10 @@
-package com.oficioya.controller;
+package com.oficioYa.controller;
 
-import com.oficioya.mapper.BusquedaMapper;
-import com.oficioya.mapper.PerfilTrabajadorMapper;
-import com.oficioya.model.domain.PerfilTrabajador;
-import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioya.service.IBusquedaTrabajadorService;
+import com.oficioYa.mapper.BusquedaMapper;
+import com.oficioYa.mapper.PerfilTrabajadorMapper;
+import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioYa.service.IBusquedaTrabajadorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest(BusquedaController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest(BusquedaController.class)
+@org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class BusquedaControllerTest {
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private com.oficioYa.security.jwt.JwtService jwtService;
 
     @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;
