@@ -63,4 +63,7 @@ public class UsuarioEntity {
     @Column(name = "embajador", nullable = false)
     private boolean embajador = false; // RF-69 Insignia Referidos
 
+    @Builder.Default
+    @Column(name = "calificacion_promedio")
+    private Double calificacionPromedio = 0.0; // RF-35 Calificar Contratante
 }
