@@ -1,8 +1,8 @@
-package com.oficioYa.validator;
+package com.oficioya.validator;
 
-import com.oficioYa.model.domain.CriteriosBusqueda;
-import com.oficioYa.model.exception.ReglaDeNegocioException;
-import com.oficioYa.validator.impl.BusquedaValidatorImpl;
+import com.oficioya.model.domain.CriteriosBusqueda;
+import com.oficioya.model.exception.ReglaDeNegocioException;
+import com.oficioya.validator.impl.BusquedaValidatorImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

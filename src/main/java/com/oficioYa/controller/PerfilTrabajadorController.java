@@ -1,18 +1,18 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.model.dto.request.PortafolioRequestDTO;
-import com.oficioYa.model.dto.request.DetallesEspecificosRequestDTO;
-import com.oficioYa.controller.docs.PerfilTrabajadorApi;
-import com.oficioYa.mapper.PerfilTrabajadorMapper;
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.model.dto.request.DisponibilidadSemanalRequestDTO;
-import com.oficioYa.model.dto.request.MetodosPagoRequestDTO;
-import com.oficioYa.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
-import com.oficioYa.model.dto.request.TarifaRequestDTO;
-import com.oficioYa.model.dto.request.ZonaCoberturaRequestDTO;
-import com.oficioYa.model.dto.response.MensajeResponseDTO;
-import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioYa.service.IPerfilTrabajadorService;
+import com.oficioya.model.dto.request.PortafolioRequestDTO;
+import com.oficioya.model.dto.request.DetallesEspecificosRequestDTO;
+import com.oficioya.controller.docs.PerfilTrabajadorApi;
+import com.oficioya.mapper.PerfilTrabajadorMapper;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.dto.request.DisponibilidadSemanalRequestDTO;
+import com.oficioya.model.dto.request.MetodosPagoRequestDTO;
+import com.oficioya.model.dto.request.PerfilTrabajadorCreacionRequestDTO;
+import com.oficioya.model.dto.request.TarifaRequestDTO;
+import com.oficioya.model.dto.request.ZonaCoberturaRequestDTO;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.service.IPerfilTrabajadorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -91,7 +91,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     @PutMapping("/{id}/oficio-principal")
     public ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficioPrincipal(
             @PathVariable Long id,
-            @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.oficioYa.model.dto.request.OficioPrincipalRequestDTO request) {
+            @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.oficioya.model.dto.request.OficioPrincipalRequestDTO request) {
         PerfilTrabajador actualizado = perfilService.registrarOficioPrincipal(id, request.getOficioId());
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
@@ -101,7 +101,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     @PutMapping("/{id}/oficios-secundarios")
     public ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficiosSecundarios(
             @PathVariable Long id,
-            @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.oficioYa.model.dto.request.OficiosSecundariosRequestDTO request) {
+            @jakarta.validation.Valid @org.springframework.web.bind.annotation.RequestBody com.oficioya.model.dto.request.OficiosSecundariosRequestDTO request) {
         PerfilTrabajador actualizado = perfilService.registrarOficiosSecundarios(id, request.getOficiosIds());
         return ResponseEntity.ok(mapper.toResponse(actualizado));
     }
@@ -134,16 +134,16 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
         return ResponseEntity.ok(mapper.toResponse(perfil));
     }
 
-    // PENDIENTE: Agregar @PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE')")
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE')")
     public ResponseEntity<java.util.List<String>> obtenerEspecializaciones(
             @PathVariable Long id, 
             @PathVariable Long oficioId) {
         return ResponseEntity.ok(perfilService.obtenerEspecializaciones(id, oficioId));
     }
 
-    // PENDIENTE: Agregar @PreAuthorize("hasRole('TRABAJADOR')")
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     public ResponseEntity<MensajeResponseDTO> actualizarEspecializaciones(
             @PathVariable Long id, 
             @PathVariable Long oficioId, 

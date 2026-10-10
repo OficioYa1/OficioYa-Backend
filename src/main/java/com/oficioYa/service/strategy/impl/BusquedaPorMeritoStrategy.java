@@ -1,8 +1,8 @@
-package com.oficioYa.service.strategy.impl;
+package com.oficioya.service.strategy.impl;
 
-import com.oficioYa.model.domain.CriteriosBusqueda;
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.service.strategy.IOrdenamientoStrategy;
+import com.oficioya.model.domain.CriteriosBusqueda;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.service.strategy.IOrdenamientoStrategy;
 import org.springframework.stereotype.Component;
 
 import java.util.Comparator;

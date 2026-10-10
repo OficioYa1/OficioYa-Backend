@@ -1,4 +1,4 @@
-package com.oficioYa.model.dto.request;
+package com.oficioya.model.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;

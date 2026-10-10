@@ -1,14 +1,14 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.mapper.SolicitudEntityMapper;
-import com.oficioYa.mapper.SolicitudMapper;
-import com.oficioYa.model.domain.Solicitud;
-import com.oficioYa.model.dto.response.DashboardResumenDTO;
-import com.oficioYa.model.dto.response.EstadisticasResponseDTO;
-import com.oficioYa.model.dto.response.SolicitudResponseDTO;
-import com.oficioYa.persistence.entity.EstadoSolicitud;
-import com.oficioYa.persistence.entity.SolicitudEntity;
-import com.oficioYa.repository.SolicitudRepository;
+import com.oficioya.mapper.SolicitudEntityMapper;
+import com.oficioya.mapper.SolicitudMapper;
+import com.oficioya.model.domain.Solicitud;
+import com.oficioya.model.dto.response.DashboardResumenDTO;
+import com.oficioya.model.dto.response.EstadisticasResponseDTO;
+import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioya.persistence.entity.SolicitudEntity;
+import com.oficioya.repository.SolicitudRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

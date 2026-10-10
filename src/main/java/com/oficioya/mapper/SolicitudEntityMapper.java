@@ -1,7 +1,7 @@
-package com.oficioYa.mapper;
+package com.oficioya.mapper;
 
-import com.oficioYa.model.domain.Solicitud;
-import com.oficioYa.persistence.entity.SolicitudEntity;
+import com.oficioya.model.domain.Solicitud;
+import com.oficioya.persistence.entity.SolicitudEntity;
 import org.mapstruct.Mapper;
 
 import org.mapstruct.Mapping;

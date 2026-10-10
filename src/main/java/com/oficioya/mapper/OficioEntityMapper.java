@@ -1,7 +1,7 @@
-package com.oficioYa.mapper;
+package com.oficioya.mapper;
 
-import com.oficioYa.model.domain.Oficio;
-import com.oficioYa.persistence.entity.OficioEntity;
+import com.oficioya.model.domain.Oficio;
+import com.oficioya.persistence.entity.OficioEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

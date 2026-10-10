@@ -1,12 +1,12 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.controller.docs.BusquedaApi;
-import com.oficioYa.mapper.BusquedaMapper;
-import com.oficioYa.mapper.PerfilTrabajadorMapper;
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.model.dto.request.FiltroBusquedaDTO;
-import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioYa.service.IBusquedaTrabajadorService;
+import com.oficioya.controller.docs.BusquedaApi;
+import com.oficioya.mapper.BusquedaMapper;
+import com.oficioya.mapper.PerfilTrabajadorMapper;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.dto.request.FiltroBusquedaDTO;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.service.IBusquedaTrabajadorService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;

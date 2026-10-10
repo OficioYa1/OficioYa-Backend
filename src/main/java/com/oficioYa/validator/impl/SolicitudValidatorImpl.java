@@ -1,11 +1,11 @@
-package com.oficioYa.validator.impl;
+package com.oficioya.validator.impl;
 
-import com.oficioYa.exception.EstadoInvalidoException;
-import com.oficioYa.exception.UsuarioNoEncontradoException;
-import com.oficioYa.persistence.entity.RolUsuario;
-import com.oficioYa.persistence.entity.UsuarioEntity;
-import com.oficioYa.repository.UsuarioRepository;
-import com.oficioYa.validator.ISolicitudValidator;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.persistence.entity.RolUsuario;
+import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioya.repository.UsuarioRepository;
+import com.oficioya.validator.ISolicitudValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

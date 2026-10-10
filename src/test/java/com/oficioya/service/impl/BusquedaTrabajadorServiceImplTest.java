@@ -1,9 +1,9 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.mapper.PerfilTrabajadorEntityMapper;
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioYa.repository.PerfilTrabajadorRepository;
+import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioya.repository.PerfilTrabajadorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,10 +30,10 @@ class BusquedaTrabajadorServiceImplTest {
     private PerfilTrabajadorEntityMapper mapper;
     
     @Mock
-    private com.oficioYa.repository.OficioRepository oficioRepository;
+    private com.oficioya.repository.OficioRepository oficioRepository;
     
     @Mock
-    private com.oficioYa.validator.IBusquedaValidator busquedaValidator;
+    private com.oficioya.validator.IBusquedaValidator busquedaValidator;
 
     private BusquedaTrabajadorServiceImpl service;
 
@@ -45,8 +45,8 @@ class BusquedaTrabajadorServiceImplTest {
         service = new BusquedaTrabajadorServiceImpl(
             repository, mapper, oficioRepository, busquedaValidator,
             Arrays.asList(
-                new com.oficioYa.service.strategy.impl.BusquedaPorMeritoStrategy(),
-                new com.oficioYa.service.strategy.impl.BusquedaPorDistanciaStrategy(new com.oficioYa.adapter.impl.MockMapboxAdapter())
+                new com.oficioya.service.strategy.impl.BusquedaPorMeritoStrategy(),
+                new com.oficioya.service.strategy.impl.BusquedaPorDistanciaStrategy(new com.oficioya.adapter.impl.MockMapboxAdapter())
             )
         );
         // Arrange general

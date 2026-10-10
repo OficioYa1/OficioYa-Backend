@@ -1,7 +1,7 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.model.domain.CriteriosBusqueda;
-import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioya.model.domain.CriteriosBusqueda;
+import com.oficioya.model.domain.PerfilTrabajador;
 import java.util.List;
 
 public interface IBusquedaTrabajadorService {

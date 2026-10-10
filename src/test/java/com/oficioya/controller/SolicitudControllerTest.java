@@ -1,12 +1,12 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oficioYa.mapper.SolicitudMapper;
-import com.oficioYa.model.domain.Solicitud;
-import com.oficioYa.model.dto.request.SolicitudCreacionDTO;
-import com.oficioYa.model.dto.response.SolicitudResponseDTO;
-import com.oficioYa.persistence.entity.EstadoSolicitud;
-import com.oficioYa.service.ISolicitudService;
+import com.oficioya.mapper.SolicitudMapper;
+import com.oficioya.model.domain.Solicitud;
+import com.oficioya.model.dto.request.SolicitudCreacionDTO;
+import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioya.service.ISolicitudService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class SolicitudControllerTest {
     @org.springframework.test.context.bean.override.mockito.MockitoBean
-    private com.oficioYa.security.jwt.JwtService jwtService;
+    private com.oficioya.security.jwt.JwtService jwtService;
 
     @org.springframework.beans.factory.annotation.Autowired
     private MockMvc mockMvc;

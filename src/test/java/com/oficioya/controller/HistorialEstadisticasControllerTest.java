@@ -1,9 +1,9 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.model.dto.response.DashboardResumenDTO;
-import com.oficioYa.model.dto.response.EstadisticasResponseDTO;
-import com.oficioYa.model.dto.response.SolicitudResponseDTO;
-import com.oficioYa.service.IHistorialEstadisticasService;
+import com.oficioya.model.dto.response.DashboardResumenDTO;
+import com.oficioya.model.dto.response.EstadisticasResponseDTO;
+import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioya.service.IHistorialEstadisticasService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class HistorialEstadisticasControllerTest {
     @org.springframework.test.context.bean.override.mockito.MockitoBean
-    private com.oficioYa.security.jwt.JwtService jwtService;
+    private com.oficioya.security.jwt.JwtService jwtService;
 
     @Mock
     private IHistorialEstadisticasService historialService;

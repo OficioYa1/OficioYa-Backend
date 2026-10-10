@@ -1,4 +1,4 @@
-package com.oficioYa.dto;
+package com.oficioya.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

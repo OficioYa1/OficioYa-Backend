@@ -1,6 +1,6 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.model.domain.Solicitud;
+import com.oficioya.model.domain.Solicitud;
 
 public interface ISolicitudService {
     Solicitud crearSolicitud(Solicitud solicitud, Long contratanteId);

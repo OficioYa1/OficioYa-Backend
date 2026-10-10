@@ -1,14 +1,14 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.mapper.SolicitudEntityMapper;
-import com.oficioYa.mapper.SolicitudMapper;
-import com.oficioYa.model.dto.response.DashboardResumenDTO;
-import com.oficioYa.model.dto.response.EstadisticasResponseDTO;
-import com.oficioYa.model.dto.response.SolicitudResponseDTO;
-import com.oficioYa.persistence.entity.EstadoSolicitud;
-import com.oficioYa.persistence.entity.SolicitudEntity;
-import com.oficioYa.repository.SolicitudRepository;
-import com.oficioYa.service.IHistorialEstadisticasService;
+import com.oficioya.mapper.SolicitudEntityMapper;
+import com.oficioya.mapper.SolicitudMapper;
+import com.oficioya.model.dto.response.DashboardResumenDTO;
+import com.oficioya.model.dto.response.EstadisticasResponseDTO;
+import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioya.persistence.entity.EstadoSolicitud;
+import com.oficioya.persistence.entity.SolicitudEntity;
+import com.oficioya.repository.SolicitudRepository;
+import com.oficioya.service.IHistorialEstadisticasService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
