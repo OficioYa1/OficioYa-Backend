@@ -125,9 +125,31 @@ jobs:
           name: application-jar
           path: target/
 
-      - name: 4.2 Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: '${{ github.workspace }}/target/*.jar'
+      - name: 4.2 Deploy to Azure Web App (OneDeploy)
+        run: |
+          echo "========================================================="
+          echo "Stage 4: Deploy Artifact to Azure App Service"
+          echo "========================================================="
+          JAR_FILE=$(find target -name "*.jar" ! -name "*original*" | head -n 1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Error: No executable JAR found in target directory!"
+            ls -la target/
+            exit 1
+          fi
+          echo "Deploying artifact: $JAR_FILE to ${{ env.AZURE_WEBAPP_NAME }}..."
+          
+          HTTP_CODE=$(curl -s -S -o deploy_output.log -w "%{http_code}" -X POST \
+            -u '$oficioya-backend:PzHEPyryvkGvtZXrSH2zwYSQLgKGiP78o0kWpc137nENmy2igGat1MJ3NYFZ' \
+            -H "Content-Type: application/octet-stream" \
+            --data-binary "@$JAR_FILE" \
+            "https://${{ env.AZURE_WEBAPP_NAME }}.scm.azurewebsites.net/api/publish?type=jar")
+          
+          echo "Deployment HTTP Response: $HTTP_CODE"
+          cat deploy_output.log || true
+          
+          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 202 ]; then
+            echo "Deployment to Azure App Service succeeded (HTTP $HTTP_CODE)!"
+          else
+            echo "Deployment failed with HTTP code $HTTP_CODE"
+            exit 1
+          fi
