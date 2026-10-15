@@ -75,10 +75,10 @@ Este repositorio aloja el **Backend Monolítico Modular**, diseñado y desarroll
 
 | Recurso / Entorno | Tipo | Estado | Enlace |
 | :--- | :--- | :---: | :--- |
-| **Swagger UI (Local)** | Documentación interactiva | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
-| **OpenAPI Docs (Local)** | Esquema JSON | 🟢 Activo | [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs) |
-| **API Backend (Azure Cloud)** | Staging / QA | 🟡 En Despliegue | `[ESPACIO PENDIENTE: https://oficioya-backend.azurewebsites.net]` |
-| **Swagger UI (Azure Cloud)** | Staging / QA | 🟡 En Despliegue | `[ESPACIO PENDIENTE: https://oficioya-backend.azurewebsites.net/swagger-ui/index.html]` |
+| **Swagger UI** | Documentación interactiva | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
+| **OpenAPI Docs** | Esquema JSON | 🟢 Activo | [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs) |
+| **API Backend (Azure Cloud)** | Staging / QA | 🟢 Activo | `[ESPACIO PENDIENTE: https://oficioya-backend.azurewebsites.net]` |
+
 | **Frontend Web (Cliente)** | Interfaz de Usuario SPA | 🟢 Repositorio | [OficioYa-Frontend](https://github.com/OficioYa1/OficioYa-Frontend) |
 
 ---
@@ -225,7 +225,8 @@ Expone la estructura estática del modelo de dominio de OficioYa. La clase raíz
 
 ### Diagrama de Despliegue en la Nube (Infraestructura)
 
-![Diagrama de Despliegue](docs/uml/DiagramDeployment.png)
+![Diagrama de Despliegue](docs/uml/Despliegue1.png)
+![Diagrama de Despliegue](docs/uml/Despliegue2.png)
 
 **Topología de Infraestructura:**
 * **Cliente Web:** Navegador cliente ejecutando la SPA.
