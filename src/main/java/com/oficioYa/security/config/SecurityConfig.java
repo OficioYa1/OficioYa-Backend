@@ -27,6 +27,7 @@ public class SecurityConfig {
             .cors(cors -> cors.configure(http))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/api/v1/health").permitAll() // Open root and health check
                 .requestMatchers("/auth/**").permitAll() // Open login endpoints
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll() // Open Swagger documentation
                 .anyRequest().authenticated()
