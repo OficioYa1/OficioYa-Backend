@@ -1,4 +1,4 @@
-package com.oficioYa.util;
+package com.oficioya.util;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,12 +1,12 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.model.dto.request.ReporteRequestDTO;
-import com.oficioYa.model.dto.response.ReporteResponseDTO;
+import com.oficioya.model.dto.request.ReporteRequestDTO;
+import com.oficioya.model.dto.response.ReporteResponseDTO;
 
 import java.util.List;
 
 public interface IModeracionService {
-    ReporteResponseDTO reportarUsuario(Long reportadorId, ReporteRequestDTO request);
+    ReporteResponseDTO reportarUsuario(String correoReportador, ReporteRequestDTO request);
     ReporteResponseDTO consultarEstadoReporte(Long reporteId);
     List<ReporteResponseDTO> obtenerTodosLosReportes();
     void pausarUsuario(Long usuarioId);

@@ -1,18 +1,18 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.controller.docs.UsuarioApi;
-import com.oficioYa.mapper.UsuarioDTOMapper;
-import com.oficioYa.model.domain.Usuario;
-import com.oficioYa.model.dto.request.UsuarioRegistroRequestDTO;
-import com.oficioYa.model.dto.response.UsuarioResponseDTO;
-import com.oficioYa.service.IUsuarioService;
+import com.oficioya.controller.docs.UsuarioApi;
+import com.oficioya.mapper.UsuarioDTOMapper;
+import com.oficioya.model.domain.Usuario;
+import com.oficioya.model.dto.request.UsuarioRegistroRequestDTO;
+import com.oficioya.model.dto.response.UsuarioResponseDTO;
+import com.oficioya.service.IUsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.oficioYa.model.dto.response.MensajeResponseDTO;
-import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioYa.model.dto.response.PerfilContratanteResponseDTO;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,8 +22,8 @@ public class UsuarioController implements UsuarioApi {
 
     private final IUsuarioService usuarioService;
     private final UsuarioDTOMapper dtoMapper;
-    private final com.oficioYa.mapper.PerfilTrabajadorMapper perfilTrabajadorMapper;
-    private final com.oficioYa.mapper.PerfilContratanteMapper perfilContratanteMapper;
+    private final com.oficioya.mapper.PerfilTrabajadorMapper perfilTrabajadorMapper;
+    private final com.oficioya.mapper.PerfilContratanteMapper perfilContratanteMapper;
 
     @Override
     @PostMapping("/registro")
@@ -62,7 +62,7 @@ public class UsuarioController implements UsuarioApi {
     @PutMapping("/{id}/perfil-trabajador")
     public ResponseEntity<MensajeResponseDTO> editarPerfilTrabajador(
             @PathVariable Long id, 
-            @Valid @RequestBody com.oficioYa.model.dto.request.EditarPerfilTrabajadorRequestDTO request) {
+            @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request) {
         
         usuarioService.editarPerfilTrabajador(id, request.telefono(), request.zonaCobertura());
         return ResponseEntity.ok(new MensajeResponseDTO("Perfil de trabajador actualizado exitosamente"));
@@ -72,19 +72,21 @@ public class UsuarioController implements UsuarioApi {
     @PutMapping("/{id}/perfil-contratante")
     public ResponseEntity<MensajeResponseDTO> editarPerfilContratante(
             @PathVariable Long id, 
-            @Valid @RequestBody com.oficioYa.model.dto.request.EditarPerfilContratanteRequestDTO request) {
+            @Valid @RequestBody com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request) {
         
         usuarioService.editarPerfilContratante(id, request.telefono(), request.descripcion());
         return ResponseEntity.ok(new MensajeResponseDTO("Perfil de contratante actualizado exitosamente"));
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE')")
     public ResponseEntity<MensajeResponseDTO> eliminarCuenta(@PathVariable Long id) {
         usuarioService.eliminarCuenta(id);
         return ResponseEntity.ok(new MensajeResponseDTO("Cuenta eliminada exitosamente"));
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE')")
     @PostMapping(value = "/{id}/foto", consumes = org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<MensajeResponseDTO> actualizarFotoPerfil(
             @PathVariable Long id, 

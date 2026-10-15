@@ -1,6 +1,6 @@
-package com.oficioYa.repository;
+package com.oficioya.repository;
 
-import com.oficioYa.persistence.entity.PerfilContratanteEntity;
+import com.oficioya.persistence.entity.PerfilContratanteEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.oficioYa.persistence.entity;
+package com.oficioya.persistence.entity;
 
 /**
  * Enum de roles posibles de un usuario en la plataforma.

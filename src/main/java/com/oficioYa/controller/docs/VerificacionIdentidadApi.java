@@ -1,6 +1,6 @@
-package com.oficioYa.controller.docs;
+package com.oficioya.controller.docs;
 
-import com.oficioYa.model.domain.EstadoVerificacion;
+import com.oficioya.model.domain.EstadoVerificacion;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;

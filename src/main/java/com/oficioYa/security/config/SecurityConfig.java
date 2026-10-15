@@ -1,6 +1,6 @@
-package com.oficioYa.security.config;
+package com.oficioya.security.config;
 
-import com.oficioYa.security.jwt.JwtAuthenticationFilter;
+import com.oficioya.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

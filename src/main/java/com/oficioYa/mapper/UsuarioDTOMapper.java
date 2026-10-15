@@ -1,8 +1,8 @@
-package com.oficioYa.mapper;
+package com.oficioya.mapper;
 
-import com.oficioYa.model.domain.Usuario;
-import com.oficioYa.model.dto.request.UsuarioRegistroRequestDTO;
-import com.oficioYa.model.dto.response.UsuarioResponseDTO;
+import com.oficioya.model.domain.Usuario;
+import com.oficioya.model.dto.request.UsuarioRegistroRequestDTO;
+import com.oficioya.model.dto.response.UsuarioResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

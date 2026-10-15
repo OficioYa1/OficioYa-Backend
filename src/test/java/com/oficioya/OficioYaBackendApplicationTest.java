@@ -1,4 +1,4 @@
-package com.oficioYa;
+package com.oficioya;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

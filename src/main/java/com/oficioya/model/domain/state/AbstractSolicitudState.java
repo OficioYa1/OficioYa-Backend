@@ -1,7 +1,7 @@
-package com.oficioYa.model.domain.state;
+package com.oficioya.model.domain.state;
 
-import com.oficioYa.model.domain.Solicitud;
-import com.oficioYa.model.exception.EstadoInvalidoException;
+import com.oficioya.model.domain.Solicitud;
+import com.oficioya.model.exception.EstadoInvalidoException;
 
 public abstract class AbstractSolicitudState implements SolicitudState {
     

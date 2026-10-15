@@ -1,4 +1,4 @@
-package com.oficioYa.persistence.entity;
+package com.oficioya.persistence.entity;
 
 public enum EstadoReporte {
     PENDIENTE, EN_REVISION, RESUELTO, DESESTIMADO

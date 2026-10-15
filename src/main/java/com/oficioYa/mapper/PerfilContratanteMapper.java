@@ -1,7 +1,7 @@
-package com.oficioYa.mapper;
+package com.oficioya.mapper;
 
-import com.oficioYa.model.domain.PerfilContratante;
-import com.oficioYa.model.dto.response.PerfilContratanteResponseDTO;
+import com.oficioya.model.domain.PerfilContratante;
+import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

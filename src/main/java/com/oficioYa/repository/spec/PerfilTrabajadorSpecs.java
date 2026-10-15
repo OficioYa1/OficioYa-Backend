@@ -1,9 +1,9 @@
-package com.oficioYa.repository.spec;
+package com.oficioya.repository.spec;
 
-import com.oficioYa.model.domain.CriteriosBusqueda;
-import com.oficioYa.persistence.entity.FranjaDisponibilidadEmbeddable;
-import com.oficioYa.persistence.entity.OficioEntity;
-import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioya.model.domain.CriteriosBusqueda;
+import com.oficioya.persistence.entity.FranjaDisponibilidadEmbeddable;
+import com.oficioya.persistence.entity.OficioEntity;
+import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;

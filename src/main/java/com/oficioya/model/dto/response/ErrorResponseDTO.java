@@ -1,4 +1,4 @@
-package com.oficioYa.model.dto.response;
+package com.oficioya.model.dto.response;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
-package com.oficioYa.repository;
+package com.oficioya.repository;
 
-import  com.oficioYa.persistence.entity.SolicitudEntity;
+import  com.oficioya.persistence.entity.SolicitudEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -15,10 +15,10 @@ public interface SolicitudRepository extends JpaRepository<SolicitudEntity, Long
     List<SolicitudEntity> findByTrabajadorIdOrderByFechaCreacionDesc(Long trabajadorId);
     
     // RF-46 / RF-48: Estadisticas Cliente
-    long countByContratanteIdAndEstado(Long contratanteId, com.oficioYa.persistence.entity.EstadoSolicitud estado);
+    long countByContratanteIdAndEstado(Long contratanteId, com.oficioya.persistence.entity.EstadoSolicitud estado);
     long countByContratanteId(Long contratanteId);
     
     // RF-47 / RF-48: Estadisticas Trabajador
-    long countByTrabajadorIdAndEstado(Long trabajadorId, com.oficioYa.persistence.entity.EstadoSolicitud estado);
+    long countByTrabajadorIdAndEstado(Long trabajadorId, com.oficioya.persistence.entity.EstadoSolicitud estado);
     long countByTrabajadorId(Long trabajadorId);
 }

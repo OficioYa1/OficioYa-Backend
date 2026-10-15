@@ -1,14 +1,15 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.exception.RecursoNoEncontradoException;
-import com.oficioYa.exception.UsuarioNoEncontradoException;
-import com.oficioYa.model.dto.request.ReporteRequestDTO;
-import com.oficioYa.model.dto.response.ReporteResponseDTO;
-import com.oficioYa.persistence.entity.EstadoReporte;
-import com.oficioYa.persistence.entity.ReporteEntity;
-import com.oficioYa.persistence.entity.UsuarioEntity;
-import com.oficioYa.repository.ReporteRepository;
-import com.oficioYa.repository.UsuarioRepository;
+import com.oficioya.exception.RecursoNoEncontradoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.model.dto.request.ReporteRequestDTO;
+import com.oficioya.model.dto.response.ReporteResponseDTO;
+import com.oficioya.persistence.entity.EstadoReporte;
+import com.oficioya.persistence.entity.ReporteEntity;
+import com.oficioya.persistence.entity.RolUsuario;
+import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioya.repository.ReporteRepository;
+import com.oficioya.repository.UsuarioRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,12 +42,13 @@ class ModeracionServiceImplTest {
     @DisplayName("Debe reportar usuario exitosamente cuando reportador y reportado existen")
     void reportarUsuario_ConDatosValidos_DebeCrearReporte() {
         // Arrange
+        String correoReportador = "reportador@oficioya.com";
         Long reportadorId = 1L;
         Long reportadoId = 2L;
         ReporteRequestDTO request = new ReporteRequestDTO(reportadoId, "Incumplimiento de acuerdo", "https://evidencia.com/img1.png");
 
-        UsuarioEntity reportador = UsuarioEntity.builder().id(reportadorId).correo("reportador@oficioya.com").build();
-        UsuarioEntity reportado = UsuarioEntity.builder().id(reportadoId).correo("reportado@oficioya.com").build();
+        UsuarioEntity reportador = UsuarioEntity.builder().id(reportadorId).correo(correoReportador).rol(RolUsuario.CONTRATANTE).build();
+        UsuarioEntity reportado = UsuarioEntity.builder().id(reportadoId).correo("reportado@oficioya.com").rol(RolUsuario.TRABAJADOR).activo(true).build();
 
         ReporteEntity reporteGuardado = ReporteEntity.builder()
                 .id(10L)
@@ -58,12 +60,12 @@ class ModeracionServiceImplTest {
                 .fechaCreacion(LocalDateTime.now())
                 .build();
 
-        when(usuarioRepository.findById(reportadorId)).thenReturn(Optional.of(reportador));
+        when(usuarioRepository.findByCorreo(correoReportador)).thenReturn(Optional.of(reportador));
         when(usuarioRepository.findById(reportadoId)).thenReturn(Optional.of(reportado));
         when(reporteRepository.save(any(ReporteEntity.class))).thenReturn(reporteGuardado);
 
         // Act
-        ReporteResponseDTO response = moderacionService.reportarUsuario(reportadorId, request);
+        ReporteResponseDTO response = moderacionService.reportarUsuario(correoReportador, request);
 
         // Assert
         assertNotNull(response);
@@ -72,7 +74,7 @@ class ModeracionServiceImplTest {
         assertEquals(reportadoId, response.reportadoId());
         assertEquals("PENDIENTE", response.estado());
         assertEquals("Incumplimiento de acuerdo", response.motivo());
-        verify(usuarioRepository).findById(reportadorId);
+        verify(usuarioRepository).findByCorreo(correoReportador);
         verify(usuarioRepository).findById(reportadoId);
         verify(reporteRepository).save(any(ReporteEntity.class));
     }
@@ -81,20 +83,20 @@ class ModeracionServiceImplTest {
     @DisplayName("Debe lanzar excepción al reportar si el usuario reportador no existe")
     void reportarUsuario_ReportadorInexistente_DebeLanzarExcepcion() {
         // Arrange
-        Long reportadorId = 99L;
+        String correoReportador = "inexistente@oficioya.com";
         ReporteRequestDTO request = new ReporteRequestDTO(2L, "Motivo cualquiera", null);
 
-        when(usuarioRepository.findById(reportadorId)).thenReturn(Optional.empty());
+        when(usuarioRepository.findByCorreo(correoReportador)).thenReturn(Optional.empty());
 
         // Act & Assert
         UsuarioNoEncontradoException exception = assertThrows(
                 UsuarioNoEncontradoException.class,
-                () -> moderacionService.reportarUsuario(reportadorId, request)
+                () -> moderacionService.reportarUsuario(correoReportador, request)
         );
 
         // Assert
         assertEquals("Reportador no encontrado", exception.getMessage());
-        verify(usuarioRepository).findById(reportadorId);
+        verify(usuarioRepository).findByCorreo(correoReportador);
         verify(usuarioRepository, never()).findById(request.reportadoId());
         verifyNoInteractions(reporteRepository);
     }
@@ -103,23 +105,24 @@ class ModeracionServiceImplTest {
     @DisplayName("Debe lanzar excepción al reportar si el usuario reportado no existe")
     void reportarUsuario_ReportadoInexistente_DebeLanzarExcepcion() {
         // Arrange
+        String correoReportador = "reportador@oficioya.com";
         Long reportadorId = 1L;
         Long reportadoId = 99L;
         ReporteRequestDTO request = new ReporteRequestDTO(reportadoId, "Motivo", null);
-        UsuarioEntity reportador = UsuarioEntity.builder().id(reportadorId).build();
+        UsuarioEntity reportador = UsuarioEntity.builder().id(reportadorId).correo(correoReportador).build();
 
-        when(usuarioRepository.findById(reportadorId)).thenReturn(Optional.of(reportador));
+        when(usuarioRepository.findByCorreo(correoReportador)).thenReturn(Optional.of(reportador));
         when(usuarioRepository.findById(reportadoId)).thenReturn(Optional.empty());
 
         // Act & Assert
         UsuarioNoEncontradoException exception = assertThrows(
                 UsuarioNoEncontradoException.class,
-                () -> moderacionService.reportarUsuario(reportadorId, request)
+                () -> moderacionService.reportarUsuario(correoReportador, request)
         );
 
         // Assert
         assertEquals("Usuario reportado no encontrado", exception.getMessage());
-        verify(usuarioRepository).findById(reportadorId);
+        verify(usuarioRepository).findByCorreo(correoReportador);
         verify(usuarioRepository).findById(reportadoId);
         verifyNoInteractions(reporteRepository);
     }

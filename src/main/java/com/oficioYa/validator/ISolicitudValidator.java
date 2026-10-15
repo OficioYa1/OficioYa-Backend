@@ -1,4 +1,4 @@
-package com.oficioYa.validator;
+package com.oficioya.validator;
 
 public interface ISolicitudValidator {
 

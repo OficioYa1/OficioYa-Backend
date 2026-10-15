@@ -1,11 +1,11 @@
-package com.oficioYa.validator;
+package com.oficioya.validator;
 
-import com.oficioYa.exception.EstadoInvalidoException;
-import com.oficioYa.exception.UsuarioNoEncontradoException;
-import com.oficioYa.persistence.entity.RolUsuario;
-import com.oficioYa.persistence.entity.UsuarioEntity;
-import com.oficioYa.repository.UsuarioRepository;
-import com.oficioYa.validator.impl.SolicitudValidatorImpl;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.persistence.entity.RolUsuario;
+import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioya.repository.UsuarioRepository;
+import com.oficioya.validator.impl.SolicitudValidatorImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

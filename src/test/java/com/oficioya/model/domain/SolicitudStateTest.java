@@ -1,8 +1,8 @@
-package com.oficioYa.model.domain;
+package com.oficioya.model.domain;
 
-import com.oficioYa.model.domain.state.*;
-import com.oficioYa.model.exception.EstadoInvalidoException;
-import com.oficioYa.persistence.entity.EstadoSolicitud;
+import com.oficioya.model.domain.state.*;
+import com.oficioya.model.exception.EstadoInvalidoException;
+import com.oficioya.persistence.entity.EstadoSolicitud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

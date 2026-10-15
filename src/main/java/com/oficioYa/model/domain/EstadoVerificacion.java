@@ -1,4 +1,4 @@
-package com.oficioYa.model.domain;
+package com.oficioya.model.domain;
 
 public enum EstadoVerificacion {
     NO_VERIFICADO,

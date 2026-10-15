@@ -1,8 +1,8 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.model.dto.request.MensajeChatRequestDTO;
-import com.oficioYa.model.dto.response.MensajeChatResponseDTO;
-import com.oficioYa.service.IMensajeriaRestService;
+import com.oficioya.model.dto.request.MensajeChatRequestDTO;
+import com.oficioya.model.dto.response.MensajeChatResponseDTO;
+import com.oficioya.service.IMensajeriaRestService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 @org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc(addFilters = false)
 class MensajeriaRestControllerTest {
     @org.springframework.test.context.bean.override.mockito.MockitoBean
-    private com.oficioYa.security.jwt.JwtService jwtService;
+    private com.oficioya.security.jwt.JwtService jwtService;
 
     @Mock
     private IMensajeriaRestService mensajeriaService;

@@ -1,6 +1,6 @@
-package com.oficioYa.controller.docs;
+package com.oficioya.controller.docs;
 
-import com.oficioYa.model.dto.response.MensajeResponseDTO;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +14,6 @@ public interface ReferidoApi {
     @Operation(summary = "RF-68 — Registrar referido", description = "Invita a un usuario por correo. Si el referido se registra luego, cuenta para la insignia del referente.")
     @PostMapping("/invitar")
     ResponseEntity<MensajeResponseDTO> registrarReferido(
-            @RequestHeader("X-Usuario-Id") Long referenteId, 
+            java.security.Principal principal, 
             @RequestParam("correo") String correoReferido);
 }

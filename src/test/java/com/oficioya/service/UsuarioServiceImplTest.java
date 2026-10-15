@@ -1,28 +1,28 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.exception.CorreoYaRegistradoException;
-import com.oficioYa.exception.EstadoInvalidoException;
-import com.oficioYa.exception.RecursoNoEncontradoException;
-import com.oficioYa.exception.UsuarioNoEncontradoException;
-import com.oficioYa.mapper.PerfilContratanteEntityMapper;
-import com.oficioYa.mapper.PerfilContratanteMapper;
-import com.oficioYa.mapper.PerfilTrabajadorEntityMapper;
-import com.oficioYa.mapper.PerfilTrabajadorMapper;
-import com.oficioYa.mapper.UsuarioEntityMapper;
-import com.oficioYa.model.domain.PerfilContratante;
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.model.domain.Usuario;
-import com.oficioYa.model.dto.response.PerfilContratanteResponseDTO;
-import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
-import com.oficioYa.persistence.entity.PerfilContratanteEntity;
-import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioYa.persistence.entity.RolUsuario;
-import com.oficioYa.persistence.entity.UsuarioEntity;
-import com.oficioYa.repository.PerfilContratanteRepository;
-import com.oficioYa.repository.PerfilTrabajadorRepository;
-import com.oficioYa.repository.UsuarioRepository;
-import com.oficioYa.service.impl.UsuarioServiceImpl;
-import com.oficioYa.validator.IUsuarioValidator;
+import com.oficioya.exception.CorreoYaRegistradoException;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.RecursoNoEncontradoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.mapper.PerfilContratanteEntityMapper;
+import com.oficioya.mapper.PerfilContratanteMapper;
+import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioya.mapper.PerfilTrabajadorMapper;
+import com.oficioya.mapper.UsuarioEntityMapper;
+import com.oficioya.model.domain.PerfilContratante;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.domain.Usuario;
+import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.persistence.entity.PerfilContratanteEntity;
+import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioya.persistence.entity.RolUsuario;
+import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioya.repository.PerfilContratanteRepository;
+import com.oficioya.repository.PerfilTrabajadorRepository;
+import com.oficioya.repository.UsuarioRepository;
+import com.oficioya.service.impl.UsuarioServiceImpl;
+import com.oficioya.validator.IUsuarioValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -424,8 +424,8 @@ class UsuarioServiceImplTest {
     void editarPerfilTrabajador_flujoExitoso_actualizaDatos() {
         // Arrange
         Long usuarioId = 1L;
-        com.oficioYa.model.dto.request.EditarPerfilTrabajadorRequestDTO request = 
-            new com.oficioYa.model.dto.request.EditarPerfilTrabajadorRequestDTO("3001234567", "Norte de la ciudad");
+        com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO("3001234567", "Norte de la ciudad");
 
         UsuarioEntity usuario = new UsuarioEntity();
         usuario.setId(usuarioId);
@@ -454,8 +454,8 @@ class UsuarioServiceImplTest {
     void editarPerfilTrabajador_rolIncorrecto_lanzaExcepcion() {
         // Arrange
         Long usuarioId = 2L;
-        com.oficioYa.model.dto.request.EditarPerfilTrabajadorRequestDTO request = 
-            new com.oficioYa.model.dto.request.EditarPerfilTrabajadorRequestDTO("3001234567", "Sur");
+        com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilTrabajadorRequestDTO("3001234567", "Sur");
 
         UsuarioEntity usuario = new UsuarioEntity();
         usuario.setId(usuarioId);
@@ -476,8 +476,8 @@ class UsuarioServiceImplTest {
     void editarPerfilContratante_flujoExitoso_actualizaDatos() {
         // Arrange
         Long usuarioId = 3L;
-        com.oficioYa.model.dto.request.EditarPerfilContratanteRequestDTO request = 
-            new com.oficioYa.model.dto.request.EditarPerfilContratanteRequestDTO("3119876543", "Busco plomero urgente");
+        com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO("3119876543", "Busco plomero urgente");
 
         UsuarioEntity usuario = new UsuarioEntity();
         usuario.setId(usuarioId);
@@ -506,8 +506,8 @@ class UsuarioServiceImplTest {
     void editarPerfilContratante_usuarioNoExiste_lanzaExcepcion() {
         // Arrange
         Long usuarioId = 99L;
-        com.oficioYa.model.dto.request.EditarPerfilContratanteRequestDTO request = 
-            new com.oficioYa.model.dto.request.EditarPerfilContratanteRequestDTO("3119876543", "Test");
+        com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO request = 
+            new com.oficioya.model.dto.request.EditarPerfilContratanteRequestDTO("3119876543", "Test");
 
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
 

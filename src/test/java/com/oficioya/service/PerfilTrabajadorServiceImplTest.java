@@ -1,26 +1,26 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.repository.OficioRepository;
-import com.oficioYa.persistence.entity.OficioEntity;
-import com.oficioYa.exception.ConflictoException;
-import com.oficioYa.exception.EstadoInvalidoException;
-import com.oficioYa.exception.RecursoNoEncontradoException;
-import com.oficioYa.exception.UsuarioNoEncontradoException;
-import com.oficioYa.mapper.PerfilTrabajadorEntityMapper;
-import com.oficioYa.model.domain.FranjaDisponibilidad;
-import com.oficioYa.model.domain.MetodoPago;
-import com.oficioYa.model.domain.PerfilTrabajador;
-import com.oficioYa.model.domain.Usuario;
-import com.oficioYa.model.exception.ReglaDeNegocioException;
-import com.oficioYa.persistence.entity.FranjaDisponibilidadEmbeddable;
-import com.oficioYa.persistence.entity.PerfilTrabajadorEntity;
-import com.oficioYa.persistence.entity.UsuarioEntity;
-import com.oficioYa.repository.PerfilTrabajadorRepository;
-import com.oficioYa.repository.PortafolioMongoRepository;
-import com.oficioYa.persistence.document.PortafolioMongoDocument;
-import com.oficioYa.repository.UsuarioRepository;
-import com.oficioYa.service.impl.PerfilTrabajadorServiceImpl;
-import com.oficioYa.validator.IPerfilTrabajadorValidator;
+import com.oficioya.repository.OficioRepository;
+import com.oficioya.persistence.entity.OficioEntity;
+import com.oficioya.exception.ConflictoException;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.RecursoNoEncontradoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.mapper.PerfilTrabajadorEntityMapper;
+import com.oficioya.model.domain.FranjaDisponibilidad;
+import com.oficioya.model.domain.MetodoPago;
+import com.oficioya.model.domain.PerfilTrabajador;
+import com.oficioya.model.domain.Usuario;
+import com.oficioya.model.exception.ReglaDeNegocioException;
+import com.oficioya.persistence.entity.FranjaDisponibilidadEmbeddable;
+import com.oficioya.persistence.entity.PerfilTrabajadorEntity;
+import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioya.repository.PerfilTrabajadorRepository;
+import com.oficioya.repository.PortafolioMongoRepository;
+import com.oficioya.persistence.document.PortafolioMongoDocument;
+import com.oficioya.repository.UsuarioRepository;
+import com.oficioya.service.impl.PerfilTrabajadorServiceImpl;
+import com.oficioya.validator.IPerfilTrabajadorValidator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -395,7 +395,7 @@ class PerfilTrabajadorServiceImplTest {
         oficio.setId(oficioId);
         oficio.setActivo(true);
 
-        com.oficioYa.model.domain.PerfilTrabajador domain = new com.oficioYa.model.domain.PerfilTrabajador();
+        com.oficioya.model.domain.PerfilTrabajador domain = new com.oficioya.model.domain.PerfilTrabajador();
         domain.setId(perfilId);
         
 
@@ -482,7 +482,7 @@ class PerfilTrabajadorServiceImplTest {
         oficio3.setId(3L);
         oficio3.setActivo(true);
 
-        com.oficioYa.model.domain.PerfilTrabajador domain = new com.oficioYa.model.domain.PerfilTrabajador();
+        com.oficioya.model.domain.PerfilTrabajador domain = new com.oficioya.model.domain.PerfilTrabajador();
         domain.setId(perfilId);
 
         when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));

@@ -1,6 +1,6 @@
-package com.oficioYa.model.dto.request;
+package com.oficioya.model.dto.request;
 
-import com.oficioYa.model.domain.MetodoPago;
+import com.oficioya.model.domain.MetodoPago;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Data;
 

@@ -1,11 +1,11 @@
-package com.oficioYa.controller;
+package com.oficioya.controller;
 
-import com.oficioYa.controller.docs.SolicitudApi;
-import com.oficioYa.mapper.SolicitudMapper;
-import com.oficioYa.model.domain.Solicitud;
-import com.oficioYa.model.dto.request.SolicitudCreacionDTO;
-import com.oficioYa.model.dto.response.SolicitudResponseDTO;
-import com.oficioYa.service.ISolicitudService;
+import com.oficioya.controller.docs.SolicitudApi;
+import com.oficioya.mapper.SolicitudMapper;
+import com.oficioya.model.domain.Solicitud;
+import com.oficioya.model.dto.request.SolicitudCreacionDTO;
+import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioya.service.ISolicitudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

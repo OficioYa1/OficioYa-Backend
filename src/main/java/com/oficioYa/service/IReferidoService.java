@@ -1,6 +1,6 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
 public interface IReferidoService {
-    void registrarReferido(Long referenteId, String correoReferido);
+    void registrarReferido(String correoReferente, String correoReferido);
     void procesarRegistroReferido(String correoNuevoUsuario);
 }

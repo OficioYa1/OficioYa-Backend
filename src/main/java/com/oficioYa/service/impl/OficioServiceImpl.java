@@ -1,10 +1,10 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.mapper.OficioMapper;
-import com.oficioYa.model.dto.response.OficioResponseDTO;
-import com.oficioYa.persistence.entity.OficioEntity;
-import com.oficioYa.repository.OficioRepository;
-import com.oficioYa.service.IOficioService;
+import com.oficioya.mapper.OficioMapper;
+import com.oficioya.model.dto.response.OficioResponseDTO;
+import com.oficioya.persistence.entity.OficioEntity;
+import com.oficioya.repository.OficioRepository;
+import com.oficioya.service.IOficioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

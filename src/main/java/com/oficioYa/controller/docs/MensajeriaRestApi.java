@@ -1,7 +1,7 @@
-package com.oficioYa.controller.docs;
+package com.oficioya.controller.docs;
 
-import com.oficioYa.model.dto.request.MensajeChatRequestDTO;
-import com.oficioYa.model.dto.response.MensajeChatResponseDTO;
+import com.oficioya.model.dto.request.MensajeChatRequestDTO;
+import com.oficioya.model.dto.response.MensajeChatResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

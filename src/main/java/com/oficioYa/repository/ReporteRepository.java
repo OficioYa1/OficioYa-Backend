@@ -1,6 +1,6 @@
-package com.oficioYa.repository;
+package com.oficioya.repository;
 
-import com.oficioYa.persistence.entity.ReporteEntity;
+import com.oficioya.persistence.entity.ReporteEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,5 +10,5 @@ import java.util.List;
 public interface ReporteRepository extends JpaRepository<ReporteEntity, Long> {
     List<ReporteEntity> findByReportadorId(Long reportadorId);
     List<ReporteEntity> findByReportadoId(Long reportadoId);
-    List<ReporteEntity> findByEstado(com.oficioYa.persistence.entity.EstadoReporte estado);
+    List<ReporteEntity> findByEstado(com.oficioya.persistence.entity.EstadoReporte estado);
 }

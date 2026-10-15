@@ -1,7 +1,7 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.exception.EstadoInvalidoException;
-import com.oficioYa.service.IStorageService;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.service.IStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

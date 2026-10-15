@@ -1,4 +1,4 @@
-package com.oficioYa.util;
+package com.oficioya.util;
 
 import java.text.Normalizer;
 import java.util.ArrayList;

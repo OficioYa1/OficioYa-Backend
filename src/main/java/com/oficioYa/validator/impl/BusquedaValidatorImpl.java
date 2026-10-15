@@ -1,8 +1,8 @@
-package com.oficioYa.validator.impl;
+package com.oficioya.validator.impl;
 
-import com.oficioYa.model.domain.CriteriosBusqueda;
-import com.oficioYa.model.exception.ReglaDeNegocioException;
-import com.oficioYa.validator.IBusquedaValidator;
+import com.oficioya.model.domain.CriteriosBusqueda;
+import com.oficioya.model.exception.ReglaDeNegocioException;
+import com.oficioya.validator.IBusquedaValidator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
-package com.oficioYa.validator;
+package com.oficioya.validator;
 
-import com.oficioYa.model.domain.CriteriosBusqueda;
+import com.oficioya.model.domain.CriteriosBusqueda;
 
 /** Reglas de negocio de la búsqueda de trabajadores (Dev B). */
 public interface IBusquedaValidator {

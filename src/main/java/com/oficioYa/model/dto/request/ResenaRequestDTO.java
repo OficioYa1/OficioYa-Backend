@@ -1,4 +1,4 @@
-package com.oficioYa.model.dto.request;
+package com.oficioya.model.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

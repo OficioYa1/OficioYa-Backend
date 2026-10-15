@@ -1,14 +1,14 @@
-package com.oficioYa.mapper;
+package com.oficioya.mapper;
 
-import com.oficioYa.model.domain.*;
-import com.oficioYa.model.dto.request.FiltroBusquedaDTO;
-import com.oficioYa.model.dto.request.SolicitudCreacionDTO;
-import com.oficioYa.model.dto.request.UsuarioRegistroRequestDTO;
-import com.oficioYa.model.dto.response.OficioResponseDTO;
-import com.oficioYa.model.dto.response.PerfilContratanteResponseDTO;
-import com.oficioYa.model.dto.response.SolicitudResponseDTO;
-import com.oficioYa.model.dto.response.UsuarioResponseDTO;
-import com.oficioYa.persistence.entity.*;
+import com.oficioya.model.domain.*;
+import com.oficioya.model.dto.request.FiltroBusquedaDTO;
+import com.oficioya.model.dto.request.SolicitudCreacionDTO;
+import com.oficioya.model.dto.request.UsuarioRegistroRequestDTO;
+import com.oficioya.model.dto.response.OficioResponseDTO;
+import com.oficioya.model.dto.response.PerfilContratanteResponseDTO;
+import com.oficioya.model.dto.response.SolicitudResponseDTO;
+import com.oficioya.model.dto.response.UsuarioResponseDTO;
+import com.oficioya.persistence.entity.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;

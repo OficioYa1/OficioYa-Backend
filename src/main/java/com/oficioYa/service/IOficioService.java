@@ -1,6 +1,6 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.model.dto.response.OficioResponseDTO;
+import com.oficioya.model.dto.response.OficioResponseDTO;
 
 import java.util.List;
 

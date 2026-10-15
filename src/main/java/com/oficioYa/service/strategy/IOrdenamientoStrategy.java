@@ -1,7 +1,7 @@
-package com.oficioYa.service.strategy;
+package com.oficioya.service.strategy;
 
-import com.oficioYa.model.domain.CriteriosBusqueda;
-import com.oficioYa.model.domain.PerfilTrabajador;
+import com.oficioya.model.domain.CriteriosBusqueda;
+import com.oficioya.model.domain.PerfilTrabajador;
 
 import java.util.List;
 

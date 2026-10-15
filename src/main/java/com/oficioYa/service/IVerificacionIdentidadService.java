@@ -1,6 +1,6 @@
-package com.oficioYa.service;
+package com.oficioya.service;
 
-import com.oficioYa.model.domain.EstadoVerificacion;
+import com.oficioya.model.domain.EstadoVerificacion;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface IVerificacionIdentidadService {

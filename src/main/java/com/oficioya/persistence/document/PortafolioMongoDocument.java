@@ -1,4 +1,4 @@
-package com.oficioYa.persistence.document;
+package com.oficioya.persistence.document;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

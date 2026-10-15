@@ -1,4 +1,4 @@
-package com.oficioYa.persistence.entity;
+package com.oficioya.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

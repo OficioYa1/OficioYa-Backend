@@ -1,8 +1,8 @@
-package com.oficioYa.controller.docs;
+package com.oficioya.controller.docs;
 
-import com.oficioYa.model.dto.request.ReporteRequestDTO;
-import com.oficioYa.model.dto.response.MensajeResponseDTO;
-import com.oficioYa.model.dto.response.ReporteResponseDTO;
+import com.oficioya.model.dto.request.ReporteRequestDTO;
+import com.oficioya.model.dto.response.MensajeResponseDTO;
+import com.oficioya.model.dto.response.ReporteResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ public interface ModeracionApi {
 
     @Operation(summary = "RF-64 — Reportar usuario por comportamiento anómalo")
     ResponseEntity<ReporteResponseDTO> reportarUsuario(
-        @RequestHeader("X-Usuario-Id") Long reportadorId, // Simulación temporal de auth
+        java.security.Principal principal,
         @Valid @RequestBody ReporteRequestDTO request);
 
     @Operation(summary = "RF-73 — Consultar estado de un reporte enviado")

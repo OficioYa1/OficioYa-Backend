@@ -1,8 +1,8 @@
-package com.oficioYa.controller.docs;
+package com.oficioya.controller.docs;
 
-import com.oficioYa.model.dto.request.FiltroBusquedaDTO;
-import com.oficioYa.model.dto.response.ErrorResponseDTO;
-import com.oficioYa.model.dto.response.PerfilTrabajadorResponseDTO;
+import com.oficioya.model.dto.request.FiltroBusquedaDTO;
+import com.oficioya.model.dto.response.ErrorResponseDTO;
+import com.oficioya.model.dto.response.PerfilTrabajadorResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

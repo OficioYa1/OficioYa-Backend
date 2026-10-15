@@ -1,11 +1,11 @@
-package com.oficioYa.service.impl;
+package com.oficioya.service.impl;
 
-import com.oficioYa.exception.EstadoInvalidoException;
-import com.oficioYa.exception.UsuarioNoEncontradoException;
-import com.oficioYa.persistence.entity.ReferidoEntity;
-import com.oficioYa.persistence.entity.UsuarioEntity;
-import com.oficioYa.repository.ReferidoRepository;
-import com.oficioYa.repository.UsuarioRepository;
+import com.oficioya.exception.EstadoInvalidoException;
+import com.oficioya.exception.UsuarioNoEncontradoException;
+import com.oficioya.persistence.entity.ReferidoEntity;
+import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioya.repository.ReferidoRepository;
+import com.oficioya.repository.UsuarioRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,16 +37,16 @@ class ReferidoServiceImplTest {
     @DisplayName("Debe registrar referido exitosamente cuando los datos son válidos")
     void registrarReferido_ConDatosValidos_DebeGuardarReferido() {
         // Arrange
-        Long referenteId = 1L;
+        String correoReferente = "referente@oficioya.com";
         String correoReferido = "nuevoamigo@oficioya.com";
-        UsuarioEntity referente = UsuarioEntity.builder().id(referenteId).correo("referente@oficioya.com").build();
+        UsuarioEntity referente = UsuarioEntity.builder().id(1L).correo(correoReferente).build();
 
-        when(usuarioRepository.findById(referenteId)).thenReturn(Optional.of(referente));
+        when(usuarioRepository.findByCorreo(correoReferente)).thenReturn(Optional.of(referente));
         when(usuarioRepository.findByCorreo(correoReferido)).thenReturn(Optional.empty());
         when(referidoRepository.findByCorreoReferido(correoReferido)).thenReturn(Optional.empty());
 
         // Act
-        referidoService.registrarReferido(referenteId, correoReferido);
+        referidoService.registrarReferido(correoReferente, correoReferido);
 
         // Assert
         ArgumentCaptor<ReferidoEntity> captor = ArgumentCaptor.forClass(ReferidoEntity.class);
@@ -57,27 +57,27 @@ class ReferidoServiceImplTest {
         assertEquals(correoReferido, saved.getCorreoReferido());
         assertFalse(saved.isCuentaCreada());
         assertNotNull(saved.getFechaInvitacion());
-        verify(usuarioRepository).findById(referenteId);
+        verify(usuarioRepository).findByCorreo(correoReferente);
     }
 
     @Test
     @DisplayName("Debe lanzar excepción al registrar referido si el referente no existe")
     void registrarReferido_ReferenteInexistente_DebeLanzarExcepcion() {
         // Arrange
-        Long referenteId = 999L;
+        String correoReferente = "inexistente@oficioya.com";
         String correoReferido = "amigo@oficioya.com";
 
-        when(usuarioRepository.findById(referenteId)).thenReturn(Optional.empty());
+        when(usuarioRepository.findByCorreo(correoReferente)).thenReturn(Optional.empty());
 
         // Act & Assert
         UsuarioNoEncontradoException exception = assertThrows(
                 UsuarioNoEncontradoException.class,
-                () -> referidoService.registrarReferido(referenteId, correoReferido)
+                () -> referidoService.registrarReferido(correoReferente, correoReferido)
         );
 
         // Assert
         assertEquals("Referente no encontrado", exception.getMessage());
-        verify(usuarioRepository).findById(referenteId);
+        verify(usuarioRepository).findByCorreo(correoReferente);
         verifyNoInteractions(referidoRepository);
     }
 
@@ -85,23 +85,23 @@ class ReferidoServiceImplTest {
     @DisplayName("Debe lanzar excepción al registrar referido si el correo ya tiene cuenta activa")
     void registrarReferido_CorreoYaRegistrado_DebeLanzarExcepcion() {
         // Arrange
-        Long referenteId = 1L;
+        String correoReferente = "referente@oficioya.com";
         String correoExistente = "existente@oficioya.com";
-        UsuarioEntity referente = UsuarioEntity.builder().id(referenteId).build();
+        UsuarioEntity referente = UsuarioEntity.builder().id(1L).correo(correoReferente).build();
         UsuarioEntity usuarioExistente = UsuarioEntity.builder().id(2L).correo(correoExistente).build();
 
-        when(usuarioRepository.findById(referenteId)).thenReturn(Optional.of(referente));
+        when(usuarioRepository.findByCorreo(correoReferente)).thenReturn(Optional.of(referente));
         when(usuarioRepository.findByCorreo(correoExistente)).thenReturn(Optional.of(usuarioExistente));
 
         // Act & Assert
         EstadoInvalidoException exception = assertThrows(
                 EstadoInvalidoException.class,
-                () -> referidoService.registrarReferido(referenteId, correoExistente)
+                () -> referidoService.registrarReferido(correoReferente, correoExistente)
         );
 
         // Assert
         assertEquals("El correo referido ya pertenece a una cuenta existente", exception.getMessage());
-        verify(usuarioRepository).findById(referenteId);
+        verify(usuarioRepository).findByCorreo(correoReferente);
         verify(usuarioRepository).findByCorreo(correoExistente);
         verify(referidoRepository, never()).save(any());
     }
@@ -110,19 +110,19 @@ class ReferidoServiceImplTest {
     @DisplayName("Debe lanzar excepción al registrar si el correo ya fue invitado previamente")
     void registrarReferido_CorreoYaInvitado_DebeLanzarExcepcion() {
         // Arrange
-        Long referenteId = 1L;
+        String correoReferente = "referente@oficioya.com";
         String correoInvitado = "ya_invitado@oficioya.com";
-        UsuarioEntity referente = UsuarioEntity.builder().id(referenteId).build();
+        UsuarioEntity referente = UsuarioEntity.builder().id(1L).correo(correoReferente).build();
         ReferidoEntity invitacionPrevia = ReferidoEntity.builder().correoReferido(correoInvitado).build();
 
-        when(usuarioRepository.findById(referenteId)).thenReturn(Optional.of(referente));
+        when(usuarioRepository.findByCorreo(correoReferente)).thenReturn(Optional.of(referente));
         when(usuarioRepository.findByCorreo(correoInvitado)).thenReturn(Optional.empty());
         when(referidoRepository.findByCorreoReferido(correoInvitado)).thenReturn(Optional.of(invitacionPrevia));
 
         // Act & Assert
         EstadoInvalidoException exception = assertThrows(
                 EstadoInvalidoException.class,
-                () -> referidoService.registrarReferido(referenteId, correoInvitado)
+                () -> referidoService.registrarReferido(correoReferente, correoInvitado)
         );
 
         // Assert

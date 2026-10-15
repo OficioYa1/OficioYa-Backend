@@ -1,6 +1,6 @@
-package com.oficioYa.model.dto.request;
+package com.oficioya.model.dto.request;
 
-import com.oficioYa.persistence.entity.RolUsuario;
+import com.oficioya.persistence.entity.RolUsuario;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

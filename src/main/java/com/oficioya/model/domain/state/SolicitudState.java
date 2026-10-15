@@ -1,6 +1,6 @@
-package com.oficioYa.model.domain.state;
+package com.oficioya.model.domain.state;
 
-import com.oficioYa.model.domain.Solicitud;
+import com.oficioya.model.domain.Solicitud;
 
 public interface SolicitudState {
     void enviar(Solicitud solicitud);

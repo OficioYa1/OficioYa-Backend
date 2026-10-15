@@ -1,6 +1,6 @@
-package com.oficioYa.adapter.impl;
+package com.oficioya.adapter.impl;
 
-import com.oficioYa.adapter.IMapAdapter;
+import com.oficioya.adapter.IMapAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
