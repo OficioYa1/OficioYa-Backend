@@ -1,275 +1,587 @@
-# 🛠️ OficioYa 
-Este repositorio contiene la arquitectura, el análisis de diseño y el código base del backend para el proyecto OficioYa.
+# 🛠️ OficioYa — Backend API REST
 
+> **Plataforma integral de intermediación ágil, transparente y meritocrática para trabajadores independientes y contratantes.**
 
-# Diagrama de contexto
-
-![DiagramContext.png](docs/uml/DiagramContext.png)
-
-## Explicacion
-
-Este diagrama ilustra el ecosistema completo de OficioY. En el centro se ubica nuestra plataforma, la cual sirve como puente entre tres actores principales: el Contratante (quien busca el servicio), el Trabajador Independiente (quien lo provee) y el Administrador (quien modera la seguridad de la plataforma).
-
-Para poder ofrecer una experiencia moderna y en tiempo real, nuestro sistema no trabaja solo, sino que se apoya en tres sistemas externos vitales: Mapbox para la geolocalización y cálculo de cercanía de los trabajadores; Firebase (FCM) para disparar las notificaciones push inmediatas cuando se acepta una solicitud; y Cloudinary para almacenar de forma optimizada todo el peso multimedia (como fotos de perfil y portafolios). Finalmente, toda la orquestación de la información es resguardada por nuestro esquema de Persistencia Mixta (PostgreSQL y MongoDB), garantizando transacciones seguras y catálogos dinámicos de alta velocidad.
-
-
-# Patrones de Diseño
----
-
-## 1. Patrones de Diseño Individuales
-
-### Patrón Creacional: Builder
-
-* **Problema del proyecto:**  
-  La plataforma maneja perfiles heterogéneos mediante "Categorías especiales". Un profesor debe registrar materias y nivel, un cuidador de mascotas debe indicar los animales que atiende, y un técnico debe listar marcas especializadas. Utilizar un constructor tradicional generaría una clase llena de atributos nulos para los oficios que no los requieran.
-
-* **Solución propuesta:**  
-  Se implementa el patrón Builder para la entidad `PerfilTrabajador`. Esto permite construir el objeto paso a paso según el oficio seleccionado, añadiendo únicamente los atributos que corresponden a su categoría.
-
-* **Sustento técnico:**  
-  Cumple con el Principio de Responsabilidad Única (SRP). Facilita el requerimiento de que *"el perfil se crea en menos de 5 minutos desde el celular"*, ya que el backend solo valida y procesa los pasos (datos básicos, zona, especialidades, galería) pertinentes al flujo específico de ese trabajador, aislando la lógica de construcción compleja del resto del sistema.
+[![Java 21](https://img.shields.io/badge/Java-21_LTS-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://www.oracle.com/java/)
+[![Spring Boot 3.4.1](https://img.shields.io/badge/Spring_Boot-3.4.1-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Security 6](https://img.shields.io/badge/Spring_Security-6.x-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
+[![JWT](https://img.shields.io/badge/JWT-jjwt_0.11.5-black?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15%2B-316192?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-6.x-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Docker](https://img.shields.io/badge/Docker-24%2B-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Azure App Service](https://img.shields.io/badge/Azure-App_Service-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
+[![JaCoCo Coverage](https://img.shields.io/badge/Coverage-96%25%2B-brightgreen?style=for-the-badge&logo=target)](https://www.jacoco.org/jacoco/)
+[![Build Status](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/)
 
 ---
 
-### Patrón de Comportamiento: Observer
+## 📑 Tabla de Contenidos
 
-* **Problema del proyecto:**  
-  Cuando el contratante emite una "Solicitud de servicio", el sistema debe notificar en tiempo real a uno o varios trabajadores cercanos. Además, existe la necesidad de alertar a quienes marcaron su estado como 'disponible ahora' ante urgencias (*"como pedir un taxi"*).
-
-* **Solución propuesta:**  
-  El patrón Observer establece un modelo de suscripción reactivo. La `SolicitudServicio` actúa como el sujeto (*Publisher*) que emite un evento al ser creada. Los canales de comunicación (como el servicio de notificaciones Push de Firebase) actúan como observadores (*Subscribers*) que reaccionan al evento.
-
-* **Sustento técnico:**  
-  Garantiza un bajo acoplamiento. La clase que gestiona las solicitudes de trabajo no necesita conocer la implementación de los envíos de notificaciones. Cumple con el Principio Open/Closed (OCP), ya que en el futuro se pueden agregar nuevos observadores (ej. notificaciones por SMS o WhatsApp) sin modificar la lógica central del emparejamiento.
-
----
-
-### Patrón de Comportamiento: Strategy
-
-* **Problema del proyecto:**  
-  El sistema de "Búsqueda de servicios" presenta diferentes variaciones algorítmicas: una búsqueda general (filtrada por texto, zona y ordenación por reputación) y una búsqueda de urgencias (filtrada estrictamente por 'disponible ahora'). La regla de negocio exige que los resultados se ordenen por *"distancia y reputación, nunca por pago"*.
-
-* **Solución propuesta:**  
-  Se utiliza el patrón Strategy para encapsular las diferentes lógicas de búsqueda y ordenamiento en clases independientes (`BusquedaPorMeritoStrategy`, `BusquedaUrgenciaStrategy`).
-
-* **Sustento técnico:**  
-  Evita el uso de múltiples condicionales (`if`/`else`) en los servicios, mejorando la mantenibilidad. Además, aísla la lógica que calcula el posicionamiento, garantizando a nivel de código que es imposible inyectar variables de "pago por publicidad", blindando así la promesa de valor de la plataforma.
-
----
-
-### Patrón Estructural: Decorator
-
-* **Problema del proyecto:**  
-  La plataforma plantea una evolución dinámica del estado del trabajador. Existe una "Verificación progresiva" donde, al alcanzar 10 trabajos, se otorga el badge de 'Identidad Verificada'. Asimismo, el modelo de negocio contempla a futuro una "suscripción 'Pro' opcional" con acceso a estadísticas avanzadas.
-
-* **Solución propuesta:**  
-  El patrón Decorator permite envolver el objeto base (`PerfilBasico`) con nuevas responsabilidades o permisos en tiempo de ejecución (`PerfilVerificadoDecorator`, `PerfilProDecorator`).
-
-* **Sustento técnico:**  
-  Previene el uso excesivo de subclases (evitando crear clases rígidas como `UsuarioBasico`, `UsuarioVerificado`, `UsuarioPro`, `UsuarioVerificadoPro`). Permite que la plataforma escale hacia su modelo de monetización futuro de forma transparente, agregando funcionalidades a los trabajadores sin alterar el código de los perfiles que se mantienen de forma gratuita.
+1. [Descripción General](#-descripción-general)
+2. [Propuesta de Valor y Características](#-propuesta-de-valor-y-características)
+3. [Entornos y Enlaces Oficiales](#-entornos-y-enlaces-oficiales)
+4. [Módulos Implementados](#-módulos-implementados)
+5. [Matriz de Seguridad y Roles (RBAC)](#-matriz-de-seguridad-y-roles-rbac)
+6. [Arquitectura del Sistema y Diagramas UML](#-arquitectura-del-sistema-y-diagramas-uml)
+   - [Diagrama de Contexto](#diagrama-de-contexto)
+   - [Diagrama de Componentes General](#diagrama-de-componentes-general)
+   - [Diagrama de Componentes Específico](#diagrama-de-componentes-específico)
+   - [Diagrama de Clases (Dominio)](#diagrama-de-clases)
+   - [Diagrama de Despliegue en la Nube](#diagrama-de-despliegue-en-la-nube-infraestructura)
+7. [Patrones de Diseño Implementados](#-patrones-de-diseño-implementados)
+   - [Patrones Individuales](#1-patrones-de-diseño-individuales)
+   - [Patrones Combinados](#2-patrones-combinados)
+8. [Arquitectura de Base de Datos (Persistencia Mixta)](#-arquitectura-de-base-de-datos-persistencia-mixta)
+   - [Modelo Entidad-Relación (PostgreSQL)](#modelo-entidad-relación-postgresql)
+   - [Modelo Documental (MongoDB)](#modelo-de-documentos-mongodb)
+9. [Stack Tecnológico](#-stack-tecnológico)
+10. [Requisitos Previos](#-requisitos-previos)
+11. [Instalación y Ejecución Local](#-instalación-y-ejecución-local)
+    - [Opción A: Ejecución con Maven](#opción-a-ejecución-con-maven-desarrollo-local)
+    - [Opción B: Ejecución con Docker Compose](#opción-b-ejecución-con-docker-compose-entorno-completo)
+12. [Variables de Entorno y Configuración](#-variables-de-entorno-y-configuración)
+13. [Documentación de la API (Swagger / OpenAPI)](#-documentación-de-la-api-swagger--openapi)
+14. [Estrategia de Pruebas y Calidad de Código](#-estrategia-de-pruebas-y-calidad-de-código)
+15. [Integración y Despliegue Continuo (CI/CD)](#-integración-y-despliegue-continuo-cicd)
+16. [Estructura del Proyecto](#-estructura-del-proyecto)
+17. [Repositorios Relacionados](#-repositorios-relacionados)
+18. [Equipo de Desarrollo](#-equipo-de-desarrollo)
+19. [Licencia](#-licencia)
 
 ---
 
-### Patrón Comportamental: Chain of Responsibility
+## 📖 Descripción General
 
-* **Problema del proyecto:**  
-  Si un contratante busca un carpintero en su barrio exacto y no hay resultados, el sistema debe expandir la búsqueda gradualmente sin llenar el controlador de `if-else` anidados.
+**OficioYa** es una solución tecnológica integral orientada a dignificar, visibilizar y conectar el trabajo informal y de oficios independientes (plomeros, carpinteros, electricistas, profesores particulares, cuidadores, entre otros) con contratantes que requieren servicios rápidos, confiables y calificados.
 
-* **Solución propuesta:**  
-  Se crea una cadena de manejadores: `HandlerBarrioExacto` → `HandlerRadioAmpliado` → `HandlerCiudad`. Cada eslabón intenta resolver la búsqueda. Si la lista de resultados está vacía, delega la petición al siguiente eslabón geográfico.
+A diferencia de las plataformas tradicionales que priorizan a los proveedores mediante esquemas pagos de publicidad (*pay-to-win*), OficioYa basa su algoritmo de coincidencia estrictamente en **cercanía geográfica, reputación real y mérito profesional**.
 
-* **Sustento técnico:**  
-  Reduce drásticamente el acoplamiento. Permite insertar nuevos niveles de búsqueda en el futuro.
+Este repositorio aloja el **Backend Monolítico Modular**, diseñado y desarrollado con **Spring Boot 3**, siguiendo los principios de la Arquitectura Limpia, persistencia híbrida (SQL + NoSQL), seguridad sin estado con tokens JWT y control de acceso basado en roles (RBAC).
 
 ---
 
-### Patrón Comportamental: State
+## 🚀 Propuesta de Valor y Características
 
-* **Problema del proyecto:**  
-  El ciclo de vida de un servicio es estricto: `PENDIENTE` → `ACEPTADO` → `EN CURSO` → `FINALIZADO`. Manejar las transiciones válidas con simples sentencias `if (estado == 'PENDIENTE')` es frágil y propenso a errores críticos (Ej. Alguien podría cancelar un servicio ya finalizado).
-
-* **Solución propuesta:**  
-  La clase `Solicitud` mantiene una referencia a una interfaz `EstadoSolicitud`. Las clases concretas dictan el comportamiento. Si se intenta cancelar desde un `EstadoFinalizado`, la clase concreta lanza directamente una `IllegalStateException`.
-
-* **Sustento técnico:**  
-  Fortalece la integridad del modelo de dominio. Previene alteraciones maliciosas en la capa de servicios.
+* 📍 **Búsqueda meritocrática geolocalizada:** Ordenamiento transparente por distancia y reputación, libre de alteraciones por pago.
+* ⚡ **Modelo Broadcast de Solicitudes:** Esquema bajo demanda (estilo Rappi/Uber) donde una solicitud puede ser atendida por el trabajador disponible más cercano.
+* 🛡️ **Seguridad Integral y Confianza:** Sistema progresivo de verificación de identidad, insignias por mérito y módulo activo de moderación de reportes.
+* 🗄️ **Persistencia Híbrida Especializada:** Garantía transaccional ACID para contratos y usuarios en PostgreSQL, y flexibilidad BSON para portafolios fotográficos en MongoDB.
+* ⏱️ **Perfiles de Rápida Adopción:** Creación de perfil profesional en menos de 5 minutos, adaptado a múltiples oficios y especialidades.
+* 🎁 **Ecosistema de Fidelización y Referidos:** Mecanismos de incentivo y recompensas mediante códigos de referido únicos.
 
 ---
 
-### Patrón Estructural: Adapter
+## 🌐 Entornos y Enlaces Oficiales
 
-* **Problema del proyecto:**  
-  Los requerimientos exigen interactuar con sistemas externos: Mapas y Pasarelas de Pago. Conectar el código fuente directamente a las APIs de estos proveedores causa un altísimo acoplamiento; si Google o Nequi cambian su API, el sistema de OficioYa colapsaría.
-
-* **Solución propuesta:**  
-  Se crean interfaces internas. Luego se implementan clases concretas que "traducen" las peticiones internas al formato JSON/XML que espera el proveedor.
-
-* **Sustento técnico:**  
-  Es la única forma profesional de proteger el sistema central contra fallos de terceros. Permite simular los pagos y mapas durante el testing unitario inyectando un mock.
-
----
-
-### Patrón Estructural: Composite
-
-* **Problema del proyecto:**  
-  Un usuario busca simultáneamente por Categoría, Precio, Reputación y Zona.
-
-* **Solución propuesta:**  
-  Cada filtro es una hoja (`FiltroZona`, `FiltroPrecio`) que implementa la interfaz `ISpecification`. El Composite une todas las hojas en una consulta dinámica mediante conectores `AND` / `OR` antes de ejecutar la consulta en la base de datos (evitando la iteración ineficiente en memoria).
-
-* **Sustento técnico:**  
-  Reduce el código repetido y utiliza la tipificación para la categorización de filtros, así cumple el principio de SRP y permite no manchar el código de switches e `instanceof`. Además se puede tratar el filtro como parte de la hoja y generar múltiples filtros al mismo tiempo.
+| Recurso / Entorno | Tipo | Estado | Enlace |
+| :--- | :--- | :---: | :--- |
+| **Swagger UI (Local)** | Documentación interactiva | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
+| **OpenAPI Docs (Local)** | Esquema JSON | 🟢 Activo | [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs) |
+| **API Backend (Azure Cloud)** | Staging / QA | 🟡 En Despliegue | `[ESPACIO PENDIENTE: https://oficioya-backend.azurewebsites.net]` |
+| **Swagger UI (Azure Cloud)** | Staging / QA | 🟡 En Despliegue | `[ESPACIO PENDIENTE: https://oficioya-backend.azurewebsites.net/swagger-ui/index.html]` |
+| **Frontend Web (Cliente)** | Interfaz de Usuario SPA | 🟢 Repositorio | [OficioYa-Frontend](https://github.com/OficioYa1/OficioYa-Frontend) |
 
 ---
 
-## 2. Patrones Combinados
+## 🧩 Módulos Implementados
 
-### Builder + Decorator
+El backend de OficioYa está estructurado funcionalmente en módulos desacoplados:
 
-* **Justificación:**  
-  Esta combinación desacopla la instanciación de perfiles heterogéneos de su evolución y asignación de privilegios en tiempo de ejecución.
+### 1. 🔐 Seguridad y Autenticación
+* **JWT Stateless:** Generación y validación de tokens de acceso criptográficos con biblioteca JJWT.
+* **Autenticación Unificada:** Inicio de sesión (`POST /auth/login`), registro y alternancia de rol operativo (`POST /auth/toggle-role`).
+* **Autorización granular:** Protección declarativa con `@PreAuthorize("hasRole('...')")` o `@PreAuthorize("hasAnyRole('...')")`.
 
-* **Builder:**  
-  Resuelve la "Construcción Heterogénea". Ensambla paso a paso el objeto `PerfilTrabajador` según la categoría del oficio, previniendo constructores telescópicos y evitando clases llenas de atributos nulos.
+### 2. 👤 Gestión de Usuarios y Perfiles
+* **Separación de Perfiles:** Composición 1 a 1 entre la cuenta de `Usuario` y los perfiles de `PerfilContratante` y `PerfilTrabajador`.
+* **Carga Multimedia Local (RF-59):** Almacenamiento y procesamiento multipart para fotos de perfil en `uploads/perfiles/`.
+* **Especializaciones y Tarifas:** Catálogo dinámico de habilidades, métodos de pago aceptados y tarifas por hora.
+* **Mantenimiento de Cuenta:** Baja lógica / eliminación voluntaria (`DELETE /usuarios/{id}`) y recuperación (`POST /usuarios/{id}/recuperar`).
 
-* **Decorator:**  
-  Encapsula la "Evolución en Runtime". Envuelve dinámicamente al objeto base (`PerfilBasico`) con nuevas responsabilidades a medida que el usuario acumula méritos en la plataforma, sin alterar la entidad original.
+### 3. 📋 Ciclo de Vida de Solicitudes (State Pattern)
+* **Gestión de Estados:** Transiciones seguras y validadas: `PENDIENTE` ➔ `ACEPTADA` ➔ `EN_CURSO` ➔ `FINALIZADA` / `CANCELADA`.
+* **Modelo Broadcast:** Solicitudes creadas con `trabajadorId` en nulo para postulación o reclamo dinámico por trabajadores cercanos.
+* **Cancelación y Seguimiento:** Consulta en tiempo real del estado de servicio y reglas de negocio para cancelación en curso.
 
-* **Conclusión:**  
-  Erradica la explosión combinatoria de herencia. Cumple estrictamente con el principio de Responsabilidad Única en la fase creacional y con el principio Abierto/Cerrado durante la extensión de funcionalidades en producción.
+### 4. 🔍 Búsqueda Avanzada y Catálogo de Oficios
+* **Filtros Dinámicos (JPA Specifications):** Consultas multicriterio por oficio, zona, tarifa y disponibilidad.
+* **Normalización de Catálogo:** Administración y consulta de oficios formales estandarizados.
+
+### 5. 🛡️ Moderación, Denuncias y Seguridad de Comunidad
+* **Creación de Reportes:** Permite denunciar comportamientos inadecuados entre contratantes y trabajadores (`POST /moderacion/reportes`).
+* **Panel de Moderación (Admin):** Revisión de reportes pendientes, resolución o descarte (`PUT /moderacion/reportes/{id}/estado`).
+* **Sanciones y Bloqueo:** Suspensión preventiva y bloqueo de usuarios infractores.
+
+### 6. 🎁 Sistema de Referidos e Incentivos
+* **Generación de Códigos Únicos:** Algoritmo de generación de código alfanumérico para invitar nuevos usuarios (`POST /referidos/generar`).
+* **Validación y Canje:** Acreditación de bonificaciones de visibilidad o créditos promocionales (`POST /referidos/canjear`).
+
+### 7. 🖼️ Portafolios Multimedia (MongoDB)
+* **Modelo Documental:** Almacenamiento no estructurado de colecciones de fotografías y evidencias de trabajos previos mediante Spring Data MongoDB.
+* **Patrón Referenciado:** Enlace transparente mediante el identificador numérico relacional del perfil del trabajador.
+
+### 8. 🌟 Reputación, Reseñas y Métricas
+* **Calificación Mutua:** Evaluación bilateral (Contratante ⇄ Trabajador) con puntaje (1-5 estrellas) y comentarios.
+* **Cálculo de Promedios:** Ponderación automática de reputación general y por categoría de oficio.
+* **Métricas de Rendimiento:** Resumen de ingresos acumulados, trabajos finalizados y servicios más solicitados.
+
+### 9. 🪪 Verificación de Identidad Progresiva
+* **Elegibilidad Automática:** Detección de cumplimiento de metas de trabajos realizados.
+* **Insignias de Confianza:** Otorgamiento del distintivo de identidad verificada y auditoría documental.
+
+### 10. 💬 Mensajería y Notificaciones (Simuladas REST)
+* **Mensajería Básica:** Intercambio de mensajes contextuales asociados a una solicitud activa.
+* **Bandeja de Notificaciones:** Endpoint de lectura para consulta periódica de alertas de estado.
 
 ---
 
-### Observer + Strategy + Factory
+## 🔒 Matriz de Seguridad y Roles (RBAC)
 
-* **Justificación:**  
-  Esta es la solución combinada más robusta del sistema, encargada de manejar alertas sin acoplar los servicios.
+La API implementa un modelo de control de acceso basado en roles (Role-Based Access Control) respaldado por Spring Security. Todas las solicitudes a rutas protegidas deben adjuntar la cabecera:
 
-* **Observer:**  
-  Desacopla el cuándo. Cuando una solicitud es aceptada, el `RequestService` emite un evento genérico. No sabe a quién ni por dónde se enviará la notificación.
+```http
+Authorization: Bearer <TU_TOKEN_JWT>
+```
 
-* **Factory:**  
-  Al recibir el evento, un Listener utiliza una Factory para determinar qué servicio de mensajería instanciar basándose en las preferencias del usuario.
-
-* **Strategy:**  
-  Encapsula el cómo. El Factory retorna una interfaz. El listener simplemente ejecuta el método `enviar()`.
-
-* **Conclusión:**  
-  Solución empresarial pura. Cumple al 100% con los principios OCP y SRP. Reemplaza las condicionales lógicas en favor de inyección de dependencias.
-
+| Módulo / Recurso | Endpoint | Método | Acceso Permitido | Descripción |
+| :--- | :--- | :---: | :---: | :--- |
+| **Autenticación** | `/auth/**` | POST | 🔓 `PÚBLICO` | Login, registro y renovación de tokens. |
+| **Documentación** | `/swagger-ui/**`, `/v3/api-docs/**` | GET | 🔓 `PÚBLICO` | Interfaz y especificación OpenAPI. |
+| **Oficios** | `/oficios` | GET | 🔓 `PÚBLICO` | Consulta del catálogo maestro de oficios. |
+| **Búsqueda** | `/busqueda/**` | GET | 🔓 `PÚBLICO` | Búsqueda y filtrado general de trabajadores. |
+| **Usuarios** | `/usuarios/{id}` | GET, PUT | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR`, 🛡️ `ADMIN` | Consulta y actualización de datos personales. |
+| **Usuarios** | `/usuarios/{id}` | DELETE | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR` | Eliminación lógica voluntaria de cuenta. |
+| **Usuarios** | `/usuarios/{id}/recuperar` | POST | 🛡️ `ADMIN` | Reactivación de cuenta desactivada. |
+| **Perfil Trabajador** | `/perfil-trabajador/{id}` | GET | 🔓 `PÚBLICO` | Visualización pública del perfil profesional. |
+| **Perfil Trabajador** | `/perfil-trabajador/{id}` | PUT | 🛠️ `TRABAJADOR` | Actualización de tarifas, disponibilidad y datos. |
+| **Perfil Trabajador** | `/perfil-trabajador/{id}/foto` | POST | 🛠️ `TRABAJADOR` | Subida de foto de perfil (Multipart/form-data). |
+| **Especializaciones** | `/perfil-trabajador/{id}/especializaciones` | GET, PUT | 🛠️ `TRABAJADOR`, 👤 `CONTRATANTE` | Gestión y consulta de especialidades. |
+| **Solicitudes** | `/solicitudes` | POST | 👤 `CONTRATANTE` | Publicación de nueva solicitud de servicio. |
+| **Solicitudes** | `/solicitudes/{id}` | GET | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR`, 🛡️ `ADMIN` | Detalle y seguimiento de la solicitud. |
+| **Solicitudes** | `/solicitudes/{id}/estado` | PUT | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR` | Transición de estado (Aceptar, Iniciar, Finalizar, Cancelar). |
+| **Moderación** | `/moderacion/reportes` | POST | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR` | Radicación de denuncias o reportes de conducta. |
+| **Moderación** | `/moderacion/reportes` | GET | 🛡️ `ADMIN` | Listado y auditoría de reportes radicados. |
+| **Moderación** | `/moderacion/reportes/{id}/estado` | PUT | 🛡️ `ADMIN` | Resolución administrativa de reportes. |
+| **Referidos** | `/referidos/generar` | POST | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR` | Creación de código único de recomendación. |
+| **Referidos** | `/referidos/canjear` | POST | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR` | Aplicación de código de referido en la cuenta. |
+| **Reputación** | `/reputacion/**` | POST, GET | 👤 `CONTRATANTE`, 🛠️ `TRABAJADOR` | Calificaciones bilaterales y consulta de promedios. |
+| **Estadísticas** | `/historial-estadisticas/**` | GET | 🛠️ `TRABAJADOR`, 🛡️ `ADMIN` | Métricas de ingresos y servicios completados. |
+| **Portafolios** | `/portafolios/**` | GET, POST | 🛠️ `TRABAJADOR`, 👤 `CONTRATANTE` | Gestión de portafolio fotográfico en MongoDB. |
 
 ---
 
-## 🏗️ Arquitectura y Componentes
+## 🏛️ Arquitectura del Sistema y Diagramas UML
 
-El proyecto sigue una arquitectura REST Multicapa (Controller - Service - Repository).
+El sistema está concebido bajo una **Arquitectura en Capas Lógicas (Multicapa)**, respetando la Inversión de Dependencias (IoC), la segregación de interfaces y la modularidad de dominio.
+
+### Diagrama de Contexto
+
+El Diagrama de Contexto ilustra el ecosistema macro de OficioYa, situando la plataforma como el puente de interacción entre el Contratante, el Trabajador Independiente y el Administrador, junto con sus integraciones externas (Mapbox, Firebase FCM, Cloudinary) y su persistencia híbrida.
+
+![Diagrama de Contexto](docs/uml/DiagramContext.png)
+
+---
 
 ### Diagrama de Componentes General
 
-![DiagramGeneralComponent.png](docs/images/DiagramGeneralComponent.png)
+Expone la macroarquitectura Cliente-Servidor del sistema, evidenciando la separación entre la aplicación web (SPA), el monolito modular desarrollado en Spring Boot 3, el motor de persistencia relacional y el almacenamiento local de archivos estáticos.
 
+![Diagrama de Componentes General](docs/images/DiagramGeneralComponent.png)
 
-El **Diagrama de Componentes General** ilustra la arquitectura macro del sistema **OficioYa**, diseñada bajo el patrón de **Cliente-Servidor con un Backend Monolítico**. Este diagrama expone los subsistemas principales y los protocolos de comunicación que permiten el funcionamiento de la plataforma en el contexto del Sprint 02.
+---
 
-**Componentes y Nodos Principales:**
+### Diagrama de Componentes Específico
 
-* **Cliente Web (Frontend):** Representa la interfaz de usuario construida como una *Single Page Application* (SPA). Este componente es el consumidor exclusivo de la API y gestiona la experiencia del usuario (vistas de catálogo, formularios de registro y visualización de solicitudes).
-* **OficioYa Backend (Monolito Modular):** Es el componente central del sistema, desarrollado sobre **Spring Boot 3**. Se despliega como una única unidad ejecutable (Monolito), pero internamente está organizado en módulos de negocio. Actúa como el orquestador principal, exponiendo una API RESTful documentada mediante Swagger.
-* **Base de Datos Relacional:** El componente de persistencia estructurada. Durante este sprint de desarrollo, está implementado sobre una base de datos en memoria **H2** para facilitar las pruebas, gestionada a través de JPA/Hibernate *(El sistema ya cuenta con los drivers preparados para migrar a PostgreSQL en producción)*.
-* **Sistema de Archivos (File Storage):** Un volumen o directorio de almacenamiento local (`uploads/perfiles/`) utilizado para persistir archivos binarios, específicamente las fotografías de perfil de los trabajadores.
+Ilustra la arquitectura de "caja blanca" interna del backend y el flujo de llamadas entre capas lógicas:
+1. **Controladores REST (`@RestController`):** Recepción y validación inicial de peticiones.
+2. **Capa de Mapeo (MapStruct):** Conversión desacoplada entre Request/Response DTOs y Entidades.
+3. **Capa de Servicios de Negocio (`@Service`):** Orquestación transaccional regida por interfaces formales.
+4. **Capa de Validadores de Dominio:** Encapsulamiento de reglas estrictas de negocio.
+5. **Capa de Persistencia (Spring Data JPA / MongoDB):** Abstracción de acceso a datos y consultas dinámicas con Criteria API.
 
-**Relaciones e Interacciones:**
-La comunicación entre el Cliente y el Backend se realiza estrictamente a través de peticiones **HTTP/JSON** sin estado (REST). Por su parte, el Backend se comunica con la base de datos relacional mediante el protocolo **JDBC**, mientras que las operaciones con el Sistema de Archivos se realizan mediante flujos de entrada/salida (I/O) estándar del sistema operativo.
+![Diagrama de Componentes Específico](docs/images/DiagramEspecificComponent.png)
 
-
-### Diagrama de Componentes especificos
-
-![DiagramEspecificComponent.png](docs/images/DiagramEspecificComponent.png)
-
-
-El **Diagrama de Componentes Específico** profundiza en la estructura interna (caja blanca) del backend. Demuestra cómo está construido el monolito siguiendo una estricta **Arquitectura en Capas Lógicas**, orientada al dominio y altamente desacoplada gracias al uso de Inyección de Dependencias (IoC de Spring).
-
-**Capas Lógicas Representadas:**
-1. **Capa de Controladores (Controllers):** Componentes (`UsuarioController`, `SolicitudController`, etc.) anotados con `@RestController`. Su única responsabilidad es recibir peticiones HTTP, delegar la conversión de los DTOs y enrutar la petición a la capa de servicios. Cuenta con un `GlobalExceptionHandler` que intercepta las excepciones y unifica las respuestas de error.
-2. **Capa de Mapeo (Mappers con MapStruct):** Se evidencia una separación estratégica de responsabilidades:
-  * *Mappers de DTO:* Convierten los datos de entrada (Requests) en objetos de dominio puros.
-  * *Mappers de Entidad:* Convierten objetos de dominio en Entidades JPA listas para persistir, aislando la persistencia de las reglas de negocio.
-3. **Capa de Servicios (Lógica de Negocio):** Es el corazón transaccional de la aplicación. Se aplica el principio de Inversión de Dependencias: los controladores no dependen de implementaciones concretas, sino de interfaces formales (ej. `IUsuarioService`). Las clases `ServiceImpl` orquestan el flujo interno.
-4. **Capa de Validación:** Componentes aislados (ej. `PerfilTrabajadorValidatorImpl`) que encapsulan las reglas de negocio estrictas. Los servicios delegan en estos validadores antes de proceder con cualquier modificación de datos.
-5. **Capa de Repositorios (Persistencia):** Interfaces de Spring Data JPA que abstraen el acceso a datos. Destaca el uso de `PerfilTrabajadorSpecs` para construir consultas dinámicas (Filtros de Búsqueda) utilizando la API Criteria de JPA.
-   
-**Dinámica de Dependencias:**
-El diagrama es completamente fiel a las inyecciones de código reales del proyecto. Utiliza la notación UML de **"Socket y Lollipop"** para demostrar que la comunicación entre capas (Controller ➔ Service ➔ Validator) se realiza a través de interfaces formales. El componente que "pide" el servicio extiende un *Socket* para acoplarse al componente que "provee" el servicio, representado por el *Lollipop*. Esto certifica que el sistema de OficioYa es modular, testeable y respeta rigurosamente los principios SOLID.
+---
 
 ### Diagrama de Clases
 
-![DiagramClass.png](docs/images/DiagramClass.png)
+Expone la estructura estática del modelo de dominio de OficioYa. La clase raíz `Usuario` compone los roles operativos (`PerfilContratante` y `PerfilTrabajador`), permitiendo la doble funcionalidad sin duplicidad de credenciales. La entidad `Solicitud` actúa como el corazón transaccional, orquestando el ciclo de vida del servicio.
+
+![Diagrama de Clases](docs/images/DiagramClass.png)
 
 <details>
-  <summary><b>Haz clic aquí para ver el Diagrama de Clases completo 🔍</b></summary>
+  <summary><b>🔍 Ver detalle seccionado del Diagrama de Clases (Partes 1 a 5)</b></summary>
+  <br>
 
-  <br> <!-- un saltito de línea para que se vea ordenado -->
-
-  ![DiagramClassPart1.png](docs/uml/DiagramClassPart1.png)
-  ![DiagramClassPart2.png](docs/uml/DiagramClassPart2.png)
-  ![DiagramClassPart3.png](docs/uml/DiagramClassPart3.png)
-  ![DiagramClassPart4.png](docs/uml/DiagramClassPart4.png)
-  ![DiagramClassPart5.png](docs/uml/DiagramClassPart5.png)
+  ![Parte 1](docs/uml/DiagramClassPart1.png)
+  ![Parte 2](docs/uml/DiagramClassPart2.png)
+  ![Parte 3](docs/uml/DiagramClassPart3.png)
+  ![Parte 4](docs/uml/DiagramClassPart4.png)
+  ![Parte 5](docs/uml/DiagramClassPart5.png)
 
 </details>
 
+---
 
-El **Diagrama de Clases** expone la estructura estática del "corazón" de la aplicación: el Modelo de Dominio. A diferencia de los diagramas de componentes que muestran la infraestructura, este diagrama ilustra las entidades puras de negocio, sus atributos, comportamientos y cómo se relacionan entre sí.
+### Diagrama de Despliegue en la Nube (Infraestructura)
 
-**Estructura y Entidades Centrales:**
-* **Núcleo de Identidad y Roles:** La clase central es `Usuario`, la cual administra la autenticación y datos básicos. De esta clase se desprenden relaciones de composición (1 a 1) hacia los roles operativas del sistema: `PerfilContratante` y `PerfilTrabajador`. Esta separación permite que un mismo usuario pueda actuar en ambos roles sin duplicar información de acceso.
-* **Catálogo y Perfil Profesional:** El `PerfilTrabajador` encapsula información financiera y operativa (tarifas, descripción, calificación). Presenta una relación de agregación múltiple con la entidad `Oficio`, permitiendo que el sistema mantenga un catálogo centralizado de habilidades estandarizadas.
-* **Núcleo Transaccional:** La entidad `Solicitud` actúa como el eje transaccional del sistema, vinculando operativamente a un contratante con el perfil de un trabajador para un oficio específico. Registra detalles críticos como descripciones, fechas programadas y montos económicos.
+![Diagrama de Despliegue](docs/uml/DiagramDeployment.png)
 
-**Patrones de Diseño Destacados (State Pattern):**
-El valor arquitectónico más alto de este diagrama es la implementación del **Patrón de Diseño de Comportamiento "State" (Estado)** para gestionar el complejo ciclo de vida de una `Solicitud`.
-* En lugar de delegar el control de estados a bloques espagueti de `if/switch`, la `Solicitud` delega su comportamiento a una jerarquía de clases polimórficas que heredan de `AbstractSolicitudState`.
-* Cada estado (Ej. *Pendiente, Aceptada, Finalizada, Cancelada*) es una clase concreta con responsabilidad única, que dicta si una transición hacia otro estado es legal o no.
-* Una clase `SolicitudStateFactory` actúa como creadora y gestora de estas transiciones, asegurando la integridad del negocio y lanzando una `EstadoInvalidoException` ante cualquier intento de flujo no permitido. Esto garantiza un dominio rico y previene estados corruptos en el sistema.
+**Topología de Infraestructura:**
+* **Cliente Web:** Navegador cliente ejecutando la SPA.
+* **Azure App Service (Linux Web App for Containers):** Aloja el contenedor Docker con la aplicación Spring Boot compilada bajo Java 21 LTS (`oficioya-backend`).
+* **Azure Database for PostgreSQL (Flexible Server):** Instancia gestionada para persistencia de datos relacionales, transacciones ACID y esquemas relacionales.
+* **MongoDB Atlas / Contenedor NoSQL:** Cluster gestionado de documentos para portafolios y multimedia dinámica.
+* **Servicios Cloud Complementarios:** Mapbox API (Geocodificación y cálculo de rutas), Firebase Cloud Messaging (Push notifications) y Cloudinary (CDN de activos binarios).
 
 ---
 
-# 🗄️ Arquitectura de Base de Datos (Persistencia Mixta)
+## 🎨 Patrones de Diseño Implementados
 
-Según la **Opción 3 (Persistencia Mixta)** de los lineamientos del Sprint 02, el proyecto OficioYa segmenta su persistencia para aprovechar las ventajas de SQL y NoSQL.
+La solución implementa rigurosamente los patrones de diseño del catálogo GoF para garantizar alta cohesión, bajo acoplamiento y extensibilidad:
 
-### 🏛️ Justificación Técnica de nuestra Arquitectura Mixta
+### 1. Patrones de Diseño Individuales
 
-A medida que fuimos definiendo las necesidades de OficioYa, nos dimos cuenta de que no toda nuestra información se comportaba igual. Por eso, decidimos usar una base de datos híbrida, tomando lo mejor del mundo relacional y del mundo NoSQL. Aquí explicamos cómo dividimos la información y por qué:
+#### Patrón Creacional: Builder
+* **Problema:** Los perfiles profesionales son heterogéneos según el oficio (un profesor requiere materias y niveles, un técnico marcas específicas y un plomero certificaciones de tuberías). Un constructor convencional generaría atributos nulos o constructores telescópicos inmanejables.
+* **Solución:** Implementación de Builder en `PerfilTrabajador`, construyendo el perfil paso a paso según el oficio seleccionado.
+* **Sustento Técnico:** Cumple con el Principio de Responsabilidad Única (SRP) y viabiliza el requerimiento funcional de creación ágil de perfiles en menos de 5 minutos desde dispositivos móviles.
 
-**1. ¿Qué guardamos en PostgreSQL y por qué?**
-Toda la información "core" y transaccional del negocio vive en Postgres. Esto incluye a los **Usuarios**, los **Perfiles (Contratante y Trabajador)**, los **Oficios** y, muy especialmente, las **Solicitudes** de servicio.
-* **¿Por qué?** Porque en OficioYa, una solicitud de trabajo funciona como un contrato entre dos partes. Para esto necesitamos la garantía absoluta de las propiedades **A.C.I.D.** (Atomicidad, Consistencia, Aislamiento, Durabilidad) que ofrece el modelo relacional. Si ocurre un fallo mientras se procesa o cambia de estado una solicitud, Postgres nos asegura que la transacción se revierte por completo.
-* Además, utilizamos un **Modelo Broadcast (Tipo Rappi/Uber)**. Al crear una solicitud, la base de datos la registra obligatoriamente con el `contratante_id`, pero permite que el `trabajador_id` sea nulo. Así, la solicitud queda "flotando" en el mercado hasta que el primer trabajador la acepta, garantizando agilidad y concurrencia bajo las normas SQL.
+#### Patrón de Comportamiento: Observer
+* **Problema:** Al emitirse una solicitud de servicio urgente o programada, múltiples componentes deben reaccionar (notificar a trabajadores cercanos, actualizar tableros, registrar auditoría) sin acoplar la creación de la solicitud con cada canal.
+* **Solución:** La `SolicitudServicio` emite eventos (*Publisher*) que son consumidos por observadores independientes (*Subscribers*) encargados de la entrega de alertas (ej. Firebase Cloud Messaging).
+* **Sustento Técnico:** Cumple con el Principio Abierto/Cerrado (OCP); permite conectar canales adicionales (WhatsApp, correo o SMS) sin tocar la lógica del núcleo de solicitudes.
 
-**2. ¿Qué guardamos en MongoDB y por qué?**
-Decidimos aislar todo lo relacionado con el **Portafolio multimedia** de los trabajadores en MongoDB.
-* **¿Por qué?** Un portafolio de trabajos anteriores es muy dinámico. Guardar un arreglo dinámico de URLs en PostgreSQL nos obligaría a ejecutar pesadas consultas `JOIN`.
-* Gracias al **Modelo de Documentos** de Mongo, podemos guardar todo ese listado de strings de forma súper ágil dentro de un solo documento BSON.
-* **¿Cómo los conectamos?** Para unir Mongo con Postgres utilizamos el **Patrón Referenciado**. Dentro de la colección de Portafolios en Mongo guardamos el campo `perfilTrabajadorId`. Este actúa como una referencia lógica hacia el perfil que vive en Postgres, permitiéndonos disfrutar de la rapidez de NoSQL sin romper el orden relacional.
+#### Patrón de Comportamiento: Strategy
+* **Problema:** El sistema maneja múltiples algoritmos de búsqueda y ordenamiento: búsqueda por mérito y cercanía, búsqueda de urgencias ('disponible ahora') y búsqueda por especialidades, con la restricción contractual de que jamás se ordenará por pago publicitario.
+* **Solución:** Encapsulamiento de las variantes algorítmicas en estrategias independientes (`BusquedaPorMeritoStrategy`, `BusquedaUrgenciaStrategy`).
+* **Sustento Técnico:** Elimina estructuras condicionales anidadas en la capa de servicios y blinda la regla de negocio de posicionamiento meritocrático.
 
+#### Patrón Estructural: Decorator
+* **Problema:** Los trabajadores evolucionan dinámicamente: obtienen distintivos como 'Identidad Verificada' tras alcanzar 10 trabajos satisfactorios, o adquieren suscripciones 'Pro' con estadísticas avanzadas.
+* **Solución:** Envoltura dinámica del objeto base (`PerfilBasico`) con decoradores (`PerfilVerificadoDecorator`, `PerfilProDecorator`) que añaden responsabilidades en tiempo de ejecución.
+* **Sustento Técnico:** Evita la explosión combinatoria de subclases (`UsuarioBasico`, `UsuarioVerificadoPro`, etc.) y simplifica la monetización futura sin impactar la base gratuita.
+
+#### Patrón Comportamental: Chain of Responsibility
+* **Problema:** Al buscar un profesional en un sector exacto sin coincidencias, la plataforma debe ampliar gradualmente el radio geográfico (Barrio exacto ➔ Localidad / Sector ➔ Ciudad metropolitana).
+* **Solución:** Cadena de eslabones (`HandlerBarrioExacto` ➔ `HandlerRadioAmpliado` ➔ `HandlerCiudad`) que procesan la solicitud o la delegan al siguiente nivel si la lista está vacía.
+* **Sustento Técnico:** Reduce el acoplamiento y permite reconfigurar o añadir nuevos umbrales de búsqueda de manera transparente.
+
+#### Patrón Comportamental: State
+* **Problema:** El ciclo de vida de una `Solicitud` (`PENDIENTE` ➔ `ACEPTADA` ➔ `EN_CURSO` ➔ `FINALIZADA` / `CANCELADA`) exige transiciones estrictas. Validarlas con bloques `if/else` conduce a estados corruptos (ej. cancelar un servicio ya liquidado).
+* **Solución:** La entidad `Solicitud` delega sus transiciones a jerarquías polimórficas que extienden de `AbstractSolicitudState`. La clase `SolicitudStateFactory` valida y orquesta los cambios de estado legales.
+* **Sustento Técnico:** Lanza excepciones explícitas (`EstadoInvalidoException`) ante transiciones ilegales, blindando la integridad del dominio.
+
+#### Patrón Estructural: Adapter
+* **Problema:** El sistema requiere consumir pasarelas de pago y proveedores de cartografía externos. Conectar el código directamente a sus SDKs ata la arquitectura a APIs volátiles de terceros.
+* **Solución:** Definición de interfaces de dominio internas (puertos) e implementación de adaptadores que traducen las llamadas al formato específico del proveedor.
+* **Sustento Técnico:** Desacoplamiento total; permite alternar proveedores o inyectar mocks durante pruebas automatizadas sin alterar las reglas de negocio.
+
+#### Patrón Estructural: Composite
+* **Problema:** Los usuarios filtran simultáneamente por combinaciones arbitrarias de Categoría, Rango Tarifario, Reputación y Cobertura.
+* **Solución:** Cada filtro implementa una especificación común (`ISpecification`). El Composite compone estos criterios mediante operadores lógicos (`AND` / `OR`) integrados con la API Criteria de JPA.
+* **Sustento Técnico:** Garantiza consultas SQL nativas altamente eficientes en lugar de iteraciones pesadas en memoria, evitando sentencias condicionales dispersas.
 
 ---
 
-## Modelo Entidad-Relación (PostgreSQL)
+### 2. Patrones Combinados
 
-![DiagramEntityRelation.png](docs/uml/DiagramEntityRelation.png)
+#### Builder + Decorator
+* **Justificación:** Resuelve de forma limpia la creación y posterior evolución de perfiles profesionales.
+* **Mecánica:** El **Builder** ensambla la entidad inicial paso a paso según el oficio seleccionado (evitando constructores gigantes con atributos nulos). Posteriormente, el **Decorator** envuelve en memoria al perfil base para conferirle atributos dinámicos (insignias, permisos premium) a medida que acumula mérito en la plataforma.
 
-### Explicacion
-
-Para entender este diagrama físico, hay que ver a la tabla de `USUARIOS` como el centro del esquema. Por reglas de negocio, cuando una persona se registra en la plataforma se le crea automáticamente un perfil de contratante (relación de uno a uno). Sin embargo, si esa persona decide que también quiere ofrecer sus servicios, se le habilita de forma opcional un perfil de trabajador. Adicionalmente, el diagrama expone tablas que no son entidades principales pero que el motor relacional crea obligatoriamente para almacenar colecciones, como `PERFIL_DISPONIBILIDAD` y `PERFIL_METODOS_PAGO`. En cuanto a los oficios, cada trabajador tiene una conexión directa a un solo oficio principal, pero como puede ofrecer múltiples oficios secundarios (y un oficio lo pueden realizar varios trabajadores), rompimos la relación de "muchos a muchos" creando una tabla intermedia física con llaves compuestas llamada `TRABAJADOR_OFICIOS`. Finalmente, conectamos la tabla de `SOLICITUDES` directamente al Usuario y no a los perfiles, preparando el terreno para el uso de tokens JWT; notarás que el ID de quien crea la solicitud es obligatorio, pero el del trabajador que la recibe es opcional, lo cual nos permite publicar una solicitud al aire libre (estilo Rappi) y que quede flotando en la base de datos hasta que un trabajador la acepte.
+#### Observer + Strategy + Factory
+* **Justificación:** Brinda un canal de notificaciones desacoplado y reactivo de nivel empresarial.
+* **Mecánica:** Al cambiar el estado de una solicitud, el servicio emite un evento genérico mediante **Observer**. Un listener intercepta el evento y utiliza una **Factory** para determinar el canal preferido por el destinatario (Push, SMS o Correo), la cual entrega una **Strategy** concreta que ejecuta el método de envío correspondiente.
 
 ---
 
-## Modelo de Documentos (MongoDB)
+## 🗄️ Arquitectura de Base de Datos (Persistencia Mixta)
 
-![DiagramModel-Document.png](docs/uml/DiagramModel-Document.png)
+El proyecto OficioYa segmenta su persistencia para aprovechar de manera óptima las fortalezas de los modelos relacional y no relacional:
 
-### Explicacion
+| Motor de Base de Datos | Tipo | Entidades y Datos Almacenados | Justificación Técnica |
+| :--- | :--- | :--- | :--- |
+| **PostgreSQL 15+** | Relacional (SQL) | Usuarios, Perfiles (Contratante y Trabajador), Oficios, Solicitudes de Servicio, Moderación/Reportes y Referidos. | Cumplimiento estricto de propiedades **A.C.I.D.** para acuerdos transaccionales, consistencia de datos, integridad referencial y llaves foráneas. |
+| **MongoDB 6+** | NoSQL (Documentos) | Portafolios multimedia, galerías fotográficas y evidencias de trabajos anteriores. | Esquema dinámico y flexible de documentos BSON, almacenamiento ágil de colecciones dinámicas y consultas directas sin penalizaciones por `JOIN`. |
 
-Por otro lado, este diagrama representa nuestra colección en MongoDB, la cual nos libera de la rigidez de las tablas y uniones de SQL. En lugar de forzar tablas adicionales para cada imagen, Mongo nos permite guardar todo el historial fotográfico del trabajador como una simple matriz de textos dentro de un mismo bloque, el cual se ilustra aquí como el documento aislado del portafolio. Ahora bien, este portafolio no vive totalmente desconectado del resto del sistema; para unir este modelo de documentos con nuestra base relacional utilizamos un patrón referenciado. Esto significa que dentro de Mongo guardamos lógicamente el ID del perfil del trabajador, creando un puente o flecha invisible que nos permite saber a quién le pertenecen esas fotos 
+Para conectar ambas bases de datos se utiliza el **Patrón Referenciado**: dentro de la colección de portafolios en MongoDB se almacena el campo `perfilTrabajadorId`, el cual actúa como referencia lógica hacia la entidad del perfil en PostgreSQL, manteniendo el desacoplamiento y la alta velocidad de lectura.
+
+### ¿Por qué PostgreSQL para el Core?
+* **Cumplimiento ACID estricto:** Una solicitud de servicio constituye un acuerdo contractual entre dos usuarios con implicaciones económicas y de reputación. Si ocurre un fallo en una transición o asignación, PostgreSQL garantiza que la transacción se revierte por completo (*rollback*).
+* **Modelo Broadcast:** Permite registrar solicitudes con `contratante_id` obligatorio y `trabajador_id` inicialmente nulo, dejándolas disponibles en el mercado para ser tomadas concurrentemente por trabajadores cercanos.
+
+### ¿Por qué MongoDB para los Portafolios?
+* **Esquema dinámico y liviano:** Los portafolios varían ampliamente según el oficio (fotos, enlaces, metadatos).
+* **Eficiencia en BSON:** Evita tablas accesorias y consultas complejas `JOIN` en el motor relacional.
+* **Integración transparente:** El documento se vincula al perfil relacional mediante su identificador numérico.
+
+---
+
+### Modelo Entidad-Relación (PostgreSQL)
+
+![Modelo Entidad Relación](docs/uml/DiagramEntityRelation.png)
+
+#### Explicación
+Para entender este esquema físico, la tabla `USUARIOS` se ubica en el centro del modelo. Al registrarse, se asocia automáticamente un perfil de contratante (relación 1:1) y, de forma opcional, un perfil de trabajador si el usuario desea ofrecer sus servicios. Las tablas accesorias gestionan colecciones de datos como `PERFIL_DISPONIBILIDAD` y `PERFIL_METODOS_PAGO`. La relación de muchos a muchos entre trabajadores y oficios se resuelve con la tabla intermedia `TRABAJADOR_OFICIOS`. Finalmente, la tabla de `SOLICITUDES` se vincula al usuario permitiendo el modelo broadcast con trabajador asignable dinámicamente.
+
+---
+
+### Modelo de Documentos (MongoDB)
+
+![Modelo Documental MongoDB](docs/uml/DiagramModel-Document.png)
+
+#### Explicación
+Este modelo en MongoDB almacena el historial y portafolio fotográfico de los trabajadores como arreglos de documentos BSON aislados. Mediante el patrón referenciado (`perfilTrabajadorId`), se crea el enlace lógico hacia el perfil profesional en PostgreSQL sin necesidad de sobrecargar el esquema relacional con tablas de imágenes.
+
+---
+
+## 💻 Stack Tecnológico
+
+| Capa / Dominio | Tecnología | Versión | Propósito |
+| :--- | :--- | :---: | :--- |
+| **Lenguaje** | Java | 21 LTS | Plataforma de desarrollo principal con virtual threads y tipos modernos. |
+| **Framework Base** | Spring Boot | 3.4.1 | Orquestación general, inyección de dependencias y autoconfiguración. |
+| **Seguridad** | Spring Security | 6.x | Control de acceso, filtros de seguridad y autorización por métodos. |
+| **Tokens Criptográficos**| JJWT (io.jsonwebtoken) | 0.11.5 | Generación, firma HMAC-SHA y validación de tokens JWT sin estado. |
+| **Persistencia SQL** | Spring Data JPA / Hibernate | 3.4.1 | Mapeo objeto-relacional y abstracción de repositorios relacionales. |
+| **Base de Datos SQL** | PostgreSQL | 15+ / 16 | Motor de base de datos relacional transaccional para producción/staging. |
+| **BD En Memoria** | H2 Database | 2.x | Persistencia rápida en memoria para testing y desarrollo local aislado. |
+| **Persistencia NoSQL**| Spring Data MongoDB | 3.4.1 | Manejo de documentos y colecciones no estructuradas de portafolios. |
+| **Base de Datos NoSQL**| MongoDB | 6.x | Motor de documentos BSON de alto rendimiento. |
+| **Mapeo de DTOs** | MapStruct | 1.5.5 | Generación de mapeadores tipados en tiempo de compilación. |
+| **Boilerplate Reduction**| Project Lombok | 1.18.48 | Eliminación de getters, setters, constructores y builders repetitivos. |
+| **Documentación** | Springdoc OpenAPI UI | 2.8.4 | Generador automático de interfaz Swagger UI 3 y esquemas OpenAPI. |
+| **Pruebas Unitarias** | JUnit 5 & Mockito | Integrado | Framework de pruebas unitarias y creación de dobles de prueba (mocks). |
+| **Auditoría Cobertura** | JaCoCo Maven Plugin | 0.8.11 | Auditoría de cobertura con umbral mínimo obligatorio del 96%. |
+| **Contenedores** | Docker & Docker Compose | 24+ / 3.8 | Empaquetamiento de servicios en contenedores multicapa optimizados. |
+| **Nube / Hosting** | Microsoft Azure App Service | Linux | Plataforma como Servicio (PaaS) para despliegue de contenedores. |
+
+---
+
+## 📋 Requisitos Previos
+
+Antes de ejecutar el proyecto localmente, asegúrate de contar con:
+
+* **Java Development Kit (JDK):** Versión 21 o superior ([Eclipse Temurin](https://adoptium.net/) recomendado).
+* **Apache Maven:** Versión 3.9 o superior (o utilizar el wrapper `./mvnw` incluido).
+* **Git:** Para clonar el repositorio y gestionar ramas.
+* **Docker & Docker Compose (Recomendado):** Para levantar PostgreSQL y MongoDB con un solo comando.
+* *(Opcional)* Clientes de base de datos como DBeaver, pgAdmin y MongoDB Compass.
+
+---
+
+## ⚙️ Instalación y Ejecución Local
+
+### Paso 1: Clonar el Repositorio
+
+```bash
+git clone https://github.com/OficioYa1/OficioYa-Backend.git
+cd OficioYa-Backend
+```
+
+---
+
+### Opción A: Ejecución con Maven (Desarrollo Local)
+
+#### 1. Iniciar las Bases de Datos (PostgreSQL & MongoDB)
+Si dispones de Docker instalado, puedes iniciar únicamente los motores de base de datos mediante:
+
+```bash
+docker compose up -d postgres mongodb
+```
+
+> **Credenciales por defecto:**
+> * **PostgreSQL:** Puerto `5432` | DB: `oficioyadb` | Usuario: `root` | Clave: `rootpassword`
+> * **MongoDB:** Puerto `27017` | DB: `oficioyadb_nosql` | Usuario: `root` | Clave: `rootpassword`
+
+#### 2. Compilar y Ejecutar el Backend
+Utiliza el Maven Wrapper para compilar y ejecutar la aplicación en el puerto `8082`:
+
+```bash
+# En Windows (PowerShell / CMD)
+.\mvnw.cmd clean spring-boot:run
+
+# En Linux / macOS
+./mvnw clean spring-boot:run
+```
+
+---
+
+### Opción B: Ejecución con Docker Compose (Entorno Completo)
+
+Para levantar la solución completa (PostgreSQL, MongoDB y el Backend de Spring Boot contenerizado):
+
+```bash
+# Construir la imagen y levantar todos los servicios en segundo plano
+docker compose up --build -d
+
+# Consultar los logs de la aplicación
+docker compose logs -f backend
+
+# Detener todos los servicios
+docker compose down
+```
+
+Una vez levantado, la aplicación estará accesible en:
+* **Backend API:** `http://localhost:8080` (en Docker Compose) o `http://localhost:8082` (ejecución directa con Maven).
+* **Swagger UI:** `http://localhost:8080/swagger-ui/index.html` o `http://localhost:8082/swagger-ui/index.html`.
+
+---
+
+## 🔧 Variables de Entorno y Configuración
+
+El proyecto permite sobreescribir sus propiedades principales mediante variables de entorno en el sistema o en el archivo de despliegue:
+
+| Variable de Entorno | Valor por Defecto (`application.properties`) | Valor en `docker-compose.yml` | Descripción |
+| :--- | :--- | :--- | :--- |
+| `SERVER_PORT` | `8082` | `8080` | Puerto HTTP expuesto por el servidor embebido Tomcat. |
+| `SPRING_DATASOURCE_URL` | `jdbc:postgresql://localhost:5432/oficioya_db` | `jdbc:postgresql://postgres:5432/oficioyadb` | Cadena de conexión JDBC a PostgreSQL. |
+| `SPRING_DATASOURCE_USERNAME` | `postgres` | `root` | Usuario con permisos en la base de datos relacional. |
+| `SPRING_DATASOURCE_PASSWORD` | `postgres` | `rootpassword` | Contraseña del usuario de PostgreSQL. |
+| `SPRING_DATA_MONGODB_URI` | `mongodb://localhost:27017/oficioya_mongo_db` | `mongodb://root:rootpassword@mongodb:27017/oficioyadb_nosql?authSource=admin` | URI de conexión a la instancia de MongoDB. |
+| `JWT_SECRET` | *(Clave por defecto interna)* | `[ESPACIO/SECRETO EN NUBE]` | Clave secreta para la firma y validación de tokens HMAC. |
+| `JWT_EXPIRATION_MS` | `86400000` (24 horas) | `86400000` | Tiempo de vida del token de acceso en milisegundos. |
+| `SPRING_JPA_HIBERNATE_DDL_AUTO` | `update` | `update` | Modo de gestión de esquema DDL de Hibernate. |
+
+---
+
+## 📚 Documentación de la API (Swagger / OpenAPI)
+
+El backend incorpora **Springdoc OpenAPI 3**, el cual genera y actualiza en tiempo real la documentación interactiva de todos los controladores y DTOs expuestos.
+
+### Acceso a la Interfaz Gráfica
+* **Swagger UI:** [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html)
+* **Especificación JSON OpenAPI:** [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs)
+
+### Flujo de Prueba de Endpoints Protegidos en Swagger UI
+1. Dirígete a la sección `auth-controller` y ejecuta la petición `POST /auth/login` con credenciales válidas.
+2. Copia la cadena del campo `token` que retorna la respuesta JSON.
+3. En la parte superior derecha de la interfaz de Swagger UI, haz clic en el botón verde **Authorize 🔓**.
+4. En el campo emergente, ingresa el prefijo y el token:
+   ```text
+   Bearer TU_TOKEN_JWT_AQUI
+   ```
+5. Haz clic en **Authorize** y luego en **Close**. Ahora todas las peticiones a endpoints con `@PreAuthorize` enviarán la cabecera de autenticación automáticamente.
+
+---
+
+## 🧪 Estrategia de Pruebas y Calidad de Código
+
+El proyecto sigue una política rigurosa de calidad de software y pruebas automatizadas:
+
+### Ejecución de Pruebas Unitarias
+Para correr la suite de pruebas con JUnit 5 y Mockito:
+
+```bash
+.\mvnw.cmd test
+```
+
+### Verificación de Cobertura con JaCoCo (Umbral 96%+)
+El archivo `pom.xml` tiene configurada una regla de calidad estricta mediante el plugin `jacoco-maven-plugin`: la compilación falla automáticamente si la cobertura general de instrucciones cae por debajo del **96%**:
+
+```bash
+# Validar la regla de cobertura mínima
+.\mvnw.cmd jacoco:check
+
+# Generar el reporte interactivo HTML de JaCoCo
+.\mvnw.cmd jacoco:report
+```
+
+Una vez generado el reporte, puedes inspeccionar el desglose detallado abriendo en tu navegador el archivo:
+`target/site/jacoco/index.html`
+
+> **Evidencia Gráfica de Cobertura:**
+> 
+> ![cobertura jacoco](docs/images/coberturaJacoco.png)
+
+---
+
+## 🚀 Integración y Despliegue Continuo (CI/CD)
+
+El repositorio implementa un flujo automatizado de CI/CD mediante **GitHub Actions** en el archivo [`.github/workflows/azure-deploy.yml`](.github/workflows/azure-deploy.yml), el cual se activa ante cualquier *push* o *pull request* a las ramas `develop` y `main`:
+
+### Etapas del Pipeline de CI/CD:
+1. **Build & Test:**
+   - Configuración del entorno con JDK 21 Temurin.
+   - Compilación completa y ejecución de suite de pruebas unitarias (`./mvnw clean test`).
+   - Verificación estricta del umbral de cobertura JaCoCo (`./mvnw jacoco:check >= 96%`).
+2. **Docker Build & Push:**
+   - Autenticación segura en Docker Hub.
+   - Construcción de imagen de contenedor optimizada multicapa basada en Alpine JRE 21.
+   - Publicación de la imagen con tags versionados (`${{ github.sha }}`) y `latest`.
+3. **Despliegue Continuo a Azure:**
+   - Despliegue automatizado hacia **Azure Web App for Containers** mediante perfil de publicación seguro.
+
+### Secretos Requeridos en GitHub Actions
+Para el correcto aprovisionamiento del pipeline, se requieren los siguientes secretos en el repositorio:
+* `DOCKER_USERNAME`: Usuario oficial de Docker Hub.
+* `DOCKER_PASSWORD`: Token de acceso personal o clave de Docker Hub.
+* `AZURE_WEBAPP_PUBLISH_PROFILE`: Perfil de publicación XML descargado desde el portal de Microsoft Azure.
+
+---
+
+## 📂 Estructura del Proyecto
+
+```text
+OficioYa-Backend/
+├── .github/
+│   └── workflows/
+│       └── azure-deploy.yml         # Pipeline automatizado de CI/CD
+├── docs/                            # Documentación de diseño y diagramas UML
+│   ├── images/                      # Diagramas de componentes y clases
+│   └── uml/                         # Diagramas de contexto, entidad-relación y documentos
+├── src/
+│   ├── main/
+│   │   ├── java/com/oficioya/
+│   │   │   ├── config/              # Configuraciones de Swagger, CORS y beans globales
+│   │   │   ├── controller/          # Controladores REST (@RestController)
+│   │   │   │   └── docs/            # Interfaces OpenAPI y documentación de endpoints
+│   │   │   ├── exception/           # Excepciones de negocio y GlobalExceptionHandler
+│   │   │   ├── model/
+│   │   │   │   ├── dto/             # Objetos de transferencia (Requests y Responses)
+│   │   │   │   └── mapper/          # Mapeadores compilados con MapStruct
+│   │   │   ├── persistence/
+│   │   │   │   ├── document/        # Documentos NoSQL (MongoDB - Portafolios)
+│   │   │   │   └── entity/          # Entidades relacionales JPA (PostgreSQL)
+│   │   │   ├── repository/          # Repositorios Spring Data JPA y Mongo
+│   │   │   ├── security/            # Configuración de Spring Security, filtros JWT y provider
+│   │   │   ├── service/             # Interfaces de servicio e implementaciones de negocio
+│   │   │   └── validator/           # Validadores desacoplados de reglas de negocio
+│   │   └── resources/
+│   │       ├── application.properties # Configuración principal de la aplicación
+│   │       └── static/uploads/        # Almacenamiento local de archivos estáticos
+│   └── test/java/com/oficioya/      # Pruebas unitarias de controladores y servicios
+├── uploads/perfiles/                # Directorio montado para subida de fotos
+├── docker-compose.yml               # Orquestación de contenedores (Postgres, Mongo, Backend)
+├── Dockerfile                       # Construcción multicapa con Java 21 Temurin
+├── pom.xml                          # Configuración de dependencias Maven y JaCoCo
+└── README.md                        # Documentación central del repositorio
+```
+
+---
+
+## 🔗 Repositorios Relacionados
+
+* **Frontend Web (SPA):** [OficioYa-Frontend](https://github.com/OficioYa1/OficioYa-Frontend) — Desarrollado en React + Vite.
+* **Organización del Proyecto:** [GitHub OficioYa1](https://github.com/OficioYa1)
+
+---
+
+## 👥 Equipo de Desarrollo
+
+Proyecto desarrollado en el marco del curso de **Diseño y Operación de Soluciones Web (DOSW)** — Escuela Colombiana de Ingeniería Julio Garavito.
+
+| Integrante | Correo Institucional | GitHub |
+| :--- | :--- | :--- |
+| **Carlos Sánchez** | `carlos.sanchez-j@mail.escuelaing.edu.co` | [@Carlossj8](https://github.com/Carlossj8) |
+| **Oscar Lasso** | `oscar.lasso-m@mail.escuelaing.edu.co` | [@Oscar10lm](https://github.com/Oscar10lm) |
+| **Cristian Santiago Moreno Ruiz** | `cristian.moreno-r@mail.escuelaing.edu.co` | [@cristianmorenor](https://github.com/cristianmorenor) |
+| **José Alejandro Martínez Arias** | `jose.martinez-ar@mail.escuelaing.edu.co` | [@JoseMartinez883](https://github.com/JoseMartinez883) |
+| **Juan Diego Gaitán** | `juan.gaitan-b@mail.escuelaing.edu.co` | [@mamagege](https://github.com/mamagege) |
+
+---
+
+## 📄 Licencia
+
+Este proyecto se encuentra bajo los lineamientos y propósitos académicos del programa de Ingeniería de Sistemas de la Escuela Colombiana de Ingeniería Julio Garavito. Todos los derechos reservados © 2026 OficioYa Team.
