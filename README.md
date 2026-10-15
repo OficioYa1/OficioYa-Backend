@@ -15,6 +15,12 @@
 
 ---
 
+### 🌐 Links de Despliegue en Azure Cloud (Swagger UI)
+* 🌐 **QA (Staging):** [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html)
+* 🚀 **PROD (Producción):** [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html)
+
+---
+
 ## 📑 Tabla de Contenidos
 
 1. [Descripción General](#-descripción-general)
@@ -75,10 +81,11 @@ Este repositorio aloja el **Backend Monolítico Modular**, diseñado y desarroll
 
 | Recurso / Entorno | Tipo | Estado | Enlace |
 | :--- | :--- | :---: | :--- |
-| **API Backend (Azure Cloud)** | Staging / QA | 🟢 Activo | [https://oficioya-backend.azurewebsites.net](https://oficioya-backend.azurewebsites.net) |
-| **Swagger UI (Azure Cloud)** | Documentación interactiva en Nube | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html) |
+| **Swagger UI — QA (Staging)** | Documentación interactiva en Nube (QA) | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html) |
+| **Swagger UI — PROD (Producción)** | Documentación interactiva en Nube (PROD) | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html) |
+| **API Backend REST (Azure Cloud)** | Endpoint Base y Health Check | 🟢 Activo | [https://oficioya-backend.azurewebsites.net](https://oficioya-backend.azurewebsites.net) |
 | **OpenAPI Docs (Azure Cloud)** | Esquema JSON en Nube | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/v3/api-docs](https://oficioya-backend.azurewebsites.net/v3/api-docs) |
-| **Swagger UI (Local)** | Documentación interactiva local | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
+| **Swagger UI (Local Docker/Maven)** | Documentación interactiva local | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
 | **OpenAPI Docs (Local)** | Esquema JSON local | 🟢 Activo | [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs) |
 | **Frontend Web (Cliente)** | Interfaz de Usuario SPA | 🟢 Repositorio | [OficioYa-Frontend](https://github.com/OficioYa1/OficioYa-Frontend) |
 
