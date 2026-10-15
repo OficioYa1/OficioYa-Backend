@@ -11,7 +11,7 @@
 [![Docker](https://img.shields.io/badge/Docker-24%2B-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Azure App Service](https://img.shields.io/badge/Azure-App_Service-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
 [![JaCoCo Coverage](https://img.shields.io/badge/Coverage-96%25%2B-brightgreen?style=for-the-badge&logo=target)](https://www.jacoco.org/jacoco/)
-[![Build Status](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/)
+[![Build Status](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/OficioYa1/OficioYa-Backend/actions)
 
 ---
 
@@ -460,8 +460,10 @@ El proyecto permite sobreescribir sus propiedades principales mediante variables
 El backend incorpora **Springdoc OpenAPI 3**, el cual genera y actualiza en tiempo real la documentación interactiva de todos los controladores y DTOs expuestos.
 
 ### Acceso a la Interfaz Gráfica
-* **Swagger UI:** [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html)
-* **Especificación JSON OpenAPI:** [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs)
+* **Swagger UI (Azure Cloud - En Vivo):** [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html)
+* **Especificación JSON OpenAPI (Azure Cloud):** [https://oficioya-backend.azurewebsites.net/v3/api-docs](https://oficioya-backend.azurewebsites.net/v3/api-docs)
+* **Swagger UI (Local Docker/Maven):** [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html)
+* **Especificación JSON OpenAPI (Local):** [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs)
 
 ### Flujo de Prueba de Endpoints Protegidos en Swagger UI
 1. Dirígete a la sección `auth-controller` y ejecuta la petición `POST /auth/login` con credenciales válidas.
