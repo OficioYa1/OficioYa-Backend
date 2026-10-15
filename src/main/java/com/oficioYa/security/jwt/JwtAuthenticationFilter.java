@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -45,10 +50,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
             
             if (jwtService.isTokenValid(jwt, userDetails)) {
+                Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
+                String roleClaim = jwtService.extractClaim(jwt, claims -> claims.get("role", String.class));
+                if (roleClaim != null && !roleClaim.isBlank()) {
+                    List<GrantedAuthority> customAuths = new ArrayList<>(authorities);
+                    String roleName = roleClaim.startsWith("ROLE_") ? roleClaim : "ROLE_" + roleClaim;
+                    customAuths.add(new SimpleGrantedAuthority(roleName));
+                    authorities = customAuths;
+                }
+
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userDetails,
                         null,
-                        userDetails.getAuthorities()
+                        authorities
                 );
                 authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
