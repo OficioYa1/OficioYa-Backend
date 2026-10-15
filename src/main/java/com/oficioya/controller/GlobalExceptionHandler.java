@@ -100,6 +100,14 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(401, "Error de autenticación", ex.getMessage(), request.getRequestURI()));
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAccesoDenegado(
+            org.springframework.security.access.AccessDeniedException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponseDTO(403, "Acceso denegado", "No tiene los permisos requeridos para acceder a este recurso.", request.getRequestURI()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenerico(
             Exception ex, HttpServletRequest request) {

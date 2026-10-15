@@ -146,6 +146,22 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("handleAccesoDenegado retorna 403")
+    void testAccesoDenegado() {
+        // Arrange
+        org.springframework.security.access.AccessDeniedException ex = 
+                new org.springframework.security.access.AccessDeniedException("Acceso denegado");
+
+        // Act
+        ResponseEntity<ErrorResponseDTO> resp = handler.handleAccesoDenegado(ex, request);
+
+        // Assert
+        assertEquals(HttpStatus.FORBIDDEN, resp.getStatusCode());
+        assertEquals(403, resp.getBody().status());
+        assertEquals("No tiene los permisos requeridos para acceder a este recurso.", resp.getBody().mensaje());
+    }
+
+    @Test
     @DisplayName("handleGenerico retorna 500")
     void testGenerico() {
         RuntimeException ex = new RuntimeException("Falla desconocida");
