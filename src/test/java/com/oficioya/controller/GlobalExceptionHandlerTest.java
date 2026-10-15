@@ -130,6 +130,22 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("handleAutenticacion retorna 401")
+    void testAutenticacion() {
+        // Arrange
+        org.springframework.security.authentication.BadCredentialsException ex = 
+                new org.springframework.security.authentication.BadCredentialsException("Credenciales inválidas");
+
+        // Act
+        ResponseEntity<ErrorResponseDTO> resp = handler.handleAutenticacion(ex, request);
+
+        // Assert
+        assertEquals(HttpStatus.UNAUTHORIZED, resp.getStatusCode());
+        assertEquals(401, resp.getBody().status());
+        assertEquals("Credenciales inválidas", resp.getBody().mensaje());
+    }
+
+    @Test
     @DisplayName("handleGenerico retorna 500")
     void testGenerico() {
         RuntimeException ex = new RuntimeException("Falla desconocida");
