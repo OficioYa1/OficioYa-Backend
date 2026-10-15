@@ -92,6 +92,14 @@ public class GlobalExceptionHandler {
                         "El cuerpo o los parámetros de la petición tienen un formato o valor no válido", request.getRequestURI()));
     }
 
+    @ExceptionHandler(org.springframework.security.core.AuthenticationException.class)
+    public ResponseEntity<ErrorResponseDTO> handleAutenticacion(
+            org.springframework.security.core.AuthenticationException ex, HttpServletRequest request) {
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponseDTO(401, "Error de autenticación", ex.getMessage(), request.getRequestURI()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDTO> handleGenerico(
             Exception ex, HttpServletRequest request) {
