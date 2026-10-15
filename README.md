@@ -75,10 +75,11 @@ Este repositorio aloja el **Backend Monolítico Modular**, diseñado y desarroll
 
 | Recurso / Entorno | Tipo | Estado | Enlace |
 | :--- | :--- | :---: | :--- |
-| **Swagger UI** | Documentación interactiva | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
-| **OpenAPI Docs** | Esquema JSON | 🟢 Activo | [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs) |
-| **API Backend (Azure Cloud)** | Staging / QA | 🟢 Activo | `[ESPACIO PENDIENTE: https://oficioya-backend.azurewebsites.net]` |
-
+| **API Backend (Azure Cloud)** | Staging / QA | 🟢 Activo | [https://oficioya-backend.azurewebsites.net](https://oficioya-backend.azurewebsites.net) |
+| **Swagger UI (Azure Cloud)** | Documentación interactiva en Nube | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html) |
+| **OpenAPI Docs (Azure Cloud)** | Esquema JSON en Nube | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/v3/api-docs](https://oficioya-backend.azurewebsites.net/v3/api-docs) |
+| **Swagger UI (Local)** | Documentación interactiva local | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
+| **OpenAPI Docs (Local)** | Esquema JSON local | 🟢 Activo | [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs) |
 | **Frontend Web (Cliente)** | Interfaz de Usuario SPA | 🟢 Repositorio | [OficioYa-Frontend](https://github.com/OficioYa1/OficioYa-Frontend) |
 
 ---
