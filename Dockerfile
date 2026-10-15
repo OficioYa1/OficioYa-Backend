@@ -17,8 +17,8 @@ WORKDIR /app
 # Copiar el jar generado desde la etapa de construcción
 COPY --from=builder /app/target/*.jar app.jar
 
-# Exponer el puerto por defecto de Spring Boot
-EXPOSE 8080
+# Exponer el puerto configurado de Spring Boot
+EXPOSE 8082
 
 # Definir la zona horaria si es necesario
 ENV TZ=America/Bogota
