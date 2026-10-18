@@ -502,9 +502,16 @@ El archivo `pom.xml` tiene configurada una regla de calidad estricta mediante el
 Una vez generado el reporte, puedes inspeccionar el desglose detallado abriendo en tu navegador el archivo:
 `target/site/jacoco/index.html`
 
-> **Evidencia Gráfica de Cobertura:**
+> **Resumen Oficial de Calidad y Cobertura (Reporte JaCoCo - Sprint 03):**
 > 
-> ![cobertura jacoco](docs/images/coberturaJacoco.png)
+> | Métrica JaCoCo | Total | Cubiertas | Porcentaje | Estado |
+> | :--- | :---: | :---: | :---: | :---: |
+> | **Instrucciones** | 8.736 | 8.036 | **91.99%** | 🟢 Supera umbral (>70%) |
+> | **Ramas (Branches)** | 506 | 378 | **74.70%** | 🟢 Aprobado |
+> | **Líneas de Código** | 1.832 | 1.708 | **93.23%** | 🟢 Aprobado |
+> | **Métodos** | 398 | 362 | **90.95%** | 🟢 Aprobado |
+> | **Clases Analizadas** | 105 | 104 | **99.04%** | 🟢 Aprobado |
+> | **Pruebas Automatizadas** | 307 | 307 | **100%** | 🟢 0 fallos, 0 errores |
 
 ---
 
