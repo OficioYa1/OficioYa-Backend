@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.oficioya.persistence.entity.UsuarioEntity;
+import com.oficioya.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -22,6 +26,9 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+
+    @Autowired(required = false)
+    private UsuarioRepository usuarioRepository;
 
     // OFY-50: Endpoint de Login
     @PostMapping("/login")
@@ -31,16 +38,23 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
 
-        // Normally we fetch user from DB here. Mocking for now:
+        // Fetch real user from DB to include their authentic role
+        UsuarioEntity usuario = usuarioRepository != null ?
+                usuarioRepository.findByCorreo(request.getEmail()).orElse(null) : null;
+
+        String rawRole = (usuario != null && usuario.getRol() != null) ?
+                usuario.getRol().name() : "CONTRATANTE";
+        String roleAuthority = "ROLE_" + rawRole.replace("ROLE_", "");
+
         UserDetails userDetails = User.builder()
                 .username(request.getEmail())
                 .password("")
-                .roles("CONTRATANTE") // Default mock role
+                .authorities(roleAuthority)
                 .build();
 
         // Add custom claim for role
         Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role", "ROLE_CONTRATANTE");
+        extraClaims.put("role", roleAuthority);
 
         String jwtToken = jwtService.generateToken(extraClaims, userDetails);
         return ResponseEntity.ok(AuthResponse.builder().token(jwtToken).build());
