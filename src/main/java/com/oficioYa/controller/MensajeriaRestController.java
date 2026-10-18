@@ -19,16 +19,19 @@ public class MensajeriaRestController implements MensajeriaRestApi {
     private final IMensajeriaRestService mensajeriaService;
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'TRABAJADOR', 'ADMIN')")
     public ResponseEntity<MensajeChatResponseDTO> enviarMensaje(Long solicitudId, MensajeChatRequestDTO request) {
         return ResponseEntity.ok(mensajeriaService.enviarMensaje(solicitudId, request));
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'TRABAJADOR', 'ADMIN')")
     public ResponseEntity<List<MensajeChatResponseDTO>> obtenerMensajesPorSolicitud(Long solicitudId) {
         return ResponseEntity.ok(mensajeriaService.obtenerMensajesPorSolicitud(solicitudId));
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'TRABAJADOR', 'ADMIN')")
     public ResponseEntity<Void> marcarMensajesComoLeidos(Long solicitudId, Long destinatarioId) {
         mensajeriaService.marcarMensajesComoLeidos(solicitudId, destinatarioId);
         return ResponseEntity.noContent().build();

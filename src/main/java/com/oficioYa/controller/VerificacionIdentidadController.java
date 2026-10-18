@@ -17,24 +17,28 @@ public class VerificacionIdentidadController implements VerificacionIdentidadApi
     private final IVerificacionIdentidadService verificacionIdentidadService;
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     public ResponseEntity<String> subirDocumentosIdentidad(Long trabajadorId, MultipartFile documentoFrente, MultipartFile documentoReverso) {
         String url = verificacionIdentidadService.subirDocumentosIdentidad(trabajadorId, documentoFrente, documentoReverso);
         return ResponseEntity.ok(url);
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     public ResponseEntity<String> subirCertificadoAntecedentes(Long trabajadorId, MultipartFile certificado) {
         String url = verificacionIdentidadService.subirCertificadoAntecedentes(trabajadorId, certificado);
         return ResponseEntity.ok(url);
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     public ResponseEntity<String> subirFotoPerfilVerificada(Long trabajadorId, MultipartFile foto) {
         String url = verificacionIdentidadService.subirFotoPerfilVerificada(trabajadorId, foto);
         return ResponseEntity.ok(url);
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     public ResponseEntity<EstadoVerificacion> obtenerEstadoVerificacion(Long trabajadorId) {
         return ResponseEntity.ok(verificacionIdentidadService.obtenerEstadoVerificacion(trabajadorId));
     }
