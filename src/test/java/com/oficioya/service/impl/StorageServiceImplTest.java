@@ -28,8 +28,11 @@ class StorageServiceImplTest {
     @Test
     @DisplayName("guardarImagen - archivo vacío lanza EstadoInvalidoException")
     void guardarImagen_archivoVacio_lanzaExcepcion() {
+        // Arrange
         when(file.isEmpty()).thenReturn(true);
 
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(
                 EstadoInvalidoException.class,
                 () -> storageService.guardarImagen(file)
@@ -41,9 +44,12 @@ class StorageServiceImplTest {
     @Test
     @DisplayName("guardarImagen - tipo de contenido nulo o inválido lanza EstadoInvalidoException")
     void guardarImagen_tipoInvalido_lanzaExcepcion() {
+        // Arrange
         when(file.isEmpty()).thenReturn(false);
         when(file.getContentType()).thenReturn("application/pdf");
 
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(
                 EstadoInvalidoException.class,
                 () -> storageService.guardarImagen(file)
@@ -55,9 +61,12 @@ class StorageServiceImplTest {
     @Test
     @DisplayName("guardarImagen - tipo de contenido nulo lanza EstadoInvalidoException")
     void guardarImagen_tipoNulo_lanzaExcepcion() {
+        // Arrange
         when(file.isEmpty()).thenReturn(false);
         when(file.getContentType()).thenReturn(null);
 
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(
                 EstadoInvalidoException.class,
                 () -> storageService.guardarImagen(file)
@@ -69,12 +78,15 @@ class StorageServiceImplTest {
     @Test
     @DisplayName("guardarImagen - archivo JPG válido guarda físicamente y retorna ruta")
     void guardarImagen_archivoValido_retornaRuta() {
+        // Arrange
         when(file.isEmpty()).thenReturn(false);
         when(file.getContentType()).thenReturn("image/jpeg");
         when(file.getOriginalFilename()).thenReturn("avatar.jpeg");
 
+        // Act
         String url = storageService.guardarImagen(file);
 
+        // Assert
         assertNotNull(url);
         assertTrue(url.startsWith("https://mock.cloudinary.com/oficioya/image/upload/v1/"));
         assertTrue(url.endsWith(".jpeg"));
@@ -83,12 +95,15 @@ class StorageServiceImplTest {
     @Test
     @DisplayName("guardarImagen - archivo PNG sin extensión guarda correctamente")
     void guardarImagen_archivoSinExtension_retornaRuta() {
+        // Arrange
         when(file.isEmpty()).thenReturn(false);
         when(file.getContentType()).thenReturn("image/png");
         when(file.getOriginalFilename()).thenReturn("avatar");
 
+        // Act
         String url = storageService.guardarImagen(file);
 
+        // Assert
         assertNotNull(url);
         assertTrue(url.startsWith("https://mock.cloudinary.com/oficioya/image/upload/v1/"));
         assertTrue(url.endsWith(".jpg"));

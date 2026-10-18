@@ -55,27 +55,48 @@ class HistorialEstadisticasServiceImplTest {
 
     @Test
     void obtenerHistorialCliente_Success() {
+        // Arrange
         when(solicitudRepository.findByContratanteIdOrderByFechaCreacionDesc(1L))
                 .thenReturn(Arrays.asList(entity));
         when(entityMapper.toDomain(any(SolicitudEntity.class))).thenReturn(domain);
         when(dtoMapper.toResponse(any(Solicitud.class))).thenReturn(dto);
 
+        // Act
         List<SolicitudResponseDTO> res = historialService.obtenerHistorialCliente(1L);
 
+        // Assert
         assertNotNull(res);
         assertEquals(1, res.size());
         verify(solicitudRepository, times(1)).findByContratanteIdOrderByFechaCreacionDesc(1L);
     }
 
     @Test
+    void obtenerHistorialCliente_ListaVacia() {
+        // Arrange
+        when(solicitudRepository.findByContratanteIdOrderByFechaCreacionDesc(99L))
+                .thenReturn(List.of());
+
+        // Act
+        List<SolicitudResponseDTO> res = historialService.obtenerHistorialCliente(99L);
+
+        // Assert
+        assertNotNull(res);
+        assertTrue(res.isEmpty());
+        verify(solicitudRepository, times(1)).findByContratanteIdOrderByFechaCreacionDesc(99L);
+    }
+
+    @Test
     void obtenerHistorialTrabajador_Success() {
+        // Arrange
         when(solicitudRepository.findByTrabajadorIdOrderByFechaCreacionDesc(2L))
                 .thenReturn(Arrays.asList(entity));
         when(entityMapper.toDomain(any(SolicitudEntity.class))).thenReturn(domain);
         when(dtoMapper.toResponse(any(Solicitud.class))).thenReturn(dto);
 
+        // Act
         List<SolicitudResponseDTO> res = historialService.obtenerHistorialTrabajador(2L);
 
+        // Assert
         assertNotNull(res);
         assertEquals(1, res.size());
         verify(solicitudRepository, times(1)).findByTrabajadorIdOrderByFechaCreacionDesc(2L);
@@ -83,13 +104,16 @@ class HistorialEstadisticasServiceImplTest {
 
     @Test
     void obtenerEstadisticasCliente_Success() {
+        // Arrange
         when(solicitudRepository.countByContratanteId(1L)).thenReturn(10L);
         when(solicitudRepository.countByContratanteIdAndEstado(1L, EstadoSolicitud.COMPLETADA)).thenReturn(5L);
         when(solicitudRepository.countByContratanteIdAndEstado(1L, EstadoSolicitud.CANCELADA)).thenReturn(2L);
         when(solicitudRepository.countByContratanteIdAndEstado(1L, EstadoSolicitud.EN_PROGRESO)).thenReturn(1L);
 
+        // Act
         EstadisticasResponseDTO stats = historialService.obtenerEstadisticasCliente(1L);
 
+        // Assert
         assertNotNull(stats);
         assertEquals(10L, stats.getTotal());
         assertEquals(5L, stats.getCompletadas());
@@ -100,13 +124,16 @@ class HistorialEstadisticasServiceImplTest {
 
     @Test
     void obtenerEstadisticasTrabajador_Success() {
+        // Arrange
         when(solicitudRepository.countByTrabajadorId(2L)).thenReturn(20L);
         when(solicitudRepository.countByTrabajadorIdAndEstado(2L, EstadoSolicitud.COMPLETADA)).thenReturn(15L);
         when(solicitudRepository.countByTrabajadorIdAndEstado(2L, EstadoSolicitud.CANCELADA)).thenReturn(1L);
         when(solicitudRepository.countByTrabajadorIdAndEstado(2L, EstadoSolicitud.EN_PROGRESO)).thenReturn(2L);
 
+        // Act
         EstadisticasResponseDTO stats = historialService.obtenerEstadisticasTrabajador(2L);
 
+        // Assert
         assertNotNull(stats);
         assertEquals(20L, stats.getTotal());
         assertEquals(15L, stats.getCompletadas());
@@ -117,16 +144,17 @@ class HistorialEstadisticasServiceImplTest {
 
     @Test
     void obtenerDashboardCliente_Success() {
-        // Mocks for estadisticas
+        // Arrange
         when(solicitudRepository.countByContratanteId(1L)).thenReturn(10L);
-        // Mocks for historial
         when(solicitudRepository.findByContratanteIdOrderByFechaCreacionDesc(1L))
                 .thenReturn(Arrays.asList(entity));
         when(entityMapper.toDomain(any())).thenReturn(domain);
         when(dtoMapper.toResponse(any())).thenReturn(dto);
 
+        // Act
         DashboardResumenDTO dashboard = historialService.obtenerDashboardCliente(1L);
 
+        // Assert
         assertNotNull(dashboard);
         assertNotNull(dashboard.getEstadisticas());
         assertNotNull(dashboard.getHistorialReciente());
@@ -135,16 +163,17 @@ class HistorialEstadisticasServiceImplTest {
 
     @Test
     void obtenerDashboardTrabajador_Success() {
-        // Mocks for estadisticas
+        // Arrange
         when(solicitudRepository.countByTrabajadorId(2L)).thenReturn(10L);
-        // Mocks for historial
         when(solicitudRepository.findByTrabajadorIdOrderByFechaCreacionDesc(2L))
                 .thenReturn(Arrays.asList(entity));
         when(entityMapper.toDomain(any())).thenReturn(domain);
         when(dtoMapper.toResponse(any())).thenReturn(dto);
 
+        // Act
         DashboardResumenDTO dashboard = historialService.obtenerDashboardTrabajador(2L);
 
+        // Assert
         assertNotNull(dashboard);
         assertNotNull(dashboard.getEstadisticas());
         assertNotNull(dashboard.getHistorialReciente());

@@ -55,7 +55,8 @@ class InterpreteNecesidadUtilTest {
     @Test
     @DisplayName("extraerTerminos - texto nulo, vacío o solo palabras vacías devuelve lista vacía")
     void extraerTerminos_sinContenido_devuelveListaVacia() {
-        // Act & Assert
+        // Act
+        // Assert
         assertTrue(InterpreteNecesidadUtil.extraerTerminos(null).isEmpty());
         assertTrue(InterpreteNecesidadUtil.extraerTerminos("   ").isEmpty());
         assertTrue(InterpreteNecesidadUtil.extraerTerminos("necesito alguien para una").isEmpty());

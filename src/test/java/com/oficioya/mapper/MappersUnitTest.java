@@ -45,6 +45,7 @@ class MappersUnitTest {
     @Test
     @DisplayName("UsuarioEntityMapper: toEntity y toDomain con datos y nulos")
     void testUsuarioEntityMapper() {
+        // Arrange
         assertNull(usuarioEntityMapper.toEntity(null));
         assertNull(usuarioEntityMapper.toDomain(null));
 
@@ -55,12 +56,14 @@ class MappersUnitTest {
                 .fechaRegistro(LocalDateTime.now())
                 .build();
 
+        // Act
         UsuarioEntity entity = usuarioEntityMapper.toEntity(domain);
+        Usuario mappedBack = usuarioEntityMapper.toDomain(entity);
+
+        // Assert
         assertNotNull(entity);
         assertEquals(domain.getId(), entity.getId());
         assertEquals(domain.getCorreo(), entity.getCorreo());
-
-        Usuario mappedBack = usuarioEntityMapper.toDomain(entity);
         assertNotNull(mappedBack);
         assertEquals(entity.getId(), mappedBack.getId());
     }
@@ -68,19 +71,23 @@ class MappersUnitTest {
     @Test
     @DisplayName("UsuarioDTOMapper: toDomain y toResponseDTO con datos y nulos")
     void testUsuarioDTOMapper() {
+        // Arrange
         assertNull(usuarioDTOMapper.toDomain(null));
         assertNull(usuarioDTOMapper.toResponseDTO(null));
 
         UsuarioRegistroRequestDTO req = new UsuarioRegistroRequestDTO(
                 "c@test.com", "3001234567", "pass123", "Carlos", "Gomez", RolUsuario.TRABAJADOR
         );
+
+        // Act
         Usuario domain = usuarioDTOMapper.toDomain(req);
+        UsuarioResponseDTO res = usuarioDTOMapper.toResponseDTO(domain);
+
+        // Assert
         assertNotNull(domain);
         assertEquals("c@test.com", domain.getCorreo());
         assertTrue(domain.isActivo());
         assertFalse(domain.isCorreoVerificado());
-
-        UsuarioResponseDTO res = usuarioDTOMapper.toResponseDTO(domain);
         assertNotNull(res);
         assertEquals(domain.getCorreo(), res.correo());
     }
@@ -88,6 +95,7 @@ class MappersUnitTest {
     @Test
     @DisplayName("SolicitudMapper: toDomain y toResponse con datos y nulos")
     void testSolicitudMapper() {
+        // Arrange
         assertNull(solicitudMapper.toDomain(null));
         assertNull(solicitudMapper.toResponse(null));
 
@@ -96,16 +104,23 @@ class MappersUnitTest {
         dto.setDescripcion("Arreglo");
         dto.setZonaServicio("Norte");
 
+        // Act
         Solicitud dom = solicitudMapper.toDomain(dto);
+
+        // Assert
         assertNotNull(dom);
         assertEquals("Arreglo", dom.getDescripcion());
 
+        // Arrange 2
         dom.setId(5L);
         dom.setContratante(Usuario.builder().id(10L).build());
         dom.setTrabajador(Usuario.builder().id(20L).build());
         dom.setEstadoEnum(EstadoSolicitud.CREADA);
 
+        // Act 2
         SolicitudResponseDTO res = solicitudMapper.toResponse(dom);
+
+        // Assert 2
         assertNotNull(res);
         assertEquals(5L, res.getId());
         assertEquals(10L, res.getContratanteId());
@@ -122,6 +137,7 @@ class MappersUnitTest {
     @Test
     @DisplayName("SolicitudEntityMapper: toEntity y toDomain con datos y nulos")
     void testSolicitudEntityMapper() {
+        // Arrange
         assertNull(solicitudEntityMapper.toEntity(null));
         assertNull(solicitudEntityMapper.toDomain(null));
 
@@ -130,11 +146,13 @@ class MappersUnitTest {
         domain.setEstadoEnum(EstadoSolicitud.CREADA);
         domain.setContratante(Usuario.builder().id(2L).build());
 
+        // Act
         SolicitudEntity entity = solicitudEntityMapper.toEntity(domain);
+        Solicitud dom = solicitudEntityMapper.toDomain(entity);
+
+        // Assert
         assertNotNull(entity);
         assertEquals(EstadoSolicitud.CREADA, entity.getEstado());
-
-        Solicitud dom = solicitudEntityMapper.toDomain(entity);
         assertNotNull(dom);
         assertEquals(EstadoSolicitud.CREADA, dom.getEstadoEnum());
     }
@@ -142,6 +160,7 @@ class MappersUnitTest {
     @Test
     @DisplayName("PerfilContratanteMapper: toResponse con datos y nulos")
     void testPerfilContratanteMapper() {
+        // Arrange
         assertNull(perfilContratanteMapper.toResponse(null));
 
         PerfilContratante domain = new PerfilContratante();
@@ -149,7 +168,10 @@ class MappersUnitTest {
         domain.setCalificacionPromedio(4.5);
         domain.setUsuario(Usuario.builder().id(9L).build());
 
+        // Act
         PerfilContratanteResponseDTO res = perfilContratanteMapper.toResponse(domain);
+
+        // Assert
         assertNotNull(res);
         assertEquals(9L, res.getUsuarioId());
         assertEquals(4.5, res.getCalificacionPromedio());
@@ -163,6 +185,7 @@ class MappersUnitTest {
     @Test
     @DisplayName("PerfilContratanteEntityMapper: toEntity y toDomain con datos y nulos")
     void testPerfilContratanteEntityMapper() {
+        // Arrange
         assertNull(perfilContratanteEntityMapper.toEntity(null));
         assertNull(perfilContratanteEntityMapper.toDomain(null));
 
@@ -171,11 +194,13 @@ class MappersUnitTest {
         dom.setDescripcion("Contratante puntual");
         dom.setUsuario(Usuario.builder().id(3L).build());
 
+        // Act
         PerfilContratanteEntity entity = perfilContratanteEntityMapper.toEntity(dom);
+        PerfilContratante mapped = perfilContratanteEntityMapper.toDomain(entity);
+
+        // Assert
         assertNotNull(entity);
         assertEquals("Contratante puntual", entity.getDescripcion());
-
-        PerfilContratante mapped = perfilContratanteEntityMapper.toDomain(entity);
         assertNotNull(mapped);
         assertEquals("Contratante puntual", mapped.getDescripcion());
     }
@@ -183,25 +208,27 @@ class MappersUnitTest {
     @Test
     @DisplayName("OficioMapper y OficioEntityMapper: toDto, toDtoList, toDomain, toEntity")
     void testOficioMappers() {
+        // Arrange
         assertNull(oficioMapper.toDto(null));
         assertNull(oficioMapper.toDtoList(null));
         assertNull(oficioEntityMapper.toEntity(null));
         assertNull(oficioEntityMapper.toDomain(null));
 
         OficioEntity ofEntity = OficioEntity.builder().id(1L).nombre("Carpintería").descripcion("Madera").activo(true).build();
+        Oficio ofDomain = Oficio.builder().id(1L).nombre("Carpintería").descripcion("Madera").activo(true).build();
+
+        // Act
         OficioResponseDTO ofDto = oficioMapper.toDto(ofEntity);
+        List<OficioResponseDTO> dtoList = oficioMapper.toDtoList(List.of(ofEntity));
+        OficioEntity mappedEntity = oficioEntityMapper.toEntity(ofDomain);
+        Oficio back = oficioEntityMapper.toDomain(mappedEntity);
+
+        // Assert
         assertNotNull(ofDto);
         assertEquals("Carpintería", ofDto.getNombre());
-
-        List<OficioResponseDTO> dtoList = oficioMapper.toDtoList(List.of(ofEntity));
         assertEquals(1, dtoList.size());
-
-        Oficio ofDomain = Oficio.builder().id(1L).nombre("Carpintería").descripcion("Madera").activo(true).build();
-        OficioEntity mappedEntity = oficioEntityMapper.toEntity(ofDomain);
         assertNotNull(mappedEntity);
         assertEquals("Carpintería", mappedEntity.getNombre());
-
-        Oficio back = oficioEntityMapper.toDomain(mappedEntity);
         assertNotNull(back);
         assertEquals("Carpintería", back.getNombre());
     }
@@ -209,6 +236,7 @@ class MappersUnitTest {
     @Test
     @DisplayName("BusquedaMapper: toCriterios con datos y nulos")
     void testBusquedaMapper() {
+        // Arrange
         assertNull(busquedaMapper.toCriterios(null));
 
         FiltroBusquedaDTO dto = new FiltroBusquedaDTO();
@@ -216,7 +244,10 @@ class MappersUnitTest {
         dto.setZona("Chapinero");
         dto.setTarifaMax(new BigDecimal("50000"));
 
+        // Act
         CriteriosBusqueda criterios = busquedaMapper.toCriterios(dto);
+
+        // Assert
         assertNotNull(criterios);
         assertEquals("plomero", criterios.getTexto());
         assertEquals("Chapinero", criterios.getZona());
@@ -225,6 +256,7 @@ class MappersUnitTest {
     @Test
     @DisplayName("PerfilTrabajadorEntityMapper: toEntity y toDomain")
     void testPerfilTrabajadorEntityMapper() {
+        // Arrange
         assertNull(perfilTrabajadorEntityMapper.toEntity(null));
         assertNull(perfilTrabajadorEntityMapper.toDomain(null));
 
@@ -238,12 +270,14 @@ class MappersUnitTest {
         pt.setFotosPortafolio(List.of("http://foto.jpg"));
         pt.setDisponibilidadSemanal(Collections.emptyList());
 
+        // Act
         PerfilTrabajadorEntity entity = perfilTrabajadorEntityMapper.toEntity(pt);
+        PerfilTrabajador back = perfilTrabajadorEntityMapper.toDomain(entity);
+
+        // Assert
         assertNotNull(entity);
         assertEquals("Electricista", entity.getDescripcion());
         assertEquals("Suba", entity.getZonaCobertura());
-
-        PerfilTrabajador back = perfilTrabajadorEntityMapper.toDomain(entity);
         assertNotNull(back);
         assertEquals("Electricista", back.getDescripcion());
         assertEquals("Suba", back.getZonaCobertura());

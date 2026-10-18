@@ -22,7 +22,8 @@ class BusquedaValidatorImplTest {
         // Arrange
         CriteriosBusqueda c = CriteriosBusqueda.builder().tarifaMin(new BigDecimal("10000")).tarifaMax(new BigDecimal("10000")).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarRangoTarifa(c));
     }
 
@@ -32,7 +33,8 @@ class BusquedaValidatorImplTest {
         // Arrange
         CriteriosBusqueda c = CriteriosBusqueda.builder().tarifaMax(new BigDecimal("50000")).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarRangoTarifa(c));
     }
 
@@ -42,7 +44,8 @@ class BusquedaValidatorImplTest {
         // Arrange
         CriteriosBusqueda c = CriteriosBusqueda.builder().tarifaMin(new BigDecimal("60000")).tarifaMax(new BigDecimal("20000")).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarRangoTarifa(c));
     }
 
@@ -52,7 +55,8 @@ class BusquedaValidatorImplTest {
         // Arrange
         CriteriosBusqueda c = CriteriosBusqueda.builder().build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarFranjaSolicitada(c));
     }
 
@@ -63,7 +67,8 @@ class BusquedaValidatorImplTest {
         CriteriosBusqueda c = CriteriosBusqueda.builder().dia(DayOfWeek.MONDAY)
                 .horaDesde(LocalTime.of(9, 0)).horaHasta(LocalTime.of(11, 0)).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarFranjaSolicitada(c));
     }
 
@@ -73,7 +78,8 @@ class BusquedaValidatorImplTest {
         // Arrange
         CriteriosBusqueda c = CriteriosBusqueda.builder().horaDesde(LocalTime.of(9, 0)).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarFranjaSolicitada(c));
     }
 
@@ -83,7 +89,8 @@ class BusquedaValidatorImplTest {
         // Arrange
         CriteriosBusqueda c = CriteriosBusqueda.builder().dia(DayOfWeek.MONDAY).horaHasta(LocalTime.of(11, 0)).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarFranjaSolicitada(c));
     }
 
@@ -94,7 +101,8 @@ class BusquedaValidatorImplTest {
         CriteriosBusqueda c = CriteriosBusqueda.builder().dia(DayOfWeek.MONDAY)
                 .horaDesde(LocalTime.of(11, 0)).horaHasta(LocalTime.of(9, 0)).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarFranjaSolicitada(c));
     }
 }

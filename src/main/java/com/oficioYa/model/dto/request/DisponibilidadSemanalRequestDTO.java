@@ -14,5 +14,5 @@ public class DisponibilidadSemanalRequestDTO {
     @NotNull(message = "La lista de franjas es obligatoria")
     @Size(max = 28, message = "No puede haber más de 28 franjas")
     @Valid
-    private List<FranjaDisponibilidadRequestDTO> franjas;
+    private List<@Valid FranjaDisponibilidadRequestDTO> franjas;
 }

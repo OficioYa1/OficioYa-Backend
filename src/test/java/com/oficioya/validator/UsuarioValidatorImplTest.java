@@ -33,7 +33,8 @@ class UsuarioValidatorImplTest {
         // Arrange
         when(usuarioRepository.existsByCorreo("nuevo@test.com")).thenReturn(false);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> usuarioValidator.validarCorreoUnico("nuevo@test.com"));
     }
 
@@ -43,7 +44,8 @@ class UsuarioValidatorImplTest {
         // Arrange
         when(usuarioRepository.existsByCorreo("repetido@test.com")).thenReturn(true);
 
-        // Act & Assert
+        // Act
+        // Assert
         CorreoYaRegistradoException ex = assertThrows(
                 CorreoYaRegistradoException.class,
                 () -> usuarioValidator.validarCorreoUnico("repetido@test.com")
@@ -61,7 +63,8 @@ class UsuarioValidatorImplTest {
         // Arrange
         when(usuarioRepository.existsById(1L)).thenReturn(true);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> usuarioValidator.validarExistencia(1L));
     }
 
@@ -71,7 +74,8 @@ class UsuarioValidatorImplTest {
         // Arrange
         when(usuarioRepository.existsById(99L)).thenReturn(false);
 
-        // Act & Assert
+        // Act
+        // Assert
         UsuarioNoEncontradoException ex = assertThrows(
                 UsuarioNoEncontradoException.class,
                 () -> usuarioValidator.validarExistencia(99L)

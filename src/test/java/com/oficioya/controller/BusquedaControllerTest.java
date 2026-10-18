@@ -44,6 +44,7 @@ class BusquedaControllerTest {
     @Test
     @DisplayName("GET /api/v1/busqueda/trabajadores - exitoso retorna lista 200 OK")
     void buscarTrabajadores_exitoso() throws Exception {
+        // Arrange
         PerfilTrabajador trabajador = new PerfilTrabajador();
         trabajador.setId(1L);
 
@@ -54,6 +55,8 @@ class BusquedaControllerTest {
         when(busquedaService.buscar(any())).thenReturn(List.of(trabajador));
         when(mapper.toResponse(trabajador)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(get("/api/v1/busqueda/trabajadores")
                         .param("necesidad", "plomero"))
                 .andExpect(status().isOk())

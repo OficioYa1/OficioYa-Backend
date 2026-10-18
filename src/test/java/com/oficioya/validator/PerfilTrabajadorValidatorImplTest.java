@@ -45,7 +45,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario(RolUsuario.TRABAJADOR, true, true, false)));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarCuentaElegible(1L));
     }
 
@@ -55,7 +56,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario(RolUsuario.TRABAJADOR, true, false, true)));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarCuentaElegible(1L));
     }
 
@@ -65,7 +67,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(usuarioRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> validator.validarCuentaElegible(1L));
     }
 
@@ -75,7 +78,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario(RolUsuario.CONTRATANTE, true, true, true)));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarCuentaElegible(1L));
     }
 
@@ -85,7 +89,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario(RolUsuario.TRABAJADOR, false, true, true)));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarCuentaElegible(1L));
     }
 
@@ -95,7 +100,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario(RolUsuario.TRABAJADOR, true, false, false)));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarCuentaElegible(1L));
     }
 
@@ -105,7 +111,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(perfilRepository.existsByUsuarioId(1L)).thenReturn(false);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarPerfilNoExiste(1L));
     }
 
@@ -115,7 +122,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         when(perfilRepository.existsByUsuarioId(1L)).thenReturn(true);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ConflictoException.class, () -> validator.validarPerfilNoExiste(1L));
     }
 
@@ -133,14 +141,16 @@ class PerfilTrabajadorValidatorImplTest {
                 franja(DayOfWeek.MONDAY, "12:00", "17:00"),
                 franja(DayOfWeek.TUESDAY, "08:00", "12:00"));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarFranjasDisponibilidad(franjas));
     }
 
     @Test
     @DisplayName("validarFranjasDisponibilidad - lista vacía es válida")
     void validarFranjas_listaVacia_noLanza() {
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarFranjasDisponibilidad(List.of()));
     }
 
@@ -150,7 +160,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         List<FranjaDisponibilidad> franjas = List.of(franja(DayOfWeek.MONDAY, "17:00", "08:00"));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarFranjasDisponibilidad(franjas));
     }
 
@@ -162,7 +173,8 @@ class PerfilTrabajadorValidatorImplTest {
                 franja(DayOfWeek.MONDAY, "08:00", "12:00"),
                 franja(DayOfWeek.MONDAY, "11:00", "15:00"));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarFranjasDisponibilidad(franjas));
     }
 
@@ -174,7 +186,8 @@ class PerfilTrabajadorValidatorImplTest {
                 franja(DayOfWeek.MONDAY, "08:00", "12:00"),
                 franja(DayOfWeek.TUESDAY, "08:00", "12:00"));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarFranjasDisponibilidad(franjas));
     }
 
@@ -184,7 +197,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).zonaCobertura("Norte").disponibleAhora(false).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarPuedeActivarDisponibleAhora(perfil));
     }
 
@@ -194,7 +208,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).zonaCobertura("Norte").disponibleAhora(true).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class, () -> validator.validarPuedeActivarDisponibleAhora(perfil));
     }
 
@@ -204,7 +219,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).zonaCobertura("  ").build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> validator.validarPuedeActivarDisponibleAhora(perfil));
     }
 
@@ -214,7 +230,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).disponibleAhora(true).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertDoesNotThrow(() -> validator.validarPuedeDesactivarDisponibleAhora(perfil));
     }
 
@@ -224,7 +241,8 @@ class PerfilTrabajadorValidatorImplTest {
         // Arrange
         PerfilTrabajador perfil = PerfilTrabajador.builder().id(1L).disponibleAhora(false).build();
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class, () -> validator.validarPuedeDesactivarDisponibleAhora(perfil));
     }
 }

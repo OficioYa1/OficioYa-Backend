@@ -35,6 +35,9 @@ public class ReputacionServiceImpl implements IReputacionService {
     private final UsuarioRepository usuarioRepository;
     private final PerfilTrabajadorRepository perfilRepository;
 
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.oficioya.service.strategy.ICalculoReputacionStrategy calculoReputacionStrategy;
+
     @Override
     @Transactional
     public ResenaResponseDTO calificarTrabajador(Long solicitudId, Long contratanteId, ResenaRequestDTO request) {
@@ -145,8 +148,14 @@ public class ReputacionServiceImpl implements IReputacionService {
     }
 
     private void recalcularPromedioTrabajador(Long trabajadorId) {
-        Double nuevoPromedio = resenaRepository.calcularPromedioPorReceptor(trabajadorId).orElse(0.0);
-        nuevoPromedio = Math.round(nuevoPromedio * 10.0) / 10.0;
+        Double nuevoPromedio;
+        if (calculoReputacionStrategy != null) {
+            List<ResenaEntity> resenas = resenaRepository.findByReceptorId(trabajadorId);
+            nuevoPromedio = calculoReputacionStrategy.calcularPromedio(resenas);
+        } else {
+            nuevoPromedio = resenaRepository.calcularPromedioPorReceptor(trabajadorId).orElse(0.0);
+            nuevoPromedio = Math.round(nuevoPromedio * 10.0) / 10.0;
+        }
 
         PerfilTrabajadorEntity perfil = perfilRepository.findByUsuarioId(trabajadorId).orElseThrow();
         perfil.setCalificacionPromedio(nuevoPromedio);
@@ -162,8 +171,14 @@ public class ReputacionServiceImpl implements IReputacionService {
     }
 
     private void recalcularPromedioContratante(Long contratanteId) {
-        Double nuevoPromedio = resenaRepository.calcularPromedioPorReceptor(contratanteId).orElse(0.0);
-        nuevoPromedio = Math.round(nuevoPromedio * 10.0) / 10.0;
+        Double nuevoPromedio;
+        if (calculoReputacionStrategy != null) {
+            List<ResenaEntity> resenas = resenaRepository.findByReceptorId(contratanteId);
+            nuevoPromedio = calculoReputacionStrategy.calcularPromedio(resenas);
+        } else {
+            nuevoPromedio = resenaRepository.calcularPromedioPorReceptor(contratanteId).orElse(0.0);
+            nuevoPromedio = Math.round(nuevoPromedio * 10.0) / 10.0;
+        }
 
         UsuarioEntity contratante = usuarioRepository.findById(contratanteId).orElseThrow();
         contratante.setCalificacionPromedio(nuevoPromedio);

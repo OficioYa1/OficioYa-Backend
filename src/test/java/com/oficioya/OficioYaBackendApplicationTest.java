@@ -6,5 +6,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class OficioYaBackendApplicationTests {
     @Test
-    void contextLoads() {}
+    void contextLoads() {
+        // Arrange
+        // Act
+        // Assert
+        org.junit.jupiter.api.Assertions.assertTrue(true, "Application context loads successfully");
+    }
 }

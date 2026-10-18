@@ -79,6 +79,7 @@ class ReputacionServiceImplTest {
     @Test
     @DisplayName("Calificar trabajador - Exito")
     void calificarTrabajador_Exito() {
+        // Arrange
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(solicitudFinalizada));
         when(perfilRepository.findByUsuarioId(2L)).thenReturn(Optional.of(perfilTrabajador));
         when(resenaRepository.save(any(ResenaEntity.class))).thenAnswer(i -> {
@@ -89,8 +90,10 @@ class ReputacionServiceImplTest {
         when(resenaRepository.calcularPromedioPorReceptor(2L)).thenReturn(Optional.of(4.0));
         when(resenaRepository.countByReceptorIdAndReportadaFalse(2L)).thenReturn(1L);
 
+        // Act
         ResenaResponseDTO response = reputacionService.calificarTrabajador(1L, 1L, resenaRequest);
 
+        // Assert
         assertNotNull(response);
         assertEquals(10L, response.getId());
         assertEquals(4, response.getEstrellas());
@@ -101,9 +104,12 @@ class ReputacionServiceImplTest {
     @Test
     @DisplayName("Calificar trabajador - Error: Solicitud no finalizada")
     void calificarTrabajador_ErrorNoFinalizada() {
+        // Arrange
         solicitudFinalizada.setEstado(EstadoSolicitud.CREADA);
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(solicitudFinalizada));
 
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class, () -> 
             reputacionService.calificarTrabajador(1L, 1L, resenaRequest)
         );
@@ -112,6 +118,7 @@ class ReputacionServiceImplTest {
     @Test
     @DisplayName("Calificar contratante - Exito")
     void calificarContratante_Exito() {
+        // Arrange
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(solicitudFinalizada));
         when(perfilRepository.findByUsuarioId(2L)).thenReturn(Optional.of(perfilTrabajador));
         when(resenaRepository.save(any(ResenaEntity.class))).thenAnswer(i -> {
@@ -122,8 +129,10 @@ class ReputacionServiceImplTest {
         when(resenaRepository.calcularPromedioPorReceptor(1L)).thenReturn(Optional.of(5.0));
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(contratante));
 
+        // Act
         ResenaResponseDTO response = reputacionService.calificarContratante(1L, 2L, resenaRequest);
 
+        // Assert
         assertNotNull(response);
         assertEquals(11L, response.getId());
         verify(usuarioRepository).save(contratante);
@@ -133,6 +142,7 @@ class ReputacionServiceImplTest {
     @Test
     @DisplayName("Calificar trabajador - Auto-pausar por baja reputación")
     void calificarTrabajador_BajaReputacionPausa() {
+        // Arrange
         resenaRequest.setEstrellas(1);
         when(solicitudRepository.findById(1L)).thenReturn(Optional.of(solicitudFinalizada));
         when(perfilRepository.findByUsuarioId(2L)).thenReturn(Optional.of(perfilTrabajador));
@@ -144,8 +154,10 @@ class ReputacionServiceImplTest {
         when(resenaRepository.calcularPromedioPorReceptor(2L)).thenReturn(Optional.of(2.5)); // Promedio < 3.0
         when(resenaRepository.countByReceptorIdAndReportadaFalse(2L)).thenReturn(3L); // 3 reseñas mínimo
 
+        // Act
         reputacionService.calificarTrabajador(1L, 1L, resenaRequest);
 
+        // Assert
         assertFalse(perfilTrabajador.isDisponibleAhora()); // RF-39 Auto pause
         verify(perfilRepository, atLeastOnce()).save(perfilTrabajador);
     }
@@ -153,6 +165,7 @@ class ReputacionServiceImplTest {
     @Test
     @DisplayName("Reportar reseña - Exito")
     void reportarResena_Exito() {
+        // Arrange
         ResenaEntity resena = ResenaEntity.builder()
                 .id(1L)
                 .receptor(trabajador)
@@ -167,8 +180,10 @@ class ReputacionServiceImplTest {
         ReporteResenaRequestDTO req = new ReporteResenaRequestDTO();
         req.setMotivo("Ofensivo");
         
+        // Act
         reputacionService.reportarResena(1L, req);
 
+        // Assert
         assertTrue(resena.isReportada());
         verify(resenaRepository).save(resena);
         verify(perfilRepository).save(perfilTrabajador); // Se recalcula el promedio sin esta reseña
@@ -177,12 +192,31 @@ class ReputacionServiceImplTest {
     @Test
     @DisplayName("Obtener reputación por oficio - Exito")
     void obtenerReputacionPorOficio_Exito() {
+        // Arrange
         when(resenaRepository.calcularPromedioPorReceptorYOficio(2L, 1L)).thenReturn(Optional.of(4.8));
         when(resenaRepository.countByReceptorIdAndReportadaFalse(2L)).thenReturn(10L);
 
+        // Act
         ReputacionPorOficioDTO response = reputacionService.obtenerReputacionPorOficio(2L, 1L);
 
+        // Assert
         assertEquals(4.8, response.getCalificacionPromedio());
         assertEquals(10L, response.getTotalResenas());
+    }
+
+    @Test
+    @DisplayName("Obtener reputación por oficio - Sin reseñas retorna 0.0")
+    void obtenerReputacionPorOficio_SinResenasRetornaCero() {
+        // Arrange
+        when(resenaRepository.calcularPromedioPorReceptorYOficio(2L, 99L)).thenReturn(Optional.empty());
+        when(resenaRepository.countByReceptorIdAndReportadaFalse(2L)).thenReturn(0L);
+
+        // Act
+        ReputacionPorOficioDTO response = reputacionService.obtenerReputacionPorOficio(2L, 99L);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(0.0, response.getCalificacionPromedio());
+        assertEquals(0L, response.getTotalResenas());
     }
 }

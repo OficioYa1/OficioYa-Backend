@@ -128,7 +128,8 @@ class BusquedaTrabajadorServiceImplBuscarTest {
         CriteriosBusqueda criterios = CriteriosBusqueda.builder().build();
         doThrow(new ReglaDeNegocioException("Rango inválido")).when(busquedaValidator).validarRangoTarifa(criterios);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> service.buscar(criterios));
         verify(repository, never()).findAll(any(Specification.class));
     }
@@ -140,7 +141,8 @@ class BusquedaTrabajadorServiceImplBuscarTest {
         CriteriosBusqueda criterios = CriteriosBusqueda.builder().build();
         doThrow(new ReglaDeNegocioException("Franja inválida")).when(busquedaValidator).validarFranjaSolicitada(criterios);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> service.buscar(criterios));
         verify(repository, never()).findAll(any(Specification.class));
     }
