@@ -142,7 +142,8 @@ class UsuarioServiceImplTest {
         doThrow(new CorreoYaRegistradoException("El correo juan@test.com ya se encuentra registrado."))
                 .when(usuarioValidator).validarCorreoUnico(domainUsuario.getCorreo());
 
-        // Act & Assert
+        // Act
+        // Assert
         CorreoYaRegistradoException ex = assertThrows(
                 CorreoYaRegistradoException.class,
                 () -> usuarioService.registrarUsuario(domainUsuario)
@@ -181,7 +182,8 @@ class UsuarioServiceImplTest {
         when(usuarioRepository.save(any(UsuarioEntity.class)))
                 .thenThrow(new RuntimeException("Error de conexion con la base de datos"));
 
-        // Act & Assert
+        // Act
+        // Assert
         RuntimeException ex = assertThrows(
                 RuntimeException.class,
                 () -> usuarioService.registrarUsuario(domainUsuario)
@@ -239,7 +241,8 @@ class UsuarioServiceImplTest {
         String correo = "test@test.com";
         when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class,
                 () -> usuarioService.verificarCorreo(correo));
         verify(usuarioRepository, never()).save(any());
@@ -255,7 +258,8 @@ class UsuarioServiceImplTest {
         entity.setCorreoVerificado(true);
         when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.of(entity));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class,
                 () -> usuarioService.verificarCorreo(correo));
         verify(usuarioRepository, never()).save(any());
@@ -302,7 +306,8 @@ class UsuarioServiceImplTest {
         // Arrange
         when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class,
                 () -> usuarioService.obtenerPerfilTrabajador(99L));
     }
@@ -316,7 +321,8 @@ class UsuarioServiceImplTest {
         usuario.setRol(RolUsuario.CONTRATANTE);
         when(usuarioRepository.findById(2L)).thenReturn(Optional.of(usuario));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class,
                 () -> usuarioService.obtenerPerfilTrabajador(2L));
     }
@@ -331,7 +337,8 @@ class UsuarioServiceImplTest {
         when(usuarioRepository.findById(3L)).thenReturn(Optional.of(usuario));
         when(perfilRepository.findByUsuarioId(3L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class,
                 () -> usuarioService.obtenerPerfilTrabajador(3L));
     }
@@ -376,7 +383,8 @@ class UsuarioServiceImplTest {
         Long usuarioId = 99L;
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class,
                 () -> usuarioService.obtenerPerfilContratante(usuarioId));
         verify(perfilContratanteRepository, never()).findByUsuarioId(anyLong());
@@ -392,7 +400,8 @@ class UsuarioServiceImplTest {
         usuario.setRol(RolUsuario.TRABAJADOR);
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class,
                 () -> usuarioService.obtenerPerfilContratante(usuarioId));
         verify(perfilContratanteRepository, never()).findByUsuarioId(anyLong());
@@ -409,7 +418,8 @@ class UsuarioServiceImplTest {
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
         when(perfilContratanteRepository.findByUsuarioId(usuarioId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class,
                 () -> usuarioService.obtenerPerfilContratante(usuarioId));
     }
@@ -463,7 +473,8 @@ class UsuarioServiceImplTest {
 
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class, () -> {
             usuarioService.editarPerfilTrabajador(usuarioId, request.telefono(), request.zonaCobertura());
         });
@@ -511,7 +522,8 @@ class UsuarioServiceImplTest {
 
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> {
             usuarioService.editarPerfilContratante(usuarioId, request.telefono(), request.descripcion());
         });
@@ -549,7 +561,8 @@ class UsuarioServiceImplTest {
         Long usuarioId = 99L;
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> {
             usuarioService.eliminarCuenta(usuarioId);
         });
@@ -567,7 +580,8 @@ class UsuarioServiceImplTest {
 
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class, () -> {
             usuarioService.eliminarCuenta(usuarioId);
         });
@@ -616,7 +630,8 @@ class UsuarioServiceImplTest {
 
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.of(usuario));
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class, () -> {
             usuarioService.actualizarFotoPerfil(usuarioId, archivo);
         });
@@ -633,7 +648,8 @@ class UsuarioServiceImplTest {
 
         when(usuarioRepository.findById(usuarioId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> {
             usuarioService.actualizarFotoPerfil(usuarioId, archivo);
         });

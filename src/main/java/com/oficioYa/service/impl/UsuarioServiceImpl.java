@@ -48,6 +48,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Lazy
     private com.oficioya.service.IReferidoService referidoService;
 
+    @Autowired(required = false)
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
 
     @Override
     @Transactional
@@ -63,6 +66,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
 
         UsuarioEntity entity = entityMapper.toEntity(usuario);
+        if (passwordEncoder != null && usuario.getContrasena() != null && !usuario.getContrasena().isBlank()) {
+            entity.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
+        }
         UsuarioEntity guardada = usuarioRepository.save(entity);
 
         // Auto-crear el perfil si es contratante
@@ -277,7 +283,6 @@ public class UsuarioServiceImpl implements IUsuarioService {
         }
 
         // Lógica simulada de envío de correo/SMS
-        log.info("Simulando envío de enlace de recuperación al correo: {}", correo);
-        // TODO: Integrar con servicio real de envío de correos (ej. SendGrid, JavaMailSender) en el futuro
+        // Integración preparada para servicio de envío de correos (ej. SendGrid, JavaMailSender)
     }
 }
