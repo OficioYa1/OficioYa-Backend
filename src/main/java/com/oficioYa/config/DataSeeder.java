@@ -17,9 +17,61 @@ public class DataSeeder implements CommandLineRunner {
 
     private final OficioRepository oficioRepository;
 
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.oficioya.repository.UsuarioRepository usuarioRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @Override
     public void run(String... args) throws Exception {
         cargarOficiosBase();
+        cargarUsuariosDemo();
+    }
+
+    private void cargarUsuariosDemo() {
+        if (usuarioRepository != null && usuarioRepository.count() == 0) {
+            String encodedPass = passwordEncoder != null ? passwordEncoder.encode("password123") : "password123";
+
+            com.oficioya.persistence.entity.UsuarioEntity admin = com.oficioya.persistence.entity.UsuarioEntity.builder()
+                    .correo("admin@oficioya.com")
+                    .telefono("3000000001")
+                    .contrasena(encodedPass)
+                    .nombre("Admin")
+                    .apellido("Sistema")
+                    .rol(com.oficioya.persistence.entity.RolUsuario.ADMIN)
+                    .correoVerificado(true)
+                    .telefonoVerificado(true)
+                    .activo(true)
+                    .build();
+
+            com.oficioya.persistence.entity.UsuarioEntity trabajador = com.oficioya.persistence.entity.UsuarioEntity.builder()
+                    .correo("trabajador@oficioya.com")
+                    .telefono("3000000002")
+                    .contrasena(encodedPass)
+                    .nombre("Carlos")
+                    .apellido("Plomero")
+                    .rol(com.oficioya.persistence.entity.RolUsuario.TRABAJADOR)
+                    .correoVerificado(true)
+                    .telefonoVerificado(true)
+                    .activo(true)
+                    .build();
+
+            com.oficioya.persistence.entity.UsuarioEntity contratante = com.oficioya.persistence.entity.UsuarioEntity.builder()
+                    .correo("contratante@oficioya.com")
+                    .telefono("3000000003")
+                    .contrasena(encodedPass)
+                    .nombre("Laura")
+                    .apellido("Cliente")
+                    .rol(com.oficioya.persistence.entity.RolUsuario.CONTRATANTE)
+                    .correoVerificado(true)
+                    .telefonoVerificado(true)
+                    .activo(true)
+                    .build();
+
+            usuarioRepository.saveAll(Arrays.asList(admin, trabajador, contratante));
+            log.info("Usuarios demo creados exitosamente (admin@oficioya.com, trabajador@oficioya.com, contratante@oficioya.com con clave 'password123').");
+        }
     }
 
     private void cargarOficiosBase() {

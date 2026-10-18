@@ -6,5 +6,6 @@ package com.oficioya.persistence.entity;
  */
 public enum RolUsuario {
     CONTRATANTE,
-    TRABAJADOR
+    TRABAJADOR,
+    ADMIN
 }
