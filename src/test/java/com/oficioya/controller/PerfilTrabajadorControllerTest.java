@@ -60,6 +60,7 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("POST /api/v1/perfiles-trabajador - 201 Created")
     void crearPerfil_exitoso() throws Exception {
+        // Arrange
         PerfilTrabajadorCreacionRequestDTO req = new PerfilTrabajadorCreacionRequestDTO();
         req.setUsuarioId(1L);
         req.setDescripcion("Plomero experto");
@@ -68,6 +69,8 @@ class PerfilTrabajadorControllerTest {
         when(perfilService.crearPerfil(any())).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(post("/api/v1/perfiles-trabajador")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -78,12 +81,15 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PUT /{id}/zona-cobertura - 200 OK")
     void actualizarZonaCobertura_exitoso() throws Exception {
+        // Arrange
         ZonaCoberturaRequestDTO req = new ZonaCoberturaRequestDTO();
         req.setZonaCobertura("Chapinero");
 
         when(perfilService.actualizarZonaCobertura(1L, "Chapinero")).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/perfiles-trabajador/1/zona-cobertura")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -93,12 +99,15 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PUT /{id}/tarifa - 200 OK")
     void actualizarTarifa_exitoso() throws Exception {
+        // Arrange
         TarifaRequestDTO req = new TarifaRequestDTO();
         req.setTarifaPorHora(new BigDecimal("35000.00"));
 
         when(perfilService.actualizarTarifa(eq(1L), any())).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/perfiles-trabajador/1/tarifa")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -108,6 +117,7 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PUT /{id}/disponibilidad-semanal - 200 OK")
     void actualizarDisponibilidadSemanal_exitoso() throws Exception {
+        // Arrange
         DisponibilidadSemanalRequestDTO req = new DisponibilidadSemanalRequestDTO();
         req.setFranjas(Collections.emptyList());
 
@@ -115,6 +125,8 @@ class PerfilTrabajadorControllerTest {
         when(perfilService.actualizarDisponibilidadSemanal(eq(1L), any())).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/perfiles-trabajador/1/disponibilidad-semanal")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -124,12 +136,15 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PUT /{id}/metodos-pago - 200 OK")
     void actualizarMetodosPago_exitoso() throws Exception {
+        // Arrange
         MetodosPagoRequestDTO req = new MetodosPagoRequestDTO();
         req.setMetodosPago(java.util.Set.of(com.oficioya.model.domain.MetodoPago.EFECTIVO));
 
         when(perfilService.actualizarMetodosPago(eq(1L), any())).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/perfiles-trabajador/1/metodos-pago")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -139,9 +154,12 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PATCH /{id}/disponible-ahora/activar - 200 OK")
     void activarDisponibleAhora_exitoso() throws Exception {
+        // Arrange
         when(perfilService.activarDisponibleAhora(1L)).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/perfiles-trabajador/1/disponible-ahora/activar"))
                 .andExpect(status().isOk());
     }
@@ -149,9 +167,12 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PATCH /{id}/disponible-ahora/desactivar - 200 OK")
     void desactivarDisponibleAhora_exitoso() throws Exception {
+        // Arrange
         when(perfilService.desactivarDisponibleAhora(1L)).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/perfiles-trabajador/1/disponible-ahora/desactivar"))
                 .andExpect(status().isOk());
     }
@@ -159,12 +180,15 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PUT /{id}/oficio-principal - 200 OK")
     void registrarOficioPrincipal_exitoso() throws Exception {
+        // Arrange
         OficioPrincipalRequestDTO req = new OficioPrincipalRequestDTO();
         req.setOficioId(2L);
 
         when(perfilService.registrarOficioPrincipal(1L, 2L)).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/perfiles-trabajador/1/oficio-principal")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -174,12 +198,15 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PUT /{id}/oficios-secundarios - 200 OK")
     void registrarOficiosSecundarios_exitoso() throws Exception {
+        // Arrange
         OficiosSecundariosRequestDTO req = new OficiosSecundariosRequestDTO();
         req.setOficiosIds(List.of(3L, 4L));
 
         when(perfilService.registrarOficiosSecundarios(1L, List.of(3L, 4L))).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/perfiles-trabajador/1/oficios-secundarios")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -189,12 +216,15 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PATCH /{id}/detalles-especificos - 200 OK")
     void actualizarDetallesEspecificos_exitoso() throws Exception {
+        // Arrange
         DetallesEspecificosRequestDTO req = new DetallesEspecificosRequestDTO();
         req.setDetallesEspecificos("Detalles");
 
         when(perfilService.actualizarDetallesEspecificos(1L, "Detalles")).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/perfiles-trabajador/1/detalles-especificos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -204,12 +234,15 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("PATCH /{id}/portafolio - 200 OK")
     void actualizarPortafolio_exitoso() throws Exception {
+        // Arrange
         PortafolioRequestDTO req = new PortafolioRequestDTO();
         req.setFotosPortafolio(List.of("http://foto1.jpg"));
 
         when(perfilService.actualizarPortafolio(1L, List.of("http://foto1.jpg"))).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/perfiles-trabajador/1/portafolio")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(req)))
@@ -219,9 +252,12 @@ class PerfilTrabajadorControllerTest {
     @Test
     @DisplayName("GET /{id} - 200 OK")
     void obtenerPerfilPorId_exitoso() throws Exception {
+        // Arrange
         when(perfilService.obtenerPerfilPorId(1L)).thenReturn(perfilDomain);
         when(mapper.toResponse(perfilDomain)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(get("/api/v1/perfiles-trabajador/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L));

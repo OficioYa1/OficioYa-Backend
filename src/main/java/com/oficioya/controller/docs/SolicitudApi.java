@@ -31,4 +31,8 @@ public interface SolicitudApi {
 
     @Operation(summary = "Cancelar solicitud", description = "Transiciona la solicitud a CANCELADA requiriendo un motivo")
     ResponseEntity<Void> cancelarSolicitud(@PathVariable Long id, String motivo);
+
+    @Operation(summary = "Consultar solicitud por ID", description = "Obtiene los detalles y el estado actual de una solicitud")
+    @org.springframework.web.bind.annotation.GetMapping("/{id}")
+    ResponseEntity<SolicitudResponseDTO> obtenerSolicitudPorId(@PathVariable Long id);
 }

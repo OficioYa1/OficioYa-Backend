@@ -48,6 +48,7 @@ class SolicitudControllerTest {
     @Test
     @DisplayName("POST /api/v1/solicitudes - crear solicitud retorna 201 Created")
     void crearSolicitud_exitoso() throws Exception {
+        // Arrange
         SolicitudCreacionDTO dto = new SolicitudCreacionDTO();
         dto.setContratanteId(1L);
         dto.setDescripcion("Arreglar tuberia");
@@ -65,6 +66,8 @@ class SolicitudControllerTest {
         when(solicitudService.crearSolicitud(any(), eq(1L))).thenReturn(dominio);
         when(mapper.toResponse(dominio)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(post("/api/v1/solicitudes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
@@ -76,8 +79,11 @@ class SolicitudControllerTest {
     @Test
     @DisplayName("POST /{id}/enviar - exitoso retorna 200 OK")
     void enviarSolicitud_exitoso() throws Exception {
+        // Arrange
         doNothing().when(solicitudService).enviarSolicitud(10L, 20L);
 
+        // Act
+        // Assert
         mockMvc.perform(post("/api/v1/solicitudes/10/enviar")
                         .param("trabajadorId", "20"))
                 .andExpect(status().isOk());
@@ -88,8 +94,11 @@ class SolicitudControllerTest {
     @Test
     @DisplayName("PATCH /{id}/aceptar - exitoso retorna 200 OK")
     void aceptarSolicitud_exitoso() throws Exception {
+        // Arrange
         doNothing().when(solicitudService).aceptarSolicitud(10L);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/solicitudes/10/aceptar"))
                 .andExpect(status().isOk());
 
@@ -99,8 +108,11 @@ class SolicitudControllerTest {
     @Test
     @DisplayName("PATCH /{id}/rechazar - exitoso retorna 200 OK")
     void rechazarSolicitud_exitoso() throws Exception {
+        // Arrange
         doNothing().when(solicitudService).rechazarSolicitud(10L);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/solicitudes/10/rechazar"))
                 .andExpect(status().isOk());
 
@@ -110,8 +122,11 @@ class SolicitudControllerTest {
     @Test
     @DisplayName("PATCH /{id}/iniciar - exitoso retorna 200 OK")
     void iniciarSolicitud_exitoso() throws Exception {
+        // Arrange
         doNothing().when(solicitudService).iniciarSolicitud(10L);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/solicitudes/10/iniciar"))
                 .andExpect(status().isOk());
 
@@ -121,8 +136,11 @@ class SolicitudControllerTest {
     @Test
     @DisplayName("PATCH /{id}/completar - exitoso retorna 200 OK")
     void completarSolicitud_exitoso() throws Exception {
+        // Arrange
         doNothing().when(solicitudService).completarSolicitud(10L);
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/solicitudes/10/completar"))
                 .andExpect(status().isOk());
 
@@ -132,12 +150,37 @@ class SolicitudControllerTest {
     @Test
     @DisplayName("PATCH /{id}/cancelar - exitoso retorna 200 OK")
     void cancelarSolicitud_exitoso() throws Exception {
+        // Arrange
         doNothing().when(solicitudService).cancelarSolicitud(10L, "Motivo cancelacion");
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/solicitudes/10/cancelar")
                         .param("motivo", "Motivo cancelacion"))
                 .andExpect(status().isOk());
 
         verify(solicitudService).cancelarSolicitud(10L, "Motivo cancelacion");
+    }
+
+    @Test
+    @DisplayName("GET /{id} - consultar solicitud retorna 200 OK")
+    void obtenerSolicitudPorId_exitoso() throws Exception {
+        // Arrange
+        Solicitud dominio = new Solicitud();
+        dominio.setId(10L);
+        dominio.setEstadoEnum(EstadoSolicitud.CREADA);
+
+        SolicitudResponseDTO responseDTO = new SolicitudResponseDTO();
+        responseDTO.setId(10L);
+
+        when(solicitudService.obtenerSolicitudPorId(10L)).thenReturn(dominio);
+        when(mapper.toResponse(dominio)).thenReturn(responseDTO);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/v1/solicitudes/10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(10L));
+
+        verify(solicitudService).obtenerSolicitudPorId(10L);
     }
 }

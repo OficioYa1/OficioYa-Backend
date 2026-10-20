@@ -88,8 +88,11 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-12 - por categoría devuelve los trabajadores de esa categoría, sin duplicados")
     void buscar_porCategoria_devuelveSoloEsaCategoria() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().categoria("hogar").build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder().categoria("hogar").build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertEquals(List.of(plomero.getId(), electricista.getId()), ids(resultado));
@@ -98,8 +101,11 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-12 - por oficio devuelve solo quienes lo ofrecen")
     void buscar_porOficio_devuelveSoloQuienesLoOfrecen() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().oficioId(electricidad.getId()).build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder().oficioId(electricidad.getId()).build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertEquals(List.of(electricista.getId()), ids(resultado));
@@ -108,8 +114,11 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-13 - por zona devuelve quienes la cubren (sin distinguir mayúsculas)")
     void buscar_porZona_devuelveQuienesLaCubren() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().zona("CHAPINERO").build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder().zona("CHAPINERO").build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertEquals(List.of(plomero.getId(), profesor.getId()), ids(resultado));
@@ -118,9 +127,12 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-14 - por rango de tarifa excluye a quienes cobran fuera del rango")
     void buscar_porRangoTarifa_excluyeFueraDelRango() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder()
+                .tarifaMin(new BigDecimal("25000")).tarifaMax(new BigDecimal("40000")).build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder()
-                .tarifaMin(new BigDecimal("25000")).tarifaMax(new BigDecimal("40000")).build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertEquals(List.of(plomero.getId()), ids(resultado));
@@ -129,9 +141,12 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-15 - por día y hora devuelve a quien tiene una franja que cubre el rango")
     void buscar_porDiaYHora_devuelveQuienCubreLaFranja() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder()
+                .dia(DayOfWeek.MONDAY).horaDesde(LocalTime.of(9, 0)).horaHasta(LocalTime.of(11, 0)).build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder()
-                .dia(DayOfWeek.MONDAY).horaDesde(LocalTime.of(9, 0)).horaHasta(LocalTime.of(11, 0)).build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertEquals(List.of(plomero.getId()), ids(resultado));
@@ -140,9 +155,12 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-15 - hora fuera de las franjas devuelve lista vacía")
     void buscar_horaFueraDeFranjas_devuelveVacio() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder()
+                .dia(DayOfWeek.MONDAY).horaDesde(LocalTime.of(20, 0)).build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder()
-                .dia(DayOfWeek.MONDAY).horaDesde(LocalTime.of(20, 0)).build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertTrue(resultado.isEmpty());
@@ -151,8 +169,11 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-32 - solo disponibles ahora devuelve únicamente a quien lo tiene activo")
     void buscar_soloDisponiblesAhora_devuelveSoloActivos() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().soloDisponiblesAhora(true).build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder().soloDisponiblesAhora(true).build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertEquals(List.of(plomero.getId()), ids(resultado));
@@ -161,9 +182,11 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-11 - 'alguien que arregle una gotera' encuentra al plomero")
     void buscar_textoLibreGotera_encuentraAlPlomero() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().texto("alguien que arregle una gotera").build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(
-                CriteriosBusqueda.builder().texto("alguien que arregle una gotera").build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertEquals(List.of(plomero.getId()), ids(resultado));
@@ -172,8 +195,11 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("RF-11 - texto sin coincidencias devuelve lista vacía")
     void buscar_textoSinCoincidencias_devuelveVacio() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().texto("necesito un astronauta").build();
+
         // Act
-        List<PerfilTrabajador> resultado = service.buscar(CriteriosBusqueda.builder().texto("necesito un astronauta").build());
+        List<PerfilTrabajador> resultado = service.buscar(criterios);
 
         // Assert
         assertTrue(resultado.isEmpty());
@@ -182,10 +208,13 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("Combinación - categoría + calificación mínima + orden por reputación")
     void buscar_filtrosCombinados_aplicaTodosConOrdenDeReputacion() {
+        // Arrange
+        CriteriosBusqueda todosHogarCriterios = CriteriosBusqueda.builder().categoria("Hogar").orden("REPUTACION").build();
+        CriteriosBusqueda exigentesCriterios = CriteriosBusqueda.builder().categoria("Hogar").calificacionMinima(4.5).build();
+
         // Act
-        List<PerfilTrabajador> todosHogar = service.buscar(CriteriosBusqueda.builder().categoria("Hogar").orden("REPUTACION").build());
-        List<PerfilTrabajador> exigentes = service.buscar(CriteriosBusqueda.builder()
-                .categoria("Hogar").calificacionMinima(4.5).build());
+        List<PerfilTrabajador> todosHogar = service.buscar(todosHogarCriterios);
+        List<PerfilTrabajador> exigentes = service.buscar(exigentesCriterios);
 
         // Assert
         assertEquals(List.of(plomero.getId(), electricista.getId()), ids(todosHogar));
@@ -195,8 +224,11 @@ class BusquedaTrabajadoresIntegrationTest {
     @Test
     @DisplayName("Sin filtros devuelve todos los perfiles ordenados por reputación")
     void buscar_sinFiltros_devuelveTodosPorReputacion() {
+        // Arrange
+        CriteriosBusqueda criterios = CriteriosBusqueda.builder().build();
+
         // Act
-        List<Long> ids = ids(service.buscar(CriteriosBusqueda.builder().build()));
+        List<Long> ids = ids(service.buscar(criterios));
 
         // Assert
         assertTrue(ids.containsAll(List.of(plomero.getId(), electricista.getId(), profesor.getId())));

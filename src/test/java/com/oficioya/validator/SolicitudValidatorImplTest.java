@@ -30,14 +30,16 @@ class SolicitudValidatorImplTest {
     @Test
     @DisplayName("validarContratante - usuario existe, rol CONTRATANTE y activo no lanza excepción")
     void validarContratante_usuarioValido_noLanzaExcepcion() {
+        // Arrange
         UsuarioEntity contratante = UsuarioEntity.builder()
                 .id(1L)
                 .rol(RolUsuario.CONTRATANTE)
                 .activo(true)
                 .build();
-
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(contratante));
 
+        // Act
+        // Assert
         assertDoesNotThrow(() -> solicitudValidator.validarContratante(1L));
         verify(usuarioRepository).findById(1L);
     }
@@ -45,8 +47,11 @@ class SolicitudValidatorImplTest {
     @Test
     @DisplayName("validarContratante - usuario no existe lanza UsuarioNoEncontradoException")
     void validarContratante_usuarioInexistente_lanzaExcepcion() {
+        // Arrange
         when(usuarioRepository.findById(99L)).thenReturn(Optional.empty());
 
+        // Act
+        // Assert
         UsuarioNoEncontradoException ex = assertThrows(
                 UsuarioNoEncontradoException.class,
                 () -> solicitudValidator.validarContratante(99L)
@@ -58,14 +63,16 @@ class SolicitudValidatorImplTest {
     @Test
     @DisplayName("validarContratante - usuario no tiene rol CONTRATANTE lanza EstadoInvalidoException")
     void validarContratante_rolNoContratante_lanzaExcepcion() {
+        // Arrange
         UsuarioEntity trabajador = UsuarioEntity.builder()
                 .id(2L)
                 .rol(RolUsuario.TRABAJADOR)
                 .activo(true)
                 .build();
-
         when(usuarioRepository.findById(2L)).thenReturn(Optional.of(trabajador));
 
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(
                 EstadoInvalidoException.class,
                 () -> solicitudValidator.validarContratante(2L)
@@ -77,14 +84,16 @@ class SolicitudValidatorImplTest {
     @Test
     @DisplayName("validarContratante - usuario inactivo lanza EstadoInvalidoException")
     void validarContratante_usuarioInactivo_lanzaExcepcion() {
+        // Arrange
         UsuarioEntity contratanteInactivo = UsuarioEntity.builder()
                 .id(3L)
                 .rol(RolUsuario.CONTRATANTE)
                 .activo(false)
                 .build();
-
         when(usuarioRepository.findById(3L)).thenReturn(Optional.of(contratanteInactivo));
 
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(
                 EstadoInvalidoException.class,
                 () -> solicitudValidator.validarContratante(3L)

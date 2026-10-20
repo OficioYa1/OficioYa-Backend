@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - develop
+      - main
 
 env:
   AZURE_WEBAPP_NAME: 'oficioya-backend'
@@ -98,7 +99,7 @@ jobs:
               -Dsonar.qualitygate.wait=true
           else
             echo "[SIMULATED SONARQUBE QUALITY GATE]"
-            echo "Verifying coverage threshold (>80%) from JaCoCo CSV report:"
+            echo "Verifying coverage threshold (>85%) from JaCoCo CSV report:"
             TOTAL_MISSED=$(awk -F, 'NR>1 {missed+=$4} END {print missed}' target/site/jacoco/jacoco.csv)
             TOTAL_COVERED=$(awk -F, 'NR>1 {covered+=$5} END {print covered}' target/site/jacoco/jacoco.csv)
             TOTAL_INSTR=$((TOTAL_MISSED + TOTAL_COVERED))
@@ -126,6 +127,8 @@ jobs:
           path: target/
 
       - name: 4.2 Deploy to Azure Web App (OneDeploy)
+        env:
+          AZURE_PUBLISH_CREDENTIALS: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE || secrets.AZURE_DEPLOYMENT_TOKEN }}
         run: |
           echo "========================================================="
           echo "Stage 4: Deploy Artifact to Azure App Service"
@@ -139,7 +142,7 @@ jobs:
           echo "Deploying artifact: $JAR_FILE to ${{ env.AZURE_WEBAPP_NAME }}..."
           
           HTTP_CODE=$(curl -s -S -o deploy_output.log -w "%{http_code}" -X POST \
-            -u '$oficioya-backend:PzHEPyryvkGvtZXrSH2zwYSQLgKGiP78o0kWpc137nENmy2igGat1MJ3NYFZ' \
+            -u "$AZURE_PUBLISH_CREDENTIALS" \
             -H "Content-Type: application/octet-stream" \
             --data-binary "@$JAR_FILE" \
             "https://${{ env.AZURE_WEBAPP_NAME }}.scm.azurewebsites.net/api/publish?type=jar")

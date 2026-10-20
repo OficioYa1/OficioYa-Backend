@@ -30,30 +30,38 @@ class MensajeriaRestControllerTest {
 
     @Test
     void enviarMensaje_Success() {
+        // Arrange
         MensajeChatRequestDTO req = new MensajeChatRequestDTO();
         when(mensajeriaService.enviarMensaje(1L, req)).thenReturn(MensajeChatResponseDTO.builder().id("123").build());
         
+        // Act
         ResponseEntity<MensajeChatResponseDTO> res = controller.enviarMensaje(1L, req);
         
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals("123", res.getBody().getId());
     }
 
     @Test
     void obtenerMensajesPorSolicitud_Success() {
+        // Arrange
         when(mensajeriaService.obtenerMensajesPorSolicitud(1L))
                 .thenReturn(Arrays.asList(MensajeChatResponseDTO.builder().id("123").build()));
         
+        // Act
         ResponseEntity<List<MensajeChatResponseDTO>> res = controller.obtenerMensajesPorSolicitud(1L);
         
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals(1, res.getBody().size());
     }
 
     @Test
     void marcarMensajesComoLeidos_Success() {
+        // Act
         ResponseEntity<Void> res = controller.marcarMensajesComoLeidos(1L, 2L);
         
+        // Assert
         assertEquals(204, res.getStatusCode().value());
         verify(mensajeriaService, times(1)).marcarMensajesComoLeidos(1L, 2L);
     }

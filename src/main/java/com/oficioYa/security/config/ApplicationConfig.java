@@ -13,22 +13,30 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.oficioya.repository.UsuarioRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import java.util.Collections;
+
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-    // For now, we mock the UserDetailsService so JWT can be generated.
-    // Dev B will implement the real DB connection later.
+    private final UsuarioRepository usuarioRepository;
+
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> {
-            UserDetails user = User.builder()
-                    .username(username)
-                    .password(passwordEncoder().encode("password123")) // Dummy password
-                    .roles("USER")
-                    .build();
-            return user;
-        };
+        return username -> usuarioRepository.findByCorreo(username)
+                .map(usuario -> new User(
+                        usuario.getCorreo(),
+                        usuario.getContrasena(),
+                        usuario.isActivo(),
+                        true,
+                        true,
+                        true,
+                        Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + usuario.getRol().name()))
+                ))
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con correo: " + username));
     }
 
     @Bean

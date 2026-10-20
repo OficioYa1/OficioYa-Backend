@@ -38,6 +38,7 @@ public class UsuarioController implements UsuarioApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE', 'ADMIN')")
     @PatchMapping("/{correo}/verificar")
     public ResponseEntity<MensajeResponseDTO> verificarCorreo(@PathVariable String correo) {
         usuarioService.verificarCorreo(correo);
@@ -45,6 +46,7 @@ public class UsuarioController implements UsuarioApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE', 'ADMIN')")
     @GetMapping("/{id}/perfil-trabajador")
     public ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilTrabajador(@PathVariable Long id) {
         PerfilTrabajadorResponseDTO response = perfilTrabajadorMapper.toResponse(usuarioService.obtenerPerfilTrabajador(id));
@@ -52,6 +54,7 @@ public class UsuarioController implements UsuarioApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'CONTRATANTE', 'ADMIN')")
     @GetMapping("/{id}/perfil-contratante")
     public ResponseEntity<PerfilContratanteResponseDTO> obtenerPerfilContratante(@PathVariable Long id) {
         PerfilContratanteResponseDTO perfil = perfilContratanteMapper.toResponse(usuarioService.obtenerPerfilContratante(id));
@@ -59,6 +62,7 @@ public class UsuarioController implements UsuarioApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     @PutMapping("/{id}/perfil-trabajador")
     public ResponseEntity<MensajeResponseDTO> editarPerfilTrabajador(
             @PathVariable Long id, 
@@ -69,6 +73,7 @@ public class UsuarioController implements UsuarioApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'ADMIN')")
     @PutMapping("/{id}/perfil-contratante")
     public ResponseEntity<MensajeResponseDTO> editarPerfilContratante(
             @PathVariable Long id, 

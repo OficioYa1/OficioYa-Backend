@@ -68,6 +68,7 @@ class SolicitudServiceImplTest {
 
     @Test
     void testCrearSolicitud_Exito() {
+        // Arrange
         Long contratanteId = 2L;
         UsuarioEntity usuarioEntity = new UsuarioEntity();
         Usuario usuarioDominio = new Usuario();
@@ -79,8 +80,10 @@ class SolicitudServiceImplTest {
         when(solicitudRepository.save(solicitudEntity)).thenReturn(solicitudEntity);
         when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
 
+        // Act
         Solicitud resultado = solicitudService.crearSolicitud(solicitudDominio, contratanteId);
 
+        // Assert
         assertNotNull(resultado);
         verify(solicitudRepository).save(any(SolicitudEntity.class));
         verify(solicitudValidator).validarContratante(contratanteId);
@@ -88,10 +91,13 @@ class SolicitudServiceImplTest {
 
     @Test
     void testCrearSolicitud_UsuarioNoEncontrado() {
+        // Arrange
         Long contratanteId = 2L;
         doNothing().when(solicitudValidator).validarContratante(contratanteId);
         when(usuarioRepository.findById(contratanteId)).thenReturn(Optional.empty());
 
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> {
             solicitudService.crearSolicitud(solicitudDominio, contratanteId);
         });
@@ -101,6 +107,7 @@ class SolicitudServiceImplTest {
 
     @Test
     void testEnviarSolicitud_Exito() {
+        // Arrange
         Long solicitudId = 1L;
         Long trabajadorId = 3L;
 
@@ -108,14 +115,17 @@ class SolicitudServiceImplTest {
         when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
         when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
 
+        // Act
         solicitudService.enviarSolicitud(solicitudId, trabajadorId);
 
+        // Assert
         verify(solicitudRepository).save(solicitudEntity);
         verify(eventPublisher).publishEvent(any(SolicitudEvent.class));
     }
 
     @Test
     void testAceptarSolicitud_Exito() {
+        // Arrange
         Long solicitudId = 1L;
         solicitudDominio.setEstadoEnum(EstadoSolicitud.ENVIADA);
 
@@ -123,18 +133,122 @@ class SolicitudServiceImplTest {
         when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
         when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
 
+        // Act
         solicitudService.aceptarSolicitud(solicitudId);
 
+        // Assert
         verify(solicitudRepository).save(solicitudEntity);
     }
 
     @Test
+    void testRechazarSolicitud_Exito() {
+        // Arrange
+        Long solicitudId = 1L;
+        solicitudDominio.setEstadoEnum(EstadoSolicitud.ENVIADA);
+
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+        when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
+
+        // Act
+        solicitudService.rechazarSolicitud(solicitudId);
+
+        // Assert
+        verify(solicitudRepository).save(solicitudEntity);
+    }
+
+    @Test
+    void testIniciarSolicitud_Exito() {
+        // Arrange
+        Long solicitudId = 1L;
+        solicitudDominio.setEstadoEnum(EstadoSolicitud.ACEPTADA);
+
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+        when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
+
+        // Act
+        solicitudService.iniciarSolicitud(solicitudId);
+
+        // Assert
+        verify(solicitudRepository).save(solicitudEntity);
+    }
+
+    @Test
+    void testCompletarSolicitud_Exito() {
+        // Arrange
+        Long solicitudId = 1L;
+        solicitudDominio.setEstadoEnum(EstadoSolicitud.EN_PROGRESO);
+
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+        when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
+
+        // Act
+        solicitudService.completarSolicitud(solicitudId);
+
+        // Assert
+        verify(solicitudRepository).save(solicitudEntity);
+    }
+
+    @Test
+    void testCancelarSolicitud_Exito() {
+        // Arrange
+        Long solicitudId = 1L;
+        solicitudDominio.setEstadoEnum(EstadoSolicitud.ACEPTADA);
+
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+        when(mapper.toEntity(solicitudDominio)).thenReturn(solicitudEntity);
+
+        // Act
+        solicitudService.cancelarSolicitud(solicitudId, "Ya no necesito el servicio");
+
+        // Assert
+        verify(solicitudRepository).save(solicitudEntity);
+    }
+
+    @Test
+    void testCancelarSolicitud_DesdeCreadaLanzaEstadoInvalido() {
+        // Arrange
+        Long solicitudId = 1L;
+        solicitudDominio.setEstadoEnum(EstadoSolicitud.CREADA);
+
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+
+        // Act
+        // Assert
+        assertThrows(com.oficioya.model.exception.EstadoInvalidoException.class, () -> {
+            solicitudService.cancelarSolicitud(solicitudId, "Intento invalido");
+        });
+    }
+
+    @Test
     void testRecuperarDominio_LanzaExcepcionSiNoExiste() {
+        // Arrange
         when(solicitudRepository.findById(99L)).thenReturn(Optional.empty());
 
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, () -> {
             solicitudService.aceptarSolicitud(99L);
         });
     }
 
+    @Test
+    void testObtenerSolicitudPorId_Exito() {
+        // Arrange
+        Long solicitudId = 1L;
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+
+        // Act
+        Solicitud resultado = solicitudService.obtenerSolicitudPorId(solicitudId);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(solicitudDominio, resultado);
+        verify(solicitudRepository).findById(solicitudId);
+    }
 }

@@ -17,6 +17,7 @@ import com.oficioya.mapper.UsuarioEntityMapper;
 import com.oficioya.exception.UsuarioNoEncontradoException;
 import com.oficioya.validator.ISolicitudValidator;
 import com.oficioya.persistence.entity.SolicitudEntity;
+import com.oficioya.persistence.entity.UsuarioEntity;
 
 @Slf4j
 @Service
@@ -45,11 +46,16 @@ public class SolicitudServiceImpl implements ISolicitudService {
     public Solicitud crearSolicitud(Solicitud solicitud, Long contratanteId) {
         log.info("Creando nueva solicitud para el contratante ID: {}", contratanteId);
         solicitudValidator.validarContratante(contratanteId);
-        solicitud.setContratante(usuarioMapper.toDomain(
-                usuarioRepository.findById(contratanteId)
-                        .orElseThrow(() -> new UsuarioNoEncontradoException("Contratante no encontrado"))));
+        UsuarioEntity contratanteEntity = usuarioRepository.findById(contratanteId)
+                .orElseThrow(() -> new UsuarioNoEncontradoException("Contratante no encontrado"));
+        solicitud.setContratante(usuarioMapper.toDomain(contratanteEntity));
         solicitud.setEstadoEnum(com.oficioya.persistence.entity.EstadoSolicitud.CREADA);
+        solicitud.setFechaCreacion(java.time.LocalDateTime.now());
         SolicitudEntity entity = mapper.toEntity(solicitud);
+        entity.setContratante(contratanteEntity);
+        if (entity.getFechaCreacion() == null) {
+            entity.setFechaCreacion(java.time.LocalDateTime.now());
+        }
         entity = solicitudRepository.save(entity);
         return mapper.toDomain(entity);
     }
@@ -104,5 +110,11 @@ public class SolicitudServiceImpl implements ISolicitudService {
         Solicitud solicitud = recuperarDominio(solicitudId);
         solicitud.cancelar();
         guardarDominio(solicitud);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Solicitud obtenerSolicitudPorId(Long solicitudId) {
+        return recuperarDominio(solicitudId);
     }
 }

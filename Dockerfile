@@ -20,8 +20,10 @@ COPY --from=builder /app/target/*.jar app.jar
 # Exponer el puerto configurado de Spring Boot
 EXPOSE 8082
 
-# Definir la zona horaria si es necesario
+# Definir la zona horaria y el perfil activo de Spring Boot
 ENV TZ=America/Bogota
+ENV SPRING_PROFILES_ACTIVE=docker
+ENV SERVER_PORT=8082
 
 # Ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -57,35 +57,45 @@ class ReputacionControllerTest {
 
     @Test
     void calificarTrabajador_retornaCreated() {
+        // Arrange
         when(reputacionService.calificarTrabajador(eq(1L), eq(2L), any(ResenaRequestDTO.class)))
                 .thenReturn(resenaResponse);
 
+        // Act
         ResponseEntity<ResenaResponseDTO> res = controller.calificarTrabajador(1L, 2L, resenaRequest);
 
+        // Assert
         assertEquals(201, res.getStatusCode().value());
         assertEquals(1L, res.getBody().getId());
     }
 
     @Test
     void calificarContratante_retornaCreated() {
+        // Arrange
         when(reputacionService.calificarContratante(eq(1L), eq(3L), any(ResenaRequestDTO.class)))
                 .thenReturn(resenaResponse);
 
+        // Act
         ResponseEntity<ResenaResponseDTO> res = controller.calificarContratante(1L, 3L, resenaRequest);
 
+        // Assert
         assertEquals(201, res.getStatusCode().value());
         assertEquals(1L, res.getBody().getId());
     }
 
     @Test
     void reportarResena_retornaNoContent() {
+        // Act
         ResponseEntity<Void> res = controller.reportarResena(1L, reporteRequest);
+
+        // Assert
         assertEquals(204, res.getStatusCode().value());
         verify(reputacionService).reportarResena(eq(1L), any(ReporteResenaRequestDTO.class));
     }
 
     @Test
     void obtenerReputacionPorOficio_retornaOk() {
+        // Arrange
         ReputacionPorOficioDTO dto = ReputacionPorOficioDTO.builder()
                 .trabajadorId(3L)
                 .oficioId(1L)
@@ -95,18 +105,23 @@ class ReputacionControllerTest {
 
         when(reputacionService.obtenerReputacionPorOficio(3L, 1L)).thenReturn(dto);
 
+        // Act
         ResponseEntity<ReputacionPorOficioDTO> res = controller.obtenerReputacionPorOficio(3L, 1L);
 
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals(4.5, res.getBody().getCalificacionPromedio());
     }
 
     @Test
     void obtenerResenasDeUsuario_retornaOk() {
+        // Arrange
         when(reputacionService.obtenerResenasDeUsuario(3L)).thenReturn(List.of(resenaResponse));
 
+        // Act
         ResponseEntity<List<ResenaResponseDTO>> res = controller.obtenerResenasDeUsuario(3L);
 
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals(1, res.getBody().size());
     }

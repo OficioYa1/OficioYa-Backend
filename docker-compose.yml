@@ -45,6 +45,7 @@ services:
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=rootpassword
       - SPRING_DATA_MONGODB_URI=mongodb://root:rootpassword@mongodb:27017/oficioyadb_nosql?authSource=admin
+      - JWT_SECRET=${JWT_SECRET:-TXkgc3VwZXIgc2VjcmV0IGtleSBwYXJhIGVsIHJlc3RhdXJhbnRlIGRvc3cgcHJveWVjdG8gb2ZpY2lveWEgMjAyNg==}
     depends_on:
       - postgres
       - mongodb

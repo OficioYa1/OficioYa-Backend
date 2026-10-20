@@ -20,6 +20,7 @@ public class SolicitudController implements SolicitudApi {
     private final SolicitudMapper mapper;
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'ADMIN')")
     @PostMapping
     public ResponseEntity<SolicitudResponseDTO> crearSolicitud(@RequestBody SolicitudCreacionDTO solicitudCreacionDTO) {
         Solicitud dominio = mapper.toDomain(solicitudCreacionDTO);
@@ -28,6 +29,7 @@ public class SolicitudController implements SolicitudApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'ADMIN')")
     @PostMapping("/{id}/enviar")
     public ResponseEntity<Void> enviarSolicitud(@PathVariable Long id, @RequestParam Long trabajadorId) {
         solicitudService.enviarSolicitud(id, trabajadorId);
@@ -35,6 +37,7 @@ public class SolicitudController implements SolicitudApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     @PatchMapping("/{id}/aceptar")
     public ResponseEntity<Void> aceptarSolicitud(@PathVariable Long id) {
         solicitudService.aceptarSolicitud(id);
@@ -42,6 +45,7 @@ public class SolicitudController implements SolicitudApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     @PatchMapping("/{id}/rechazar")
     public ResponseEntity<Void> rechazarSolicitud(@PathVariable Long id) {
         solicitudService.rechazarSolicitud(id);
@@ -49,6 +53,7 @@ public class SolicitudController implements SolicitudApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     @PatchMapping("/{id}/iniciar")
     public ResponseEntity<Void> iniciarSolicitud(@PathVariable Long id) {
         solicitudService.iniciarSolicitud(id);
@@ -56,6 +61,7 @@ public class SolicitudController implements SolicitudApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('TRABAJADOR', 'ADMIN')")
     @PatchMapping("/{id}/completar")
     public ResponseEntity<Void> completarSolicitud(@PathVariable Long id) {
         solicitudService.completarSolicitud(id);
@@ -63,9 +69,18 @@ public class SolicitudController implements SolicitudApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'ADMIN')")
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<Void> cancelarSolicitud(@PathVariable Long id, @RequestParam String motivo) {
         solicitudService.cancelarSolicitud(id, motivo);
         return ResponseEntity.ok().build();
+    }
+
+    @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'TRABAJADOR', 'ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<SolicitudResponseDTO> obtenerSolicitudPorId(@PathVariable Long id) {
+        Solicitud solicitud = solicitudService.obtenerSolicitudPorId(id);
+        return ResponseEntity.ok(mapper.toResponse(solicitud));
     }
 }

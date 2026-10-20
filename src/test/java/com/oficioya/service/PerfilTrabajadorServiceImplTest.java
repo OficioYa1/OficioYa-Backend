@@ -96,7 +96,8 @@ class PerfilTrabajadorServiceImplTest {
         PerfilTrabajador entrada = dominioEntrada(99L);
         doThrow(new UsuarioNoEncontradoException("No existe")).when(validator).validarCuentaElegible(99L);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> service.crearPerfil(entrada));
         verify(perfilRepository, never()).save(any());
     }
@@ -108,7 +109,8 @@ class PerfilTrabajadorServiceImplTest {
         PerfilTrabajador entrada = dominioEntrada(7L);
         doThrow(new ConflictoException("Ya tiene perfil")).when(validator).validarPerfilNoExiste(7L);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ConflictoException.class, () -> service.crearPerfil(entrada));
         verify(perfilRepository, never()).save(any());
     }
@@ -120,7 +122,8 @@ class PerfilTrabajadorServiceImplTest {
         PerfilTrabajador entrada = dominioEntrada(7L);
         doThrow(new ReglaDeNegocioException("No verificada")).when(validator).validarCuentaElegible(7L);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> service.crearPerfil(entrada));
         verify(validator, never()).validarPerfilNoExiste(any());
         verify(perfilRepository, never()).save(any());
@@ -133,7 +136,8 @@ class PerfilTrabajadorServiceImplTest {
         PerfilTrabajador entrada = dominioEntrada(7L);
         when(usuarioRepository.findById(7L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(UsuarioNoEncontradoException.class, () -> service.crearPerfil(entrada));
         verify(perfilRepository, never()).save(any());
     }
@@ -169,7 +173,8 @@ class PerfilTrabajadorServiceImplTest {
         // Arrange
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarZonaCobertura(99L, "Norte"));
         verify(perfilRepository, never()).save(any());
     }
@@ -198,7 +203,8 @@ class PerfilTrabajadorServiceImplTest {
         // Arrange
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarTarifa(99L, BigDecimal.TEN));
         verify(perfilRepository, never()).save(any());
     }
@@ -236,7 +242,8 @@ class PerfilTrabajadorServiceImplTest {
         List<FranjaDisponibilidad> franjas = List.of();
         doThrow(new ReglaDeNegocioException("Solapadas")).when(validator).validarFranjasDisponibilidad(franjas);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> service.actualizarDisponibilidadSemanal(1L, franjas));
         verify(perfilRepository, never()).save(any());
     }
@@ -248,7 +255,8 @@ class PerfilTrabajadorServiceImplTest {
         List<FranjaDisponibilidad> franjas = List.of();
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarDisponibilidadSemanal(99L, franjas));
         verify(perfilRepository, never()).save(any());
     }
@@ -278,7 +286,8 @@ class PerfilTrabajadorServiceImplTest {
         // Arrange
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.actualizarMetodosPago(99L, Set.of(MetodoPago.NEQUI)));
         verify(perfilRepository, never()).save(any());
     }
@@ -315,7 +324,8 @@ class PerfilTrabajadorServiceImplTest {
         when(entityMapper.toDomain(entidad)).thenReturn(dominio);
         doThrow(new ReglaDeNegocioException("Sin zona")).when(validator).validarPuedeActivarDisponibleAhora(dominio);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(ReglaDeNegocioException.class, () -> service.activarDisponibleAhora(1L));
         assertFalse(entidad.isDisponibleAhora());
         verify(perfilRepository, never()).save(any());
@@ -327,7 +337,8 @@ class PerfilTrabajadorServiceImplTest {
         // Arrange
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.activarDisponibleAhora(99L));
     }
 
@@ -362,7 +373,8 @@ class PerfilTrabajadorServiceImplTest {
         when(entityMapper.toDomain(entidad)).thenReturn(dominio);
         doThrow(new EstadoInvalidoException("No estaba activo")).when(validator).validarPuedeDesactivarDisponibleAhora(dominio);
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(EstadoInvalidoException.class, () -> service.desactivarDisponibleAhora(1L));
         verify(perfilRepository, never()).save(any());
     }
@@ -373,7 +385,8 @@ class PerfilTrabajadorServiceImplTest {
         // Arrange
         when(perfilRepository.findById(99L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, () -> service.desactivarDisponibleAhora(99L));
     }
 
@@ -432,7 +445,8 @@ class PerfilTrabajadorServiceImplTest {
         when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
         when(oficioRepository.findById(oficioId)).thenReturn(java.util.Optional.of(oficio));
 
-        // Act & Assert
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(EstadoInvalidoException.class, 
                 () -> service.registrarOficioPrincipal(perfilId, oficioId));
         assertEquals("No se puede asignar un oficio inactivo como principal", ex.getMessage());
@@ -452,7 +466,8 @@ class PerfilTrabajadorServiceImplTest {
         when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
         when(oficioRepository.findById(oficioId)).thenReturn(java.util.Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         RecursoNoEncontradoException ex = assertThrows(RecursoNoEncontradoException.class, 
                 () -> service.registrarOficioPrincipal(perfilId, oficioId));
         assertTrue(ex.getMessage().contains("Oficio no encontrado"));
@@ -518,7 +533,8 @@ class PerfilTrabajadorServiceImplTest {
         // Devuelve solo 1 oficio, pero se solicitaron 2
         when(oficioRepository.findAllById(oficiosIds)).thenReturn(List.of(oficio2));
 
-        // Act & Assert
+        // Act
+        // Assert
         RecursoNoEncontradoException ex = assertThrows(RecursoNoEncontradoException.class, 
                 () -> service.registrarOficiosSecundarios(perfilId, oficiosIds));
         assertTrue(ex.getMessage().contains("Uno o más oficios secundarios"));
@@ -542,7 +558,8 @@ class PerfilTrabajadorServiceImplTest {
         when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
         when(oficioRepository.findAllById(oficiosIds)).thenReturn(List.of(oficio2));
 
-        // Act & Assert
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(EstadoInvalidoException.class, 
                 () -> service.registrarOficiosSecundarios(perfilId, oficiosIds));
         assertTrue(ex.getMessage().contains("inactivo y no puede ser asignado"));
@@ -567,7 +584,8 @@ class PerfilTrabajadorServiceImplTest {
         when(perfilRepository.findById(perfilId)).thenReturn(java.util.Optional.of(perfil));
         when(oficioRepository.findAllById(oficiosIds)).thenReturn(List.of(oficio2));
 
-        // Act & Assert
+        // Act
+        // Assert
         EstadoInvalidoException ex = assertThrows(EstadoInvalidoException.class, 
                 () -> service.registrarOficiosSecundarios(perfilId, oficiosIds));
         assertTrue(ex.getMessage().contains("ya es el oficio principal y no puede ser secundario"));
@@ -615,7 +633,8 @@ class PerfilTrabajadorServiceImplTest {
         Long perfilId = 99L;
         when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, 
                 () -> service.actualizarDetallesEspecificos(perfilId, "Detalles cualquiera"));
     }
@@ -666,7 +685,8 @@ class PerfilTrabajadorServiceImplTest {
         List<String> fotos = List.of("url.jpg");
         when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, 
                 () -> service.actualizarPortafolio(perfilId, fotos));
     }
@@ -736,7 +756,8 @@ class PerfilTrabajadorServiceImplTest {
         Long perfilId = 99L;
         when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Act
+        // Assert
         assertThrows(RecursoNoEncontradoException.class, 
                 () -> service.obtenerPerfilPorId(perfilId));
         
@@ -744,4 +765,105 @@ class PerfilTrabajadorServiceImplTest {
         verifyNoInteractions(entityMapper);
     }
 
+    @Test
+    @DisplayName("obtenerEspecializaciones - Documento existe y contiene oficio retorna lista")
+    void obtenerEspecializaciones_conOficio_retornaLista() {
+        Long perfilId = 1L;
+        Long oficioId = 10L;
+        java.util.Map<String, List<String>> map = new java.util.HashMap<>();
+        map.put("10", List.of("Tuberías PVC", "Goteras"));
+        PortafolioMongoDocument doc = PortafolioMongoDocument.builder()
+                .perfilTrabajadorId(perfilId)
+                .especializacionesPorOficioId(map)
+                .build();
+
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.of(doc));
+
+        List<String> result = service.obtenerEspecializaciones(perfilId, oficioId);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains("Tuberías PVC"));
+    }
+
+    @Test
+    @DisplayName("obtenerEspecializaciones - Documento existe pero sin oficio o mapa nulo retorna lista vacía")
+    void obtenerEspecializaciones_sinOficio_retornaVacio() {
+        Long perfilId = 1L;
+        Long oficioId = 20L;
+        PortafolioMongoDocument doc = PortafolioMongoDocument.builder()
+                .perfilTrabajadorId(perfilId)
+                .especializacionesPorOficioId(new java.util.HashMap<>())
+                .build();
+
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.of(doc));
+
+        List<String> result = service.obtenerEspecializaciones(perfilId, oficioId);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("obtenerEspecializaciones - Documento no existe retorna lista vacía")
+    void obtenerEspecializaciones_sinDocumento_retornaVacio() {
+        Long perfilId = 1L;
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.empty());
+
+        List<String> result = service.obtenerEspecializaciones(perfilId, 10L);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("actualizarEspecializaciones - Perfil existe y portafolio existe actualiza y guarda")
+    void actualizarEspecializaciones_exitoso() {
+        Long perfilId = 1L;
+        Long oficioId = 5L;
+        List<String> esp = List.of("Soldadura", "Cerrajería digital");
+        PerfilTrabajadorEntity perfil = PerfilTrabajadorEntity.builder().id(perfilId).build();
+        PortafolioMongoDocument doc = PortafolioMongoDocument.builder()
+                .perfilTrabajadorId(perfilId)
+                .especializacionesPorOficioId(new java.util.HashMap<>())
+                .build();
+        PerfilTrabajador domain = PerfilTrabajador.builder().id(perfilId).build();
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.of(doc));
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+
+        PerfilTrabajador result = service.actualizarEspecializaciones(perfilId, oficioId, esp);
+
+        assertNotNull(result);
+        verify(portafolioMongoRepository).save(any(PortafolioMongoDocument.class));
+    }
+
+    @Test
+    @DisplayName("actualizarEspecializaciones - Perfil existe pero portafolio nuevo crea mapa y guarda")
+    void actualizarEspecializaciones_portafolioNuevo_creaYGuarda() {
+        Long perfilId = 1L;
+        Long oficioId = 5L;
+        List<String> esp = List.of("Pintura epóxica");
+        PerfilTrabajadorEntity perfil = PerfilTrabajadorEntity.builder().id(perfilId).build();
+        PerfilTrabajador domain = PerfilTrabajador.builder().id(perfilId).build();
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.empty());
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+
+        PerfilTrabajador result = service.actualizarEspecializaciones(perfilId, oficioId, esp);
+
+        assertNotNull(result);
+        verify(portafolioMongoRepository).save(any(PortafolioMongoDocument.class));
+    }
+
+    @Test
+    @DisplayName("actualizarEspecializaciones - Perfil no encontrado lanza RecursoNoEncontradoException")
+    void actualizarEspecializaciones_perfilNoExiste_lanzaException() {
+        Long perfilId = 99L;
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
+
+        assertThrows(RecursoNoEncontradoException.class,
+                () -> service.actualizarEspecializaciones(perfilId, 1L, List.of("Test")));
+
+        verify(portafolioMongoRepository, never()).save(any());
+    }
 }

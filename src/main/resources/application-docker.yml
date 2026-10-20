@@ -1,0 +1,25 @@
+# Configuración de Spring Boot para el entorno de contenedores Docker (Perfil 'docker')
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://${DB_HOST:postgres}:${DB_PORT:5432}/${DB_NAME:oficioyadb}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USER:root}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:rootpassword}}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://${MONGO_USER:root}:${MONGO_PASSWORD:rootpassword}@${MONGO_HOST:mongodb}:${MONGO_PORT:27017}/${MONGO_DB:oficioyadb_nosql}?authSource=admin}
+
+server:
+  port: ${SERVER_PORT:8082}
+
+jwt:
+  secret: ${JWT_SECRET:TXkgc3VwZXIgc2VjcmV0IGtleSBwYXJhIGVsIHJlc3RhdXJhbnRlIGRvc3cgcHJveWVjdG8gb2ZpY2lveWEgMjAyNg==}
+  expiration-ms: ${JWT_EXPIRATION_MS:3600000}

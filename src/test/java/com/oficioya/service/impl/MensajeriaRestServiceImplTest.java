@@ -50,10 +50,13 @@ class MensajeriaRestServiceImplTest {
 
     @Test
     void enviarMensaje_Success() {
+        // Arrange
         when(mensajeRepository.save(any(MensajeDocument.class))).thenReturn(doc);
 
+        // Act
         MensajeChatResponseDTO res = mensajeriaService.enviarMensaje(1L, req);
 
+        // Assert
         assertNotNull(res);
         assertEquals("mongo-123", res.getId());
         assertEquals("Hola!", res.getContenido());
@@ -62,10 +65,13 @@ class MensajeriaRestServiceImplTest {
 
     @Test
     void obtenerMensajesPorSolicitud_Success() {
+        // Arrange
         when(mensajeRepository.findBySolicitudIdOrderByFechaEnvioAsc(1L)).thenReturn(Arrays.asList(doc));
 
+        // Act
         List<MensajeChatResponseDTO> res = mensajeriaService.obtenerMensajesPorSolicitud(1L);
 
+        // Assert
         assertNotNull(res);
         assertEquals(1, res.size());
         assertEquals("mongo-123", res.get(0).getId());
@@ -73,22 +79,28 @@ class MensajeriaRestServiceImplTest {
 
     @Test
     void marcarMensajesComoLeidos_Success() {
+        // Arrange
         when(mensajeRepository.findBySolicitudIdAndDestinatarioIdAndLeidoFalse(1L, 3L))
                 .thenReturn(Arrays.asList(doc));
 
+        // Act
         mensajeriaService.marcarMensajesComoLeidos(1L, 3L);
 
+        // Assert
         assertTrue(doc.isLeido());
         verify(mensajeRepository, times(1)).saveAll(anyList());
     }
 
     @Test
     void marcarMensajesComoLeidos_EmptyList() {
+        // Arrange
         when(mensajeRepository.findBySolicitudIdAndDestinatarioIdAndLeidoFalse(1L, 3L))
                 .thenReturn(Arrays.asList());
 
+        // Act
         mensajeriaService.marcarMensajesComoLeidos(1L, 3L);
 
+        // Assert
         verify(mensajeRepository, never()).saveAll(anyList());
     }
 }

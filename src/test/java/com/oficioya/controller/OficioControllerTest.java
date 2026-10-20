@@ -34,6 +34,7 @@ class OficioControllerTest {
     @Test
     @DisplayName("GET /api/v1/oficios - exitoso retorna lista de oficios 200 OK")
     void listarOficiosActivos_exitoso() throws Exception {
+        // Arrange
         OficioResponseDTO dto = OficioResponseDTO.builder()
                 .id(1L)
                 .nombre("Plomería")
@@ -43,6 +44,8 @@ class OficioControllerTest {
 
         when(oficioService.listarOficiosActivos()).thenReturn(List.of(dto));
 
+        // Act
+        // Assert
         mockMvc.perform(get("/api/v1/oficios"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))

@@ -15,9 +15,11 @@ import com.oficioya.exception.ConflictoException;
 import com.oficioya.model.exception.ReglaDeNegocioException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -58,9 +60,12 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponseDTO(409, "Conflicto de unicidad", ex.getMessage(), request.getRequestURI()));
     }
 
-    @ExceptionHandler(EstadoInvalidoException.class)
+    @ExceptionHandler({
+            EstadoInvalidoException.class,
+            com.oficioya.model.exception.EstadoInvalidoException.class
+    })
     public ResponseEntity<ErrorResponseDTO> handleEstadoInvalido(
-            EstadoInvalidoException ex, HttpServletRequest request) {
+            RuntimeException ex, HttpServletRequest request) {
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ErrorResponseDTO(422, "Transición de estado inválida", ex.getMessage(), request.getRequestURI()));
@@ -112,7 +117,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponseDTO> handleGenerico(
             Exception ex, HttpServletRequest request) {
 
-        ex.printStackTrace();
+        log.error("Error inesperado en el servidor al procesar {}: {}", request.getRequestURI(), ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponseDTO(500, "Error interno del servidor", "Ocurrió un error inesperado en el sistema.", request.getRequestURI()));
     }

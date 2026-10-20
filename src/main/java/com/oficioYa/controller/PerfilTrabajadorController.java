@@ -34,6 +34,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     private final PerfilTrabajadorMapper mapper;
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PostMapping
     public ResponseEntity<PerfilTrabajadorResponseDTO> crearPerfil(
             @Valid @RequestBody PerfilTrabajadorCreacionRequestDTO request) {
@@ -43,6 +44,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PutMapping("/{id}/zona-cobertura")
     public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarZonaCobertura(
             @PathVariable Long id, @Valid @RequestBody ZonaCoberturaRequestDTO request) {
@@ -51,6 +53,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PutMapping("/{id}/tarifa")
     public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarTarifa(
             @PathVariable Long id, @Valid @RequestBody TarifaRequestDTO request) {
@@ -59,6 +62,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PutMapping("/{id}/disponibilidad-semanal")
     public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarDisponibilidadSemanal(
             @PathVariable Long id, @Valid @RequestBody DisponibilidadSemanalRequestDTO request) {
@@ -68,6 +72,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PutMapping("/{id}/metodos-pago")
     public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarMetodosPago(
             @PathVariable Long id, @Valid @RequestBody MetodosPagoRequestDTO request) {
@@ -76,18 +81,21 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PatchMapping("/{id}/disponible-ahora/activar")
     public ResponseEntity<PerfilTrabajadorResponseDTO> activarDisponibleAhora(@PathVariable Long id) {
         return ResponseEntity.ok(mapper.toResponse(perfilService.activarDisponibleAhora(id)));
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PatchMapping("/{id}/disponible-ahora/desactivar")
     public ResponseEntity<PerfilTrabajadorResponseDTO> desactivarDisponibleAhora(@PathVariable Long id) {
         return ResponseEntity.ok(mapper.toResponse(perfilService.desactivarDisponibleAhora(id)));
     }
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PutMapping("/{id}/oficio-principal")
     public ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficioPrincipal(
             @PathVariable Long id,
@@ -98,6 +106,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
 
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PutMapping("/{id}/oficios-secundarios")
     public ResponseEntity<PerfilTrabajadorResponseDTO> registrarOficiosSecundarios(
             @PathVariable Long id,
@@ -108,6 +117,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
 
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PatchMapping("/{id}/detalles-especificos")
     public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarDetallesEspecificos(
             @PathVariable Long id,
@@ -118,6 +128,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
 
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasRole('TRABAJADOR')")
     @PatchMapping("/{id}/portafolio")
     public ResponseEntity<PerfilTrabajadorResponseDTO> actualizarPortafolio(
             @PathVariable Long id,
@@ -128,6 +139,7 @@ public class PerfilTrabajadorController implements PerfilTrabajadorApi {
 
 
     @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'TRABAJADOR', 'ADMIN')")
     @org.springframework.web.bind.annotation.GetMapping("/{id}")
     public ResponseEntity<PerfilTrabajadorResponseDTO> obtenerPerfilPorId(@PathVariable Long id) {
         PerfilTrabajador perfil = perfilService.obtenerPerfilPorId(id);

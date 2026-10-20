@@ -35,11 +35,22 @@ public class BusquedaTrabajadorServiceImpl implements IBusquedaTrabajadorService
     private final IBusquedaValidator busquedaValidator;
     private final List<IOrdenamientoStrategy> estrategiasOrdenamiento;
 
+    @org.springframework.beans.factory.annotation.Autowired(required = false)
+    private com.oficioya.service.chain.BusquedaZonaChainService busquedaZonaChainService;
+
     @Override
     public List<PerfilTrabajador> buscarTrabajadores(String zona, Long oficioId, Double calificacionMinima, String orden) {
         log.info("Iniciando busqueda de trabajadores. Zona: {}, Oficio: {}", zona, oficioId);
         
-        List<PerfilTrabajador> candidatos = repository.findByZonaCoberturaContaining(zona).stream()
+        List<PerfilTrabajadorEntity> entidadesZona = (busquedaZonaChainService != null && zona != null && !zona.isBlank())
+                ? busquedaZonaChainService.resolverBusquedaPorZona(zona, repository)
+                : repository.findByZonaCoberturaContaining(zona);
+
+        if (entidadesZona == null || entidadesZona.isEmpty()) {
+            entidadesZona = repository.findByZonaCoberturaContaining(zona);
+        }
+
+        List<PerfilTrabajador> candidatos = entidadesZona.stream()
                 .map(mapper::toDomain)
                 .collect(Collectors.toList());
 

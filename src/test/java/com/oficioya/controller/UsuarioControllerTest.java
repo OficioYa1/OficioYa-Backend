@@ -64,6 +64,7 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("POST /registro - exitoso retorna 201 Created")
     void registrarUsuario_exitoso() throws Exception {
+        // Arrange
         UsuarioRegistroRequestDTO request = new UsuarioRegistroRequestDTO(
                 "carlos@test.com", "3001234567", "Password123!", "Carlos", "Gomez", RolUsuario.CONTRATANTE
         );
@@ -77,6 +78,8 @@ class UsuarioControllerTest {
         when(usuarioService.registrarUsuario(any())).thenReturn(dominio);
         when(dtoMapper.toResponseDTO(any())).thenReturn(response);
 
+        // Act
+        // Assert
         mockMvc.perform(post("/api/v1/usuarios/registro")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -88,8 +91,11 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("PATCH /{correo}/verificar - exitoso retorna 200 OK")
     void verificarCorreo_exitoso() throws Exception {
+        // Arrange
         doNothing().when(usuarioService).verificarCorreo("test@test.com");
 
+        // Act
+        // Assert
         mockMvc.perform(patch("/api/v1/usuarios/test@test.com/verificar"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Correo verificado exitosamente"));
@@ -98,6 +104,7 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("GET /{id}/perfil-trabajador - exitoso retorna 200 OK")
     void obtenerPerfilTrabajador_exitoso() throws Exception {
+        // Arrange
         PerfilTrabajador perfil = new PerfilTrabajador();
         perfil.setId(5L);
         PerfilTrabajadorResponseDTO responseDTO = new PerfilTrabajadorResponseDTO();
@@ -107,6 +114,8 @@ class UsuarioControllerTest {
         when(usuarioService.obtenerPerfilTrabajador(1L)).thenReturn(perfil);
         when(perfilTrabajadorMapper.toResponse(perfil)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(get("/api/v1/usuarios/1/perfil-trabajador"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(5L))
@@ -116,9 +125,12 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("GET /{id}/perfil-trabajador - usuario no encontrado retorna 404")
     void obtenerPerfilTrabajador_noEncontrado() throws Exception {
+        // Arrange
         when(usuarioService.obtenerPerfilTrabajador(99L))
                 .thenThrow(new UsuarioNoEncontradoException("Usuario no encontrado"));
 
+        // Act
+        // Assert
         mockMvc.perform(get("/api/v1/usuarios/99/perfil-trabajador"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
@@ -127,6 +139,7 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("GET /{id}/perfil-contratante - exitoso retorna 200 OK")
     void obtenerPerfilContratante_exitoso() throws Exception {
+        // Arrange
         PerfilContratante perfil = new PerfilContratante();
         perfil.setId(7L);
         PerfilContratanteResponseDTO responseDTO = new PerfilContratanteResponseDTO();
@@ -136,6 +149,8 @@ class UsuarioControllerTest {
         when(usuarioService.obtenerPerfilContratante(2L)).thenReturn(perfil);
         when(perfilContratanteMapper.toResponse(perfil)).thenReturn(responseDTO);
 
+        // Act
+        // Assert
         mockMvc.perform(get("/api/v1/usuarios/2/perfil-contratante"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(7L))
@@ -145,10 +160,12 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("PUT /{id}/perfil-trabajador - exitoso retorna 200 OK")
     void editarPerfilTrabajador_exitoso() throws Exception {
+        // Arrange
         EditarPerfilTrabajadorRequestDTO request = new EditarPerfilTrabajadorRequestDTO("3009876543", "Suba");
-
         doNothing().when(usuarioService).editarPerfilTrabajador(1L, "3009876543", "Suba");
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/usuarios/1/perfil-trabajador")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -159,10 +176,12 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("PUT /{id}/perfil-contratante - exitoso retorna 200 OK")
     void editarPerfilContratante_exitoso() throws Exception {
+        // Arrange
         EditarPerfilContratanteRequestDTO request = new EditarPerfilContratanteRequestDTO("3101112233", "Busco reparaciones");
-
         doNothing().when(usuarioService).editarPerfilContratante(1L, "3101112233", "Busco reparaciones");
 
+        // Act
+        // Assert
         mockMvc.perform(put("/api/v1/usuarios/1/perfil-contratante")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -173,8 +192,11 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("DELETE /{id} - exitoso retorna 200 OK")
     void eliminarCuenta_exitoso() throws Exception {
+        // Arrange
         doNothing().when(usuarioService).eliminarCuenta(1L);
 
+        // Act
+        // Assert
         mockMvc.perform(delete("/api/v1/usuarios/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Cuenta eliminada exitosamente"));
@@ -183,12 +205,14 @@ class UsuarioControllerTest {
     @Test
     @DisplayName("POST /{id}/foto - exitoso retorna 200 OK")
     void actualizarFotoPerfil_exitoso() throws Exception {
+        // Arrange
         MockMultipartFile file = new MockMultipartFile(
                 "file", "avatar.jpg", "image/jpeg", "fake-image-bytes".getBytes()
         );
-
         doNothing().when(usuarioService).actualizarFotoPerfil(eq(1L), any());
 
+        // Act
+        // Assert
         mockMvc.perform(multipart("/api/v1/usuarios/1/foto").file(file))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mensaje").value("Foto de perfil actualizada exitosamente"));

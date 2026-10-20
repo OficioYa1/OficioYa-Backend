@@ -27,39 +27,55 @@ class VerificacionIdentidadControllerTest {
 
     @Test
     void subirDocumentosIdentidad_Success() {
+        // Arrange
         MockMultipartFile file = new MockMultipartFile("f", new byte[]{});
         when(verificacionService.subirDocumentosIdentidad(1L, file, file)).thenReturn("url");
         
+        // Act
         ResponseEntity<String> res = controller.subirDocumentosIdentidad(1L, file, file);
+
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals("url", res.getBody());
     }
 
     @Test
     void subirCertificadoAntecedentes_Success() {
+        // Arrange
         MockMultipartFile file = new MockMultipartFile("f", new byte[]{});
         when(verificacionService.subirCertificadoAntecedentes(1L, file)).thenReturn("url_cert");
         
+        // Act
         ResponseEntity<String> res = controller.subirCertificadoAntecedentes(1L, file);
+
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals("url_cert", res.getBody());
     }
 
     @Test
     void subirFotoPerfilVerificada_Success() {
+        // Arrange
         MockMultipartFile file = new MockMultipartFile("f", new byte[]{});
         when(verificacionService.subirFotoPerfilVerificada(1L, file)).thenReturn("url_foto");
         
+        // Act
         ResponseEntity<String> res = controller.subirFotoPerfilVerificada(1L, file);
+
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals("url_foto", res.getBody());
     }
 
     @Test
     void obtenerEstadoVerificacion_Success() {
+        // Arrange
         when(verificacionService.obtenerEstadoVerificacion(1L)).thenReturn(EstadoVerificacion.PENDIENTE_REVISION);
         
+        // Act
         ResponseEntity<EstadoVerificacion> res = controller.obtenerEstadoVerificacion(1L);
+
+        // Assert
         assertEquals(200, res.getStatusCode().value());
         assertEquals(EstadoVerificacion.PENDIENTE_REVISION, res.getBody());
     }
