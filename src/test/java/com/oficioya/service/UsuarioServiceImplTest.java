@@ -656,4 +656,40 @@ class UsuarioServiceImplTest {
         verify(usuarioRepository, never()).save(any());
         verify(storageService, never()).guardarImagen(any());
     }
+
+    @Test
+    @DisplayName("recuperarCuenta - Usuario activo y existente no lanza excepcion")
+    void recuperarCuenta_exitoso() {
+        String correo = "activo@oficioya.com";
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setCorreo(correo);
+        usuario.setActivo(true);
+
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.of(usuario));
+
+        assertDoesNotThrow(() -> usuarioService.recuperarCuenta(correo));
+        verify(usuarioRepository).findByCorreo(correo);
+    }
+
+    @Test
+    @DisplayName("recuperarCuenta - Usuario inexistente lanza UsuarioNoEncontradoException")
+    void recuperarCuenta_usuarioInexistente_lanzaException() {
+        String correo = "noexiste@oficioya.com";
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.empty());
+
+        assertThrows(UsuarioNoEncontradoException.class, () -> usuarioService.recuperarCuenta(correo));
+    }
+
+    @Test
+    @DisplayName("recuperarCuenta - Usuario inactivo lanza EstadoInvalidoException")
+    void recuperarCuenta_usuarioInactivo_lanzaException() {
+        String correo = "inactivo@oficioya.com";
+        UsuarioEntity usuario = new UsuarioEntity();
+        usuario.setCorreo(correo);
+        usuario.setActivo(false);
+
+        when(usuarioRepository.findByCorreo(correo)).thenReturn(Optional.of(usuario));
+
+        assertThrows(EstadoInvalidoException.class, () -> usuarioService.recuperarCuenta(correo));
+    }
 }

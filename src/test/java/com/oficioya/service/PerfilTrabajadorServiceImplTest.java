@@ -765,4 +765,105 @@ class PerfilTrabajadorServiceImplTest {
         verifyNoInteractions(entityMapper);
     }
 
+    @Test
+    @DisplayName("obtenerEspecializaciones - Documento existe y contiene oficio retorna lista")
+    void obtenerEspecializaciones_conOficio_retornaLista() {
+        Long perfilId = 1L;
+        Long oficioId = 10L;
+        java.util.Map<String, List<String>> map = new java.util.HashMap<>();
+        map.put("10", List.of("Tuberías PVC", "Goteras"));
+        PortafolioMongoDocument doc = PortafolioMongoDocument.builder()
+                .perfilTrabajadorId(perfilId)
+                .especializacionesPorOficioId(map)
+                .build();
+
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.of(doc));
+
+        List<String> result = service.obtenerEspecializaciones(perfilId, oficioId);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains("Tuberías PVC"));
+    }
+
+    @Test
+    @DisplayName("obtenerEspecializaciones - Documento existe pero sin oficio o mapa nulo retorna lista vacía")
+    void obtenerEspecializaciones_sinOficio_retornaVacio() {
+        Long perfilId = 1L;
+        Long oficioId = 20L;
+        PortafolioMongoDocument doc = PortafolioMongoDocument.builder()
+                .perfilTrabajadorId(perfilId)
+                .especializacionesPorOficioId(new java.util.HashMap<>())
+                .build();
+
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.of(doc));
+
+        List<String> result = service.obtenerEspecializaciones(perfilId, oficioId);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("obtenerEspecializaciones - Documento no existe retorna lista vacía")
+    void obtenerEspecializaciones_sinDocumento_retornaVacio() {
+        Long perfilId = 1L;
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.empty());
+
+        List<String> result = service.obtenerEspecializaciones(perfilId, 10L);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    @DisplayName("actualizarEspecializaciones - Perfil existe y portafolio existe actualiza y guarda")
+    void actualizarEspecializaciones_exitoso() {
+        Long perfilId = 1L;
+        Long oficioId = 5L;
+        List<String> esp = List.of("Soldadura", "Cerrajería digital");
+        PerfilTrabajadorEntity perfil = PerfilTrabajadorEntity.builder().id(perfilId).build();
+        PortafolioMongoDocument doc = PortafolioMongoDocument.builder()
+                .perfilTrabajadorId(perfilId)
+                .especializacionesPorOficioId(new java.util.HashMap<>())
+                .build();
+        PerfilTrabajador domain = PerfilTrabajador.builder().id(perfilId).build();
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.of(doc));
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+
+        PerfilTrabajador result = service.actualizarEspecializaciones(perfilId, oficioId, esp);
+
+        assertNotNull(result);
+        verify(portafolioMongoRepository).save(any(PortafolioMongoDocument.class));
+    }
+
+    @Test
+    @DisplayName("actualizarEspecializaciones - Perfil existe pero portafolio nuevo crea mapa y guarda")
+    void actualizarEspecializaciones_portafolioNuevo_creaYGuarda() {
+        Long perfilId = 1L;
+        Long oficioId = 5L;
+        List<String> esp = List.of("Pintura epóxica");
+        PerfilTrabajadorEntity perfil = PerfilTrabajadorEntity.builder().id(perfilId).build();
+        PerfilTrabajador domain = PerfilTrabajador.builder().id(perfilId).build();
+
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.of(perfil));
+        when(portafolioMongoRepository.findByPerfilTrabajadorId(perfilId)).thenReturn(Optional.empty());
+        when(entityMapper.toDomain(perfil)).thenReturn(domain);
+
+        PerfilTrabajador result = service.actualizarEspecializaciones(perfilId, oficioId, esp);
+
+        assertNotNull(result);
+        verify(portafolioMongoRepository).save(any(PortafolioMongoDocument.class));
+    }
+
+    @Test
+    @DisplayName("actualizarEspecializaciones - Perfil no encontrado lanza RecursoNoEncontradoException")
+    void actualizarEspecializaciones_perfilNoExiste_lanzaException() {
+        Long perfilId = 99L;
+        when(perfilRepository.findById(perfilId)).thenReturn(Optional.empty());
+
+        assertThrows(RecursoNoEncontradoException.class,
+                () -> service.actualizarEspecializaciones(perfilId, 1L, List.of("Test")));
+
+        verify(portafolioMongoRepository, never()).save(any());
+    }
 }
