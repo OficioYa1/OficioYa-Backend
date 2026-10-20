@@ -30,9 +30,9 @@ public class SecurityConfig {
                 .requestMatchers("/", "/health", "/api/v1/health").permitAll() // Open root and health check
                 .requestMatchers("/auth/**").permitAll() // Open login endpoints
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll() // Open Swagger documentation
-                .requestMatchers(org.springframework.http.HttpMethod.POST, "/usuarios").permitAll() // Registro público de usuarios
-                .requestMatchers("/oficios/**").permitAll() // Catálogo público de oficios
-                .requestMatchers("/busqueda/**").permitAll() // Búsqueda pública de trabajadores
+                .requestMatchers(org.springframework.http.HttpMethod.POST, "/usuarios", "/usuarios/**", "/api/v1/usuarios/registro", "/api/v1/usuarios/recuperar-cuenta").permitAll() // Registro público de usuarios
+                .requestMatchers("/oficios/**", "/api/v1/oficios/**").permitAll() // Catálogo público de oficios
+                .requestMatchers("/busqueda/**", "/api/v1/busqueda/**").permitAll() // Búsqueda pública de trabajadores
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
