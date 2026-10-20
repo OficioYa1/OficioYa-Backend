@@ -10,14 +10,16 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.x-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Docker](https://img.shields.io/badge/Docker-24%2B-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 [![Azure App Service](https://img.shields.io/badge/Azure-App_Service-0078D4?style=for-the-badge&logo=microsoftazure&logoColor=white)](https://azure.microsoft.com/)
-[![JaCoCo Coverage](https://img.shields.io/badge/Coverage-96%25%2B-brightgreen?style=for-the-badge&logo=target)](https://www.jacoco.org/jacoco/)
+[![JaCoCo Coverage](https://img.shields.io/badge/Coverage-95%25-brightgreen?style=for-the-badge&logo=target)](https://www.jacoco.org/jacoco/)
 [![Build Status](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/OficioYa1/OficioYa-Backend/actions)
+[![Demo Video](https://img.shields.io/badge/YouTube-Video_Demostración-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=gNrCYsFKNvw)
 
 ---
 
-### 🌐 Links de Despliegue en Azure Cloud (Swagger UI)
-* 🌐 **QA (Staging):** [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html)
-* 🚀 **PROD (Producción):** [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html)
+### 🌐 Links de Despliegue en Azure Cloud & Video Demostración
+* 🌐 **Swagger UI (QA / PROD):** [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html)
+* 🎬 **Video Técnico de Demostración (Sprint 4):** [https://www.youtube.com/watch?v=gNrCYsFKNvw](https://www.youtube.com/watch?v=gNrCYsFKNvw)
+* 📮 **Colección Postman E2E:** [`/postman/OficioYa_E2E.postman_collection.json`](postman/OficioYa_E2E.postman_collection.json)
 
 ---
 
@@ -48,6 +50,9 @@
 12. [Variables de Entorno y Configuración](#-variables-de-entorno-y-configuración)
 13. [Documentación de la API (Swagger / OpenAPI)](#-documentación-de-la-api-swagger--openapi)
 14. [Estrategia de Pruebas y Calidad de Código](#-estrategia-de-pruebas-y-calidad-de-código)
+    - [Reporte Oficial JaCoCo (Sprint 04 - 95%)](#verificación-de-cobertura-con-jacoco-umbral-96)
+    - [Video Técnico de Demostración (Sprint 4)](#-video-técnico-de-demostración-sprint-4)
+    - [Suite de Pruebas Automatizadas en Postman (E2E)](#-suite-de-pruebas-automatizadas-en-postman-e2e)
 15. [Integración y Despliegue Continuo (CI/CD)](#-integración-y-despliegue-continuo-cicd)
 16. [Estructura del Proyecto](#-estructura-del-proyecto)
 17. [Repositorios Relacionados](#-repositorios-relacionados)
@@ -81,10 +86,12 @@ Este repositorio aloja el **Backend Monolítico Modular**, diseñado y desarroll
 
 | Recurso / Entorno | Tipo | Estado | Enlace |
 | :--- | :--- | :---: | :--- |
-| **Swagger UI — QA (Staging)** | Documentación interactiva en Nube (QA) | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html) |
+| **Video Demostración Técnica (Sprint 4)** | Sustentación técnica E2E y pruebas en Azure | 🟢 YouTube | [Ver Video en YouTube](https://www.youtube.com/watch?v=gNrCYsFKNvw) |
 | **Swagger UI — PROD (Producción)** | Documentación interactiva en Nube (PROD) | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html) |
+| **Swagger UI — QA (Staging)** | Documentación interactiva en Nube (QA) | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/swagger-ui/index.html](https://oficioya-backend.azurewebsites.net/swagger-ui/index.html) |
 | **API Backend REST (Azure Cloud)** | Endpoint Base y Health Check | 🟢 Activo | [https://oficioya-backend.azurewebsites.net](https://oficioya-backend.azurewebsites.net) |
 | **OpenAPI Docs (Azure Cloud)** | Esquema JSON en Nube | 🟢 Activo | [https://oficioya-backend.azurewebsites.net/v3/api-docs](https://oficioya-backend.azurewebsites.net/v3/api-docs) |
+| **Colección Postman E2E** | Suite automatizada de pruebas funcionales | 🟢 Repositorio | [/postman](postman/) |
 | **Swagger UI (Local Docker/Maven)** | Documentación interactiva local | 🟢 Activo | [http://localhost:8082/swagger-ui/index.html](http://localhost:8082/swagger-ui/index.html) |
 | **OpenAPI Docs (Local)** | Esquema JSON local | 🟢 Activo | [http://localhost:8082/v3/api-docs](http://localhost:8082/v3/api-docs) |
 | **Frontend Web (Cliente)** | Interfaz de Usuario SPA | 🟢 Repositorio | [OficioYa-Frontend](https://github.com/OficioYa1/OficioYa-Frontend) |
@@ -502,16 +509,53 @@ El archivo `pom.xml` tiene configurada una regla de calidad estricta mediante el
 Una vez generado el reporte, puedes inspeccionar el desglose detallado abriendo en tu navegador el archivo:
 `target/site/jacoco/index.html`
 
-> **Resumen Oficial de Calidad y Cobertura (Reporte JaCoCo - Sprint 03):**
+> **Resumen Oficial de Calidad y Cobertura (Reporte JaCoCo - Sprint 04):**
 > 
 > | Métrica JaCoCo | Total | Cubiertas | Porcentaje | Estado |
 > | :--- | :---: | :---: | :---: | :---: |
-> | **Instrucciones** | 8.736 | 8.036 | **91.99%** | 🟢 Supera umbral (>70%) |
-> | **Ramas (Branches)** | 506 | 378 | **74.70%** | 🟢 Aprobado |
-> | **Líneas de Código** | 1.832 | 1.708 | **93.23%** | 🟢 Aprobado |
-> | **Métodos** | 398 | 362 | **90.95%** | 🟢 Aprobado |
-> | **Clases Analizadas** | 105 | 104 | **99.04%** | 🟢 Aprobado |
-> | **Pruebas Automatizadas** | 307 | 307 | **100%** | 🟢 0 fallos, 0 errores |
+> | **Instrucciones** | 9.332 | 8.890 | **95.26%** | 🟢 Supera umbral (>85%) |
+> | **Ramas (Branches)** | 554 | 429 | **77.43%** | 🟢 Aprobado |
+> | **Líneas de Código** | 2.009 | 1.909 | **95.02%** | 🟢 Aprobado |
+> | **Métodos** | 470 | 445 | **94.68%** | 🟢 Aprobado |
+> | **Clases Analizadas** | 105 | 105 | **100%** | 🟢 Aprobado |
+> | **Pruebas Automatizadas** | 338 | 338 | **100%** | 🟢 0 fallos, 0 errores |
+
+---
+
+### 🎬 Video Técnico de Demostración (Sprint 4)
+
+Como parte de los entregables obligatorios del Sprint 4 y el plan de contingencia técnico para la feria DOSW, se grabó y publicó una demostración integral del Backend desplegado y operativo en Azure Cloud:
+
+* 🎥 **Enlace al Video en YouTube:** [https://www.youtube.com/watch?v=gNrCYsFKNvw](https://www.youtube.com/watch?v=gNrCYsFKNvw)
+* ⏱️ **Duración:** 4:54 minutos (1080p Full HD)
+* ☁️ **Entorno Demostrado:** Azure App Service (`https://oficioya-backend.azurewebsites.net`)
+
+#### Contenido y Cronología del Video:
+1. **0:00 - Presentación y Objetivos:** Portada oficial del proyecto OficioYa, integrantes y alcance de las pruebas técnicas.
+2. **0:25 - Salud de la API & Swagger OpenAPI 3:** Ejecución de `GET /api/v1/health` (`status: UP`) y navegación por la documentación interactiva en Swagger UI.
+3. **0:50 - Endpoints Públicos y Búsqueda Meritocrática:** Consumo sin token de `GET /api/v1/oficios` y `GET /api/v1/busqueda/trabajadores`, comprobando la persistencia de los 8 perfiles de trabajadores con tarifas y calificaciones reales.
+4. **1:40 - Autenticación y Seguridad JWT:** Registro de nuevo usuario en `POST /api/v1/usuarios/registro` con hash BCrypt e inicio de sesión en `POST /auth/login` con emisión de token JWT portador del rol `ROLE_CONTRATANTE`.
+5. **2:35 - Ciclo de Negocio E2E (Happy Path):** Creación transaccional de una solicitud de servicio en `POST /api/v1/solicitudes` y consulta detallada por ID en `GET /api/v1/solicitudes/{id}` con estado `CREADA`.
+6. **3:25 - Prueba Negativa de Autenticación (401/403):** Intento de consumo de endpoints protegidos sin cabecera `Authorization`, verificando la intercepción por Spring Security y respuesta de error estandarizada (`ErrorResponseDTO`).
+7. **3:55 - Control de Acceso RBAC (403 Forbidden):** Intento de consumo de rutas exclusivas de administración (`GET /api/v1/moderacion/reportes`) usando credenciales de contratante, verificando el rechazo estricto por `@PreAuthorize`.
+8. **4:30 - Calidad de Software y Cobertura JaCoCo (95%):** Evidencia del reporte HTML interactivo de JaCoCo con 95% de cobertura general y 338 pruebas automatizadas pasando al 100%.
+
+---
+
+### 📮 Suite de Pruebas Automatizadas en Postman (E2E)
+
+El directorio [`/postman`](postman/) contiene la colección oficial de pruebas E2E automatizadas para validar los flujos funcionales y de seguridad de la plataforma:
+
+* **Colección Oficial:** [`postman/OficioYa_E2E.postman_collection.json`](postman/OficioYa_E2E.postman_collection.json) (16 peticiones con aserciones `pm.test`).
+* **Entorno Azure (PROD):** [`postman/OficioYa_Azure.postman_environment.json`](postman/OficioYa_Azure.postman_environment.json).
+* **Entorno Local (Dev):** [`postman/OficioYa_Local.postman_environment.json`](postman/OficioYa_Local.postman_environment.json).
+
+#### Flujo Ejecutado por la Colección:
+1. `01. Salud & Documentación`: Health Check (`/api/v1/health`) y OpenAPI Docs (`/v3/api-docs`).
+2. `02. Endpoints Públicos`: Catálogo de oficios y búsqueda de trabajadores (8 trabajadores sembrados).
+3. `03. Autenticación & JWT`: Registro de usuario contratante y login (contratante, trabajador y admin).
+4. `04. Ciclo E2E de Solicitudes`: Creación, consulta por ID, envío a trabajador y aceptación de solicitud.
+5. `05. Seguridad & Control de Acceso`: Pruebas negativas sin token (401/403), login con credenciales inválidas (401) y acceso no autorizado a ruta administrativa (403 Forbidden).
 
 ---
 
@@ -549,6 +593,10 @@ OficioYa-Backend/
 ├── docs/                            # Documentación de diseño y diagramas UML
 │   ├── images/                      # Diagramas de componentes y clases
 │   └── uml/                         # Diagramas de contexto, entidad-relación y documentos
+├── postman/                         # Suite de pruebas E2E automatizadas
+│   ├── OficioYa_Azure.postman_environment.json
+│   ├── OficioYa_E2E.postman_collection.json
+│   └── OficioYa_Local.postman_environment.json
 ├── src/
 │   ├── main/
 │   │   ├── java/com/oficioya/
