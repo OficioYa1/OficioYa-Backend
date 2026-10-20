@@ -32,3 +32,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Planes locales de trabajo ###
+docs/Sprint_4_Plan_Trabajo_Backend.md
+docs/*Plan*.md
+docs/*plan*.md
+
