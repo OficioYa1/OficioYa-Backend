@@ -1,0 +1,608 @@
+{
+  "info": {
+    "_postman_id": "oficioya-e2e-collection-sprint4",
+    "name": "OficioYa Backend - Suite E2E Automatizada (Sprint 4)",
+    "description": "Colección completa de pruebas E2E automatizadas para la plataforma OficioYa (DOSW - Sprint 4). Incluye pruebas de salud, catálogo, búsqueda meritocrática, autenticación real con JWT, ciclo completo de negocio y pruebas negativas de seguridad 401 y 403.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01. Salud & Documentación",
+      "item": [
+        {
+          "name": "01. Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "health"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Servicio activo con status UP', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.status).to.eql('UP');",
+                  "    pm.expect(json.service).to.eql('OficioYa-Backend');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "02. Contrato OpenAPI 3 (v3/api-docs)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/v3/api-docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["v3", "api-docs"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('OpenAPI v3 esquema válido', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.openapi).to.exist;",
+                  "    pm.expect(json.info.title).to.include('OficioYa');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02. Endpoints Públicos (Sin Autenticación)",
+      "item": [
+        {
+          "name": "03. Catálogo de Oficios",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/oficios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "oficios"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Retorna catálogo de oficios base', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array');",
+                  "    pm.expect(json.length).to.be.at.least(5);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "04. Búsqueda Meritocrática de Trabajadores (Seeding BE-05)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/busqueda/trabajadores",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "busqueda", "trabajadores"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Retorna al menos 8 trabajadores poblados en BD', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array');",
+                  "    pm.expect(json.length).to.be.at.least(8);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03. Autenticación & Tokens JWT",
+      "item": [
+        {
+          "name": "05. Registro de Nuevo Usuario Contratante",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"correo\": \"postman.user.\" + Date.now() + \"@oficioya.com\",\n  \"telefono\": \"310\" + Math.floor(1000000 + Math.random() * 9000000),\n  \"contrasena\": \"Password123!\",\n  \"nombre\": \"Usuario\",\n  \"apellido\": \"Postman\",\n  \"rol\": \"CONTRATANTE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/registro",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "registro"]
+            }
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "var uniqueEmail = 'postman.user.' + Date.now() + '@oficioya.com';",
+                  "var randomPhone = '310' + Math.floor(1000000 + Math.random() * 9000000);",
+                  "pm.variables.set('uniqueEmail', uniqueEmail);",
+                  "pm.variables.set('randomPhone', randomPhone);",
+                  "pm.request.body.raw = JSON.stringify({",
+                  "    correo: uniqueEmail,",
+                  "    telefono: randomPhone,",
+                  "    contrasena: 'Password123!',",
+                  "    nombre: 'Usuario',",
+                  "    apellido: 'Postman',",
+                  "    rol: 'CONTRATANTE'",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Usuario registrado con rol CONTRATANTE', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.exist;",
+                  "    pm.expect(json.rol).to.eql('CONTRATANTE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "06. Login Contratante Demo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"contratante@oficioya.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Emite token JWT válido y lo guarda', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.token).to.exist;",
+                  "    pm.environment.set('token_contratante', json.token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "07. Login Trabajador Demo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"trabajador@oficioya.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Emite token JWT para Trabajador', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.token).to.exist;",
+                  "    pm.environment.set('token_trabajador', json.token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "08. Login Administrador Demo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@oficioya.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Emite token JWT para Administrador', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.token).to.exist;",
+                  "    pm.environment.set('token_admin', json.token);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04. Ciclo E2E de Solicitudes (Happy Path)",
+      "item": [
+        {
+          "name": "09. Crear Solicitud de Servicio (Contratante)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_contratante}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contratanteId\": 1,\n  \"descripcion\": \"Reparación urgente de tubería en cocina - Demo E2E\",\n  \"zonaServicio\": \"Suba, Bogotá\",\n  \"fotoAdjuntaUrl\": \"https://res.cloudinary.com/demo/image/upload/sample.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/solicitudes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "solicitudes"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Solicitud creada en estado SOLICITADO y guarda ID', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.exist;",
+                  "    pm.expect(json.estado).to.eql('SOLICITADO');",
+                  "    pm.environment.set('solicitudId', json.id);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "10. Consultar Solicitud por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_contratante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/solicitudes/{{solicitudId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "solicitudes", "{{solicitudId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Retorna detalle correcto de la solicitud', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.id).to.eql(Number(pm.environment.get('solicitudId')));",
+                  "    pm.expect(json.descripcion).to.include('Reparación urgente');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "11. Enviar Solicitud a Trabajador",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_contratante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/solicitudes/{{solicitudId}}/enviar?trabajadorId={{trabajadorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "solicitudes", "{{solicitudId}}", "enviar"],
+              "query": [
+                {
+                  "key": "trabajadorId",
+                  "value": "{{trabajadorId}}"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "12. Aceptar Solicitud (Trabajador)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_trabajador}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/solicitudes/{{solicitudId}}/aceptar",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "solicitudes", "{{solicitudId}}", "aceptar"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "13. Historial de Solicitudes Trabajador",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_trabajador}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/historial-estadisticas/trabajador/{{trabajadorId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "historial-estadisticas", "trabajador", "{{trabajadorId}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code es 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Historial retorna array de solicitudes', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05. Seguridad & Control de Acceso (Negativas)",
+      "item": [
+        {
+          "name": "14. Seguridad 401/403 - Petición sin Token a Ruta Protegida",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"contratanteId\": 1,\n  \"descripcion\": \"Prueba sin token\",\n  \"zonaServicio\": \"Bogotá\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/solicitudes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "solicitudes"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Rechazo por falta de credenciales (HTTP 401 o 403)', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([401, 403]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "15. Seguridad 401 - Login con Contraseña Incorrecta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"contratante@oficioya.com\",\n  \"password\": \"CLAVE_ERRONEA_TOTALMENTE_INVALIDA\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Rechazo por credenciales inválidas (HTTP 401)', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "16. Seguridad 403 - Contratante intentando acceder a ruta exclusiva de Admin",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_contratante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/moderacion/reportes",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "moderacion", "reportes"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Rechazo por RBAC insuficiente (HTTP 403 Forbidden)', function () {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
