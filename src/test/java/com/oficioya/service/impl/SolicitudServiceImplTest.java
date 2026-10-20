@@ -236,4 +236,19 @@ class SolicitudServiceImplTest {
         });
     }
 
+    @Test
+    void testObtenerSolicitudPorId_Exito() {
+        // Arrange
+        Long solicitudId = 1L;
+        when(solicitudRepository.findById(solicitudId)).thenReturn(Optional.of(solicitudEntity));
+        when(mapper.toDomain(solicitudEntity)).thenReturn(solicitudDominio);
+
+        // Act
+        Solicitud resultado = solicitudService.obtenerSolicitudPorId(solicitudId);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(solicitudDominio, resultado);
+        verify(solicitudRepository).findById(solicitudId);
+    }
 }

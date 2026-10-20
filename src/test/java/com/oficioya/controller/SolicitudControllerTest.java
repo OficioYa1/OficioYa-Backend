@@ -161,4 +161,26 @@ class SolicitudControllerTest {
 
         verify(solicitudService).cancelarSolicitud(10L, "Motivo cancelacion");
     }
+
+    @Test
+    @DisplayName("GET /{id} - consultar solicitud retorna 200 OK")
+    void obtenerSolicitudPorId_exitoso() throws Exception {
+        // Arrange
+        Solicitud dominio = new Solicitud();
+        dominio.setId(10L);
+        dominio.setEstadoEnum(EstadoSolicitud.CREADA);
+
+        SolicitudResponseDTO responseDTO = new SolicitudResponseDTO();
+        responseDTO.setId(10L);
+
+        when(solicitudService.obtenerSolicitudPorId(10L)).thenReturn(dominio);
+        when(mapper.toResponse(dominio)).thenReturn(responseDTO);
+
+        // Act & Assert
+        mockMvc.perform(get("/api/v1/solicitudes/10"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(10L));
+
+        verify(solicitudService).obtenerSolicitudPorId(10L);
+    }
 }

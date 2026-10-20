@@ -59,6 +59,13 @@ public class SolicitudEntity {
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
 
+    @PrePersist
+    public void prePersist() {
+        if (this.fechaCreacion == null) {
+            this.fechaCreacion = LocalDateTime.now();
+        }
+    }
+
     /**
      * Custom setter para actualizar automáticamente la fecha_actualizacion
      * al cambiar el estado.

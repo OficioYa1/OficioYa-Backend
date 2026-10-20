@@ -10,4 +10,5 @@ public interface ISolicitudService {
     void iniciarSolicitud(Long solicitudId);
     void completarSolicitud(Long solicitudId);
     void cancelarSolicitud(Long solicitudId, String motivo);
+    Solicitud obtenerSolicitudPorId(Long solicitudId);
 }

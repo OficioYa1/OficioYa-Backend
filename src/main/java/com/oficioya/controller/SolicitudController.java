@@ -75,4 +75,12 @@ public class SolicitudController implements SolicitudApi {
         solicitudService.cancelarSolicitud(id, motivo);
         return ResponseEntity.ok().build();
     }
+
+    @Override
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('CONTRATANTE', 'TRABAJADOR', 'ADMIN')")
+    @GetMapping("/{id}")
+    public ResponseEntity<SolicitudResponseDTO> obtenerSolicitudPorId(@PathVariable Long id) {
+        Solicitud solicitud = solicitudService.obtenerSolicitudPorId(id);
+        return ResponseEntity.ok(mapper.toResponse(solicitud));
+    }
 }
